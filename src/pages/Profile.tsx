@@ -27,7 +27,6 @@ const Profile = () => {
   });
 
   const [editableProfile, setEditableProfile] = useState({ ...userProfile });
-  const [showDetails, setShowDetails] = useState(false);
 
   const handleSave = () => {
     setUserProfile(editableProfile);
@@ -49,14 +48,55 @@ const Profile = () => {
                 </Button>
               </DropdownMenuTrigger>
               <DropdownMenuContent align="end">
-                <DialogTrigger asChild>
-                  <DropdownMenuItem>
-                    View Details
-                  </DropdownMenuItem>
-                </DialogTrigger>
                 <Dialog>
                   <DialogTrigger asChild>
-                    <DropdownMenuItem>
+                    <DropdownMenuItem onSelect={(e) => e.preventDefault()}>
+                      View Details
+                    </DropdownMenuItem>
+                  </DialogTrigger>
+                  <DialogContent>
+                    <DialogHeader>
+                      <DialogTitle>User Details</DialogTitle>
+                    </DialogHeader>
+                    <div className="space-y-4">
+                      <div className="flex items-center space-x-4 p-3 bg-secondary/10 rounded-lg">
+                        <User className="w-5 h-5 text-primary" />
+                        <div>
+                          <p className="text-sm text-muted-foreground">Name</p>
+                          <p className="font-medium">{userProfile.name}</p>
+                        </div>
+                      </div>
+
+                      <div className="flex items-center space-x-4 p-3 bg-secondary/10 rounded-lg">
+                        <Mail className="w-5 h-5 text-primary" />
+                        <div>
+                          <p className="text-sm text-muted-foreground">Email</p>
+                          <p className="font-medium">{userProfile.email}</p>
+                        </div>
+                      </div>
+
+                      <div className="flex items-center space-x-4 p-3 bg-secondary/10 rounded-lg">
+                        <Phone className="w-5 h-5 text-primary" />
+                        <div>
+                          <p className="text-sm text-muted-foreground">Phone</p>
+                          <p className="font-medium">{userProfile.phone}</p>
+                        </div>
+                      </div>
+
+                      <div className="flex items-center space-x-4 p-3 bg-secondary/10 rounded-lg">
+                        <MapPin className="w-5 h-5 text-primary" />
+                        <div>
+                          <p className="text-sm text-muted-foreground">Address</p>
+                          <p className="font-medium">{userProfile.address}</p>
+                        </div>
+                      </div>
+                    </div>
+                  </DialogContent>
+                </Dialog>
+
+                <Dialog>
+                  <DialogTrigger asChild>
+                    <DropdownMenuItem onSelect={(e) => e.preventDefault()}>
                       Edit Profile
                     </DropdownMenuItem>
                   </DialogTrigger>
@@ -123,47 +163,6 @@ const Profile = () => {
               <span className="font-medium">{userProfile.coins} coins</span>
             </div>
           </div>
-
-          <Dialog>
-            <DialogContent>
-              <DialogHeader>
-                <DialogTitle>User Details</DialogTitle>
-              </DialogHeader>
-              <div className="space-y-4">
-                <div className="flex items-center space-x-4 p-3 bg-secondary/10 rounded-lg">
-                  <User className="w-5 h-5 text-primary" />
-                  <div>
-                    <p className="text-sm text-muted-foreground">Name</p>
-                    <p className="font-medium">{userProfile.name}</p>
-                  </div>
-                </div>
-
-                <div className="flex items-center space-x-4 p-3 bg-secondary/10 rounded-lg">
-                  <Mail className="w-5 h-5 text-primary" />
-                  <div>
-                    <p className="text-sm text-muted-foreground">Email</p>
-                    <p className="font-medium">{userProfile.email}</p>
-                  </div>
-                </div>
-
-                <div className="flex items-center space-x-4 p-3 bg-secondary/10 rounded-lg">
-                  <Phone className="w-5 h-5 text-primary" />
-                  <div>
-                    <p className="text-sm text-muted-foreground">Phone</p>
-                    <p className="font-medium">{userProfile.phone}</p>
-                  </div>
-                </div>
-
-                <div className="flex items-center space-x-4 p-3 bg-secondary/10 rounded-lg">
-                  <MapPin className="w-5 h-5 text-primary" />
-                  <div>
-                    <p className="text-sm text-muted-foreground">Address</p>
-                    <p className="font-medium">{userProfile.address}</p>
-                  </div>
-                </div>
-              </div>
-            </DialogContent>
-          </Dialog>
         </div>
       </div>
     </div>
