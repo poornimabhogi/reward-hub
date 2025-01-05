@@ -14,7 +14,7 @@ const Games = () => {
           onClick={() => navigate('/games/2048')}
         >
           <div className="p-4 h-full flex flex-col">
-            <div className="flex-1 rounded-lg bg-gradient-to-br from-primary/90 to-secondary/90 p-4">
+            <div className="flex-1 rounded-lg bg-primary p-4">
               <div className="w-full h-full grid grid-cols-2 grid-rows-2 gap-2">
                 {[2, 4, 8, 16].map((num, index) => (
                   <div
