@@ -4,7 +4,6 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { useAuth } from "@/contexts/AuthContext";
 import { useToast } from "@/hooks/use-toast";
-import { Dices } from "lucide-react";
 
 export const LoginForm = () => {
   const [email, setEmail] = useState("");
@@ -54,24 +53,6 @@ export const LoginForm = () => {
   const continueAsGuest = () => {
     if (login("guest@example.com", "guest123456")) {
       navigate("/");
-    }
-  };
-
-  const tryYourLuck = () => {
-    const randomEmail = `lucky${Math.floor(Math.random() * 1000)}@example.com`;
-    const randomPassword = `lucky${Math.floor(Math.random() * 1000)}`;
-    if (login(randomEmail, randomPassword)) {
-      toast({
-        title: "Lucky You! 🎲",
-        description: "Successfully logged in with random credentials!",
-      });
-      navigate("/");
-    } else {
-      toast({
-        title: "Not So Lucky 😔",
-        description: "Try again or use regular login",
-        variant: "destructive",
-      });
     }
   };
 
@@ -134,14 +115,6 @@ export const LoginForm = () => {
             >
               Continue as Guest
             </Button>
-            <Button
-              variant="outline"
-              className="w-full"
-              onClick={tryYourLuck}
-            >
-              <Dices className="mr-2" />
-              Try Your Luck
-            </Button>
           </div>
         </>
       ) : (
@@ -174,14 +147,6 @@ export const LoginForm = () => {
             onClick={() => setShowGoogleForm(false)}
           >
             Back to Regular Login
-          </Button>
-          <Button
-            variant="outline"
-            className="w-full"
-            onClick={tryYourLuck}
-          >
-            <Dices className="mr-2" />
-            Try Your Luck
           </Button>
         </form>
       )}
