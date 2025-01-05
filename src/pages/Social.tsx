@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Search, Volume2, VolumeX, User } from "lucide-react";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
@@ -11,6 +11,11 @@ interface Post {
   content: string;
   isFollowing: boolean;
   isMuted?: boolean;
+}
+
+interface FollowedUser {
+  username: string;
+  isFollowing: boolean;
 }
 
 const Social = () => {
@@ -32,13 +37,32 @@ const Social = () => {
       isFollowing: false,
       isMuted: true
     },
-    // Add more sample posts as needed
   ]);
+
+  // Initialize posts with following status from localStorage
+  useEffect(() => {
+    const followedUsers = JSON.parse(localStorage.getItem('followedUsers') || '[]');
+    setPosts(posts.map(post => ({
+      ...post,
+      isFollowing: followedUsers.some((user: FollowedUser) => user.username === post.username)
+    })));
+  }, []);
 
   const handleFollow = (postId: number) => {
     setPosts(posts.map(post => {
       if (post.id === postId) {
         const newState = !post.isFollowing;
+        
+        // Update localStorage
+        const followedUsers = JSON.parse(localStorage.getItem('followedUsers') || '[]');
+        if (newState) {
+          followedUsers.push({ username: post.username, isFollowing: true });
+        } else {
+          const index = followedUsers.findIndex((user: FollowedUser) => user.username === post.username);
+          if (index > -1) followedUsers.splice(index, 1);
+        }
+        localStorage.setItem('followedUsers', JSON.stringify(followedUsers));
+
         toast({
           title: newState ? "Following" : "Unfollowed",
           description: `You ${newState ? 'are now following' : 'have unfollowed'} ${post.username}`,
