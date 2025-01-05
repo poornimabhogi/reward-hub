@@ -5,6 +5,7 @@ import { Textarea } from "@/components/ui/textarea";
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { toast } from "sonner";
+import { ArrowLeft } from "lucide-react";
 import {
   Dialog,
   DialogContent,
@@ -89,8 +90,15 @@ const Sell = () => {
     <div className="h-[calc(100vh-4rem)] overflow-y-auto pb-20">
       <div className="container mx-auto px-4 py-8">
         <div className="max-w-2xl mx-auto">
-          <div className="flex justify-between items-center mb-6">
-            <h1 className="text-2xl font-bold">List Item for Sale</h1>
+          <div className="flex items-center mb-6">
+            <Button 
+              variant="ghost" 
+              className="mr-4 p-2"
+              onClick={() => navigate('/shop')}
+            >
+              <ArrowLeft className="h-6 w-6" />
+            </Button>
+            <h1 className="text-2xl font-bold flex-1">List Item for Sale</h1>
             <Button 
               type="submit"
               form="sellForm"
