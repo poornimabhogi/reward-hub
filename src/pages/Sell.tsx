@@ -86,103 +86,105 @@ const Sell = () => {
   );
 
   return (
-    <div className="container mx-auto px-4 py-8 pb-24">
-      <div className="max-w-2xl mx-auto relative">
-        <div className="flex justify-between items-center mb-6">
-          <h1 className="text-2xl font-bold">List Item for Sale</h1>
-          <Button 
-            type="submit"
-            form="sellForm"
-            className="bg-primary hover:bg-primary/90"
-          >
-            Add Product
-          </Button>
-        </div>
-        <form id="sellForm" onSubmit={handleSubmit} className="space-y-6">
-          <div>
-            <Label htmlFor="name">Item Name</Label>
-            <Input
-              id="name"
-              value={formData.name}
-              onChange={(e) => setFormData({ ...formData, name: e.target.value })}
-              required
-            />
-          </div>
-          
-          <div>
-            <Label htmlFor="price">Price ($)</Label>
-            <Input
-              id="price"
-              type="number"
-              min="0"
-              step="0.01"
-              value={formData.price}
-              onChange={(e) => setFormData({ ...formData, price: e.target.value })}
-              required
-            />
-          </div>
-
-          <div>
-            <Label htmlFor="size">Size (optional)</Label>
-            <Input
-              id="size"
-              value={formData.size}
-              onChange={(e) => setFormData({ ...formData, size: e.target.value })}
-              placeholder="e.g., Small, Medium, Large, or specific dimensions"
-            />
-          </div>
-
-          <div>
-            <Label htmlFor="description">Description</Label>
-            <Textarea
-              id="description"
-              value={formData.description}
-              onChange={(e) => setFormData({ ...formData, description: e.target.value })}
-              required
-            />
-          </div>
-
-          <div>
-            <Label htmlFor="category">Category</Label>
-            <select
-              id="category"
-              className="w-full rounded-md border border-input bg-background px-3 py-2"
-              value={formData.category}
-              onChange={(e) => setFormData({ ...formData, category: e.target.value })}
+    <div className="h-[calc(100vh-4rem)] overflow-y-auto pb-20">
+      <div className="container mx-auto px-4 py-8">
+        <div className="max-w-2xl mx-auto">
+          <div className="flex justify-between items-center mb-6">
+            <h1 className="text-2xl font-bold">List Item for Sale</h1>
+            <Button 
+              type="submit"
+              form="sellForm"
+              className="bg-primary hover:bg-primary/90"
             >
-              <option>Electronics</option>
-              <option>Fashion</option>
-              <option>Home & Living</option>
-              <option>Books</option>
-            </select>
+              Add Product
+            </Button>
           </div>
+          <form id="sellForm" onSubmit={handleSubmit} className="space-y-6">
+            <div>
+              <Label htmlFor="name">Item Name</Label>
+              <Input
+                id="name"
+                value={formData.name}
+                onChange={(e) => setFormData({ ...formData, name: e.target.value })}
+                required
+              />
+            </div>
+            
+            <div>
+              <Label htmlFor="price">Price ($)</Label>
+              <Input
+                id="price"
+                type="number"
+                min="0"
+                step="0.01"
+                value={formData.price}
+                onChange={(e) => setFormData({ ...formData, price: e.target.value })}
+                required
+              />
+            </div>
 
-          <div>
-            <Label htmlFor="image">Product Image/Video</Label>
-            <Input
-              id="image"
-              type="file"
-              accept="image/*,video/*"
-              onChange={handleFileChange}
-              className="cursor-pointer"
-              required
-            />
-          </div>
+            <div>
+              <Label htmlFor="size">Size (optional)</Label>
+              <Input
+                id="size"
+                value={formData.size}
+                onChange={(e) => setFormData({ ...formData, size: e.target.value })}
+                placeholder="e.g., Small, Medium, Large, or specific dimensions"
+              />
+            </div>
 
-          <Dialog>
-            <DialogTrigger asChild>
-              <Button type="button" variant="outline" className="w-full">
-                Preview Product
-              </Button>
-            </DialogTrigger>
-            <DialogContent>
-              <DialogHeader>
-                <DialogTitle>Product Preview</DialogTitle>
-              </DialogHeader>
-              <PreviewProduct />
-            </DialogContent>
-          </Dialog>
-        </form>
+            <div>
+              <Label htmlFor="description">Description</Label>
+              <Textarea
+                id="description"
+                value={formData.description}
+                onChange={(e) => setFormData({ ...formData, description: e.target.value })}
+                required
+              />
+            </div>
+
+            <div>
+              <Label htmlFor="category">Category</Label>
+              <select
+                id="category"
+                className="w-full rounded-md border border-input bg-background px-3 py-2"
+                value={formData.category}
+                onChange={(e) => setFormData({ ...formData, category: e.target.value })}
+              >
+                <option>Electronics</option>
+                <option>Fashion</option>
+                <option>Home & Living</option>
+                <option>Books</option>
+              </select>
+            </div>
+
+            <div>
+              <Label htmlFor="image">Product Image/Video</Label>
+              <Input
+                id="image"
+                type="file"
+                accept="image/*,video/*"
+                onChange={handleFileChange}
+                className="cursor-pointer"
+                required
+              />
+            </div>
+
+            <Dialog>
+              <DialogTrigger asChild>
+                <Button type="button" variant="outline" className="w-full">
+                  Preview Product
+                </Button>
+              </DialogTrigger>
+              <DialogContent>
+                <DialogHeader>
+                  <DialogTitle>Product Preview</DialogTitle>
+                </DialogHeader>
+                <PreviewProduct />
+              </DialogContent>
+            </Dialog>
+          </form>
+        </div>
       </div>
     </div>
   );
