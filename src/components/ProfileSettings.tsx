@@ -80,6 +80,7 @@ export const ProfileSettings = ({ userProfile }: { userProfile: UserProfile }) =
         accept="image/*,video/*"
         className="hidden"
         onChange={handleFileSelect}
+        capture={undefined}  // Remove capture attribute to allow gallery access
       />
       
       <DropdownMenu>
@@ -138,7 +139,12 @@ export const ProfileSettings = ({ userProfile }: { userProfile: UserProfile }) =
       <Dialog open={isConfirmDialogOpen} onOpenChange={setIsConfirmDialogOpen}>
         <DialogContent>
           <DialogHeader>
-            <DialogTitle>Confirm Post</DialogTitle>
+            <DialogTitle className="flex justify-between items-center">
+              <span>Preview Post</span>
+              <Button onClick={handleConfirmPost} size="sm">
+                Post
+              </Button>
+            </DialogTitle>
           </DialogHeader>
           <div className="space-y-4">
             {selectedFile && (
@@ -161,9 +167,6 @@ export const ProfileSettings = ({ userProfile }: { userProfile: UserProfile }) =
             <div className="flex justify-end gap-2">
               <Button variant="outline" onClick={() => setIsConfirmDialogOpen(false)}>
                 Cancel
-              </Button>
-              <Button onClick={handleConfirmPost}>
-                Post
               </Button>
             </div>
           </div>
