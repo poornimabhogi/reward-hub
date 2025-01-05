@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { User, Coins, Dice } from "lucide-react";
+import { User, Coins, Dice1 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "@/contexts/AuthContext";
@@ -116,7 +116,7 @@ const Index = () => {
               onClick={handleTryLuck}
               className="flex items-center gap-2"
             >
-              <Dice className="h-4 w-4" />
+              <Dice1 className="h-4 w-4" />
               Try Your Luck
             </Button>
           </div>
