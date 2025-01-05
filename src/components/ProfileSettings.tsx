@@ -1,5 +1,6 @@
 import { useState } from "react";
 import { Settings2, Plus } from "lucide-react";
+import { useNavigate } from "react-router-dom";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
 import { ViewDetailsDropdown } from "./profile/ViewDetailsDropdown";
@@ -21,13 +22,38 @@ interface UserProfile {
 export const ProfileSettings = ({ userProfile }: { userProfile: UserProfile }) => {
   const [isEditing, setIsEditing] = useState(false);
   const [editableProfile, setEditableProfile] = useState(userProfile);
+  const navigate = useNavigate();
 
   const handleSave = () => {
     setIsEditing(false);
   };
 
+  const handleDropdownItemClick = (postType: 'timeCapsule' | 'feature' | 'reel') => {
+    // Navigate to gallery first, passing the post type as state
+    navigate('/gallery', { state: { selectedPostType: postType } });
+  };
+
   return (
     <div className="absolute right-4 top-4 flex items-center gap-2">
+      <DropdownMenu>
+        <DropdownMenuTrigger asChild>
+          <Button variant="ghost" size="icon">
+            <Plus className="h-5 w-5" />
+          </Button>
+        </DropdownMenuTrigger>
+        <DropdownMenuContent align="end">
+          <DropdownMenuItem onClick={() => handleDropdownItemClick('timeCapsule')}>
+            Today's Time Capsule
+          </DropdownMenuItem>
+          <DropdownMenuItem onClick={() => handleDropdownItemClick('feature')}>
+            Feature Post
+          </DropdownMenuItem>
+          <DropdownMenuItem onClick={() => handleDropdownItemClick('reel')}>
+            Reel
+          </DropdownMenuItem>
+        </DropdownMenuContent>
+      </DropdownMenu>
+
       <Dialog>
         <DialogTrigger asChild>
           <Button variant="ghost" size="icon">
@@ -61,19 +87,6 @@ export const ProfileSettings = ({ userProfile }: { userProfile: UserProfile }) =
           </div>
         </DialogContent>
       </Dialog>
-
-      <DropdownMenu>
-        <DropdownMenuTrigger asChild>
-          <Button variant="ghost" size="icon">
-            <Plus className="h-5 w-5" />
-          </Button>
-        </DropdownMenuTrigger>
-        <DropdownMenuContent align="end">
-          <DropdownMenuItem>Today's Time Capsule</DropdownMenuItem>
-          <DropdownMenuItem>Feature Post</DropdownMenuItem>
-          <DropdownMenuItem>Reel</DropdownMenuItem>
-        </DropdownMenuContent>
-      </DropdownMenu>
     </div>
   );
 };

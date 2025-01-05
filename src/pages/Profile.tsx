@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { User } from "lucide-react";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { ProfileSettings } from "@/components/ProfileSettings";
@@ -45,7 +46,6 @@ const Profile = () => {
 
   return (
     <div className="container mx-auto px-4 py-4 max-w-2xl">
-      {/* Profile Header with Actions */}
       <div className="bg-white rounded-lg shadow-sm p-4 mb-4">
         <div className="flex items-start justify-between mb-4">
           <div className="flex items-start gap-4">
@@ -74,10 +74,8 @@ const Profile = () => {
         </div>
       </div>
 
-      {/* Time Capsules */}
       <TimeCapsules timeCapsules={timeCapsules} />
 
-      {/* Create Post Dialog */}
       <Dialog open={isCreatePostOpen} onOpenChange={setIsCreatePostOpen}>
         <DialogContent>
           <DialogHeader>
@@ -93,7 +91,6 @@ const Profile = () => {
         </DialogContent>
       </Dialog>
 
-      {/* Posts Grid/List View */}
       <Tabs defaultValue="grid" className="w-full">
         <TabsList className="w-full">
           <TabsTrigger value="grid" className="flex-1" onClick={() => setViewMode('grid')}>
