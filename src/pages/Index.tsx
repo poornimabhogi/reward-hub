@@ -6,79 +6,62 @@ import { Card, CardContent } from "@/components/ui/card";
 import { ProfileSettings } from "@/components/ProfileSettings";
 
 const Index = () => {
-  // This would typically come from a global state management solution
-  const [userProfile] = useState({
-    name: "John Doe",
-    coins: 100
-  });
-
-  // Mock wishlist data - in a real app, this would be shared state with the Shop component
-  const [wishlistedProducts] = useState([
-    {
-      id: 1,
-      name: "Premium Headphones",
-      price: 299,
-      image: "/placeholder.svg",
-    },
-    {
-      id: 2,
-      name: "Smart Watch",
-      price: 199,
-      image: "/placeholder.svg",
-    }
-  ]);
-
+  const [coins] = useState(100);
   const navigate = useNavigate();
 
   return (
     <div className="container mx-auto px-4 pb-24">
-      {/* Profile Section */}
-      <div className="flex items-center gap-4 mb-6 relative">
-        <div className="w-12 h-12 bg-primary/10 rounded-full flex items-center justify-center">
-          <User className="w-6 h-6 text-primary" />
+      {/* Top Bar */}
+      <div className="flex items-center justify-between py-4">
+        <Button 
+          variant="ghost" 
+          size="icon"
+          onClick={() => navigate('/profile')}
+        >
+          <User className="h-6 w-6" />
+        </Button>
+        
+        <div className="flex items-center gap-2">
+          <Coins className="h-5 w-5 text-yellow-500" />
+          <span className="font-medium">{coins} coins</span>
         </div>
-        <div className="flex-1">
-          <h2 className="text-lg font-semibold">{userProfile.name}</h2>
-          <div className="flex items-center gap-2 text-muted-foreground">
-            <Coins className="w-4 h-4" />
-            <span>{userProfile.coins} coins</span>
-          </div>
-        </div>
-        <ProfileSettings userProfile={userProfile} />
+        
+        <Button 
+          onClick={() => navigate('/lucky-draw')}
+          variant="default"
+          size="sm"
+        >
+          Try Your Luck!
+        </Button>
       </div>
 
-      {/* Lucky Draw Button */}
-      <Button 
-        className="w-full mb-8" 
-        onClick={() => navigate('/lucky-draw')}
-      >
-        Try Your Luck!
-      </Button>
-
       {/* Wishlist Section */}
-      <div className="space-y-4">
+      <div className="space-y-4 mt-8">
         <h3 className="text-lg font-semibold">Your Wishlist</h3>
-        {wishlistedProducts.length > 0 ? (
-          <div className="grid grid-cols-2 gap-4">
-            {wishlistedProducts.map((product) => (
-              <Card key={product.id} className="overflow-hidden">
-                <CardContent className="p-3">
-                  <img
-                    src={product.image}
-                    alt={product.name}
-                    className="w-full h-32 object-cover rounded-md mb-2"
-                  />
-                  <h4 className="font-medium text-sm truncate">{product.name}</h4>
-                  <p className="text-sm text-muted-foreground">${product.price}</p>
-                </CardContent>
-              </Card>
-            ))}
-          </div>
-        ) : (
-          <p className="text-muted-foreground text-center py-8">
-            No items in your wishlist yet
-          </p>
-        )}
+        <div className="grid grid-cols-2 gap-4">
+          <Card key={1} className="overflow-hidden">
+            <CardContent className="p-3">
+              <img
+                src="/placeholder.svg"
+                alt="Premium Headphones"
+                className="w-full h-32 object-cover rounded-md mb-2"
+              />
+              <h4 className="font-medium text-sm truncate">Premium Headphones</h4>
+              <p className="text-sm text-muted-foreground">$299</p>
+            </CardContent>
+          </Card>
+          <Card key={2} className="overflow-hidden">
+            <CardContent className="p-3">
+              <img
+                src="/placeholder.svg"
+                alt="Smart Watch"
+                className="w-full h-32 object-cover rounded-md mb-2"
+              />
+              <h4 className="font-medium text-sm truncate">Smart Watch</h4>
+              <p className="text-sm text-muted-foreground">$199</p>
+            </CardContent>
+          </Card>
+        </div>
       </div>
     </div>
   );
