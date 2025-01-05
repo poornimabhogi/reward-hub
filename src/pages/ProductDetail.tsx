@@ -1,24 +1,45 @@
-import { useLocation, useNavigate } from "react-router-dom";
+import { useLocation, useNavigate, useParams } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { useToast } from "@/hooks/use-toast";
 import { ArrowLeft, Heart, ShoppingCart } from "lucide-react";
 
 const ProductDetail = () => {
   const { state } = useLocation();
+  const { id } = useParams();
   const navigate = useNavigate();
   const { toast } = useToast();
-  const product = state?.product;
+
+  // Get product either from navigation state or localStorage
+  const getProduct = () => {
+    if (state?.product) return state.product;
+    
+    const storedProducts = localStorage.getItem('products');
+    if (storedProducts) {
+      const products = JSON.parse(storedProducts);
+      return products.find((p: any) => p.id === Number(id));
+    }
+    return null;
+  };
+
+  const product = getProduct();
 
   if (!product) {
     return (
       <div className="container mx-auto px-4 py-8">
+        <Button
+          variant="ghost"
+          className="mb-6"
+          onClick={() => navigate('/shop')}
+        >
+          <ArrowLeft className="mr-2" />
+          Back to Shop
+        </Button>
         <div className="text-center">Product not found</div>
       </div>
     );
   }
 
   const handleAddToCart = () => {
-    // Get products from localStorage
     const storedProducts = localStorage.getItem('products');
     if (storedProducts) {
       const products = JSON.parse(storedProducts);
@@ -35,7 +56,6 @@ const ProductDetail = () => {
   };
 
   const handleToggleWishlist = () => {
-    // Get products from localStorage
     const storedProducts = localStorage.getItem('products');
     if (storedProducts) {
       const products = JSON.parse(storedProducts);
