@@ -42,7 +42,7 @@ export const PostsGrid = ({ posts, viewMode: externalViewMode }: PostsGridProps)
                   className="h-6 w-6"
                   onClick={handleAddPost}
                 >
-                  <PlusSquare className="h-5 w-5 text-black" />
+                  <PlusSquare className="h-7 w-7 text-black" />
                 </Button>
               </TooltipTrigger>
               <TooltipContent>
