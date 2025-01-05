@@ -97,7 +97,7 @@ const Shop = () => {
   };
 
   return (
-    <div className="flex flex-col h-screen max-h-[calc(100vh-4rem)]">
+    <div className="flex flex-col h-screen">
       <div className="sticky top-0 z-10 bg-white border-b">
         <ShopHeader
           wishlistedProducts={wishlistedProducts}
@@ -118,7 +118,13 @@ const Shop = () => {
         />
       </div>
 
-      <div className="flex-1 overflow-y-auto pb-16 px-4">
+      <div 
+        className="flex-1 overflow-y-auto px-4"
+        style={{
+          height: 'calc(100vh - 4rem - 2px)', // 4rem for nav height, 2px for border
+          paddingBottom: '1rem'
+        }}
+      >
         <ProductList
           products={products}
           categories={categories}
