@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { Status } from "@/types/profile";
-import { LayoutGrid, LayoutList, PlusCircle } from "lucide-react";
+import { LayoutGrid, LayoutList, PlusSquare } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import {
   Tooltip,
@@ -42,7 +42,7 @@ export const PostsGrid = ({ posts, viewMode: externalViewMode }: PostsGridProps)
                   className="h-6 w-6"
                   onClick={handleAddPost}
                 >
-                  <PlusCircle className="h-4 w-4 text-black" />
+                  <PlusSquare className="h-4 w-4 text-black" />
                 </Button>
               </TooltipTrigger>
               <TooltipContent>
