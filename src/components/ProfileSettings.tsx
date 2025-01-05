@@ -24,6 +24,8 @@ export const ProfileSettings = ({ userProfile }: { userProfile: UserProfile }) =
   const [editableProfile, setEditableProfile] = useState(userProfile);
   const fileInputRef = useRef<HTMLInputElement>(null);
   const [selectedPostType, setSelectedPostType] = useState<'timeCapsule' | 'feature' | 'reel'>('feature');
+  const [selectedFile, setSelectedFile] = useState<File | null>(null);
+  const [isConfirmDialogOpen, setIsConfirmDialogOpen] = useState(false);
 
   const handleSave = () => {
     setIsEditing(false);
@@ -39,10 +41,19 @@ export const ProfileSettings = ({ userProfile }: { userProfile: UserProfile }) =
   const handleFileSelect = (event: React.ChangeEvent<HTMLInputElement>) => {
     const file = event.target.files?.[0];
     if (file) {
+      setSelectedFile(file);
+      setIsConfirmDialogOpen(true);
+      // Reset the input value so the same file can be selected again
+      event.target.value = '';
+    }
+  };
+
+  const handleConfirmPost = () => {
+    if (selectedFile) {
       const newStatus = {
         id: Date.now(),
-        type: file.type.startsWith('image/') ? 'photo' : 'video',
-        url: URL.createObjectURL(file),
+        type: selectedFile.type.startsWith('image/') ? 'photo' : 'video',
+        url: URL.createObjectURL(selectedFile),
         timestamp: new Date(),
         postType: selectedPostType
       };
@@ -53,10 +64,11 @@ export const ProfileSettings = ({ userProfile }: { userProfile: UserProfile }) =
       });
       window.dispatchEvent(customEvent);
       
-      toast.success("Time capsule added!");
+      toast.success(`${selectedPostType === 'timeCapsule' ? "Time capsule" : "Post"} added!`);
       
-      // Reset the input value so the same file can be selected again
-      event.target.value = '';
+      // Reset states
+      setSelectedFile(null);
+      setIsConfirmDialogOpen(false);
     }
   };
 
@@ -119,6 +131,41 @@ export const ProfileSettings = ({ userProfile }: { userProfile: UserProfile }) =
                 onSave={handleSave}
               />
             )}
+          </div>
+        </DialogContent>
+      </Dialog>
+
+      <Dialog open={isConfirmDialogOpen} onOpenChange={setIsConfirmDialogOpen}>
+        <DialogContent>
+          <DialogHeader>
+            <DialogTitle>Confirm Post</DialogTitle>
+          </DialogHeader>
+          <div className="space-y-4">
+            {selectedFile && (
+              <div className="aspect-square w-full relative overflow-hidden rounded-lg">
+                {selectedFile.type.startsWith('image/') ? (
+                  <img
+                    src={URL.createObjectURL(selectedFile)}
+                    alt="Preview"
+                    className="w-full h-full object-cover"
+                  />
+                ) : (
+                  <video
+                    src={URL.createObjectURL(selectedFile)}
+                    className="w-full h-full object-cover"
+                    controls
+                  />
+                )}
+              </div>
+            )}
+            <div className="flex justify-end gap-2">
+              <Button variant="outline" onClick={() => setIsConfirmDialogOpen(false)}>
+                Cancel
+              </Button>
+              <Button onClick={handleConfirmPost}>
+                Post
+              </Button>
+            </div>
           </div>
         </DialogContent>
       </Dialog>
