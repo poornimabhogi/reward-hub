@@ -63,7 +63,7 @@ export const PostsGrid = ({ posts, viewMode: externalViewMode }: PostsGridProps)
       <div 
         className={`${
           currentViewMode === 'grid' 
-            ? "grid grid-cols-3 gap-4"
+            ? "grid grid-cols-2 gap-6" // Changed from grid-cols-3 to grid-cols-2 and increased gap
             : "flex flex-col gap-4"
         } animate-fade-in`}
       >
@@ -95,7 +95,7 @@ export const PostsGrid = ({ posts, viewMode: externalViewMode }: PostsGridProps)
             </div>
           ))
         ) : (
-          <div className="col-span-3 text-center text-muted-foreground py-8">
+          <div className="col-span-2 text-center text-muted-foreground py-8">
             No posts yet. Share your first post!
           </div>
         )}
