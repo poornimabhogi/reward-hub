@@ -3,6 +3,7 @@ import { User, Coins } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useNavigate } from "react-router-dom";
 import { Card, CardContent } from "@/components/ui/card";
+import { ProfileSettings } from "@/components/ProfileSettings";
 
 const Index = () => {
   // This would typically come from a global state management solution
@@ -32,7 +33,7 @@ const Index = () => {
   return (
     <div className="container mx-auto px-4 pb-24">
       {/* Profile Section */}
-      <div className="flex items-center gap-4 mb-6">
+      <div className="flex items-center gap-4 mb-6 relative">
         <div className="w-12 h-12 bg-primary/10 rounded-full flex items-center justify-center">
           <User className="w-6 h-6 text-primary" />
         </div>
@@ -43,6 +44,7 @@ const Index = () => {
             <span>{userProfile.coins} coins</span>
           </div>
         </div>
+        <ProfileSettings userProfile={userProfile} />
       </div>
 
       {/* Lucky Draw Button */}
