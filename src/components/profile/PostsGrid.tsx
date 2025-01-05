@@ -32,6 +32,7 @@ export const PostsGrid = ({ posts, viewMode: externalViewMode }: PostsGridProps)
           variant={currentViewMode === 'grid' ? 'default' : 'outline'}
           size="icon"
           onClick={() => setViewMode('grid')}
+          title="Grid View"
         >
           <LayoutGrid className="h-4 w-4" />
         </Button>
@@ -39,6 +40,7 @@ export const PostsGrid = ({ posts, viewMode: externalViewMode }: PostsGridProps)
           variant={currentViewMode === 'list' ? 'default' : 'outline'}
           size="icon"
           onClick={() => setViewMode('list')}
+          title="List View"
         >
           <LayoutList className="h-4 w-4" />
         </Button>
