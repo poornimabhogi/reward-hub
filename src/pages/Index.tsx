@@ -1,5 +1,6 @@
 import { useState } from "react";
 import { Heart, Gift, Coins } from "lucide-react";
+import { Link } from "react-router-dom";
 
 interface Product {
   id: number;
