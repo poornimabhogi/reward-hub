@@ -5,7 +5,9 @@ interface PostsGridProps {
 }
 
 export const PostsGrid = ({ posts }: PostsGridProps) => {
-  if (posts.length === 0) {
+  const regularPosts = posts.filter(post => !post.isTimeCapsule);
+  
+  if (regularPosts.length === 0) {
     return (
       <p className="text-center text-muted-foreground py-8">
         No posts yet. Share your first post!
@@ -14,8 +16,8 @@ export const PostsGrid = ({ posts }: PostsGridProps) => {
   }
 
   return (
-    <div className="grid grid-cols-2 md:grid-cols-3 gap-4 mt-6">
-      {posts.map((post) => (
+    <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
+      {regularPosts.map((post) => (
         <div key={post.id} className="aspect-square relative rounded-lg overflow-hidden">
           {post.type === 'photo' ? (
             <img

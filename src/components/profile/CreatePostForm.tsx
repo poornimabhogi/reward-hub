@@ -3,14 +3,16 @@ import { Image, Send } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
 import { Status } from "@/types/profile";
+import { toast } from "sonner";
 
 interface CreatePostFormProps {
-  onPost: (newStatus: Status) => void;
+  onPost: (newStatus: Status, isTimeCapsule: boolean) => void;
 }
 
 export const CreatePostForm = ({ onPost }: CreatePostFormProps) => {
   const [thoughtText, setThoughtText] = useState('');
   const [thoughtMedia, setThoughtMedia] = useState<File | null>(null);
+  const [isTimeCapsule, setIsTimeCapsule] = useState(false);
 
   const handleSubmit = () => {
     if (thoughtText.trim() || thoughtMedia) {
@@ -19,10 +21,12 @@ export const CreatePostForm = ({ onPost }: CreatePostFormProps) => {
         type: thoughtMedia?.type.startsWith('image/') ? 'photo' : 'video',
         url: thoughtMedia ? URL.createObjectURL(thoughtMedia) : '',
         timestamp: new Date(),
+        isTimeCapsule
       };
-      onPost(newStatus);
+      onPost(newStatus, isTimeCapsule);
       setThoughtText('');
       setThoughtMedia(null);
+      toast.success(isTimeCapsule ? "Time capsule created!" : "Post created!");
     }
   };
 
@@ -52,14 +56,23 @@ export const CreatePostForm = ({ onPost }: CreatePostFormProps) => {
             {thoughtMedia.name}
           </span>
         )}
-        <Button
-          className="ml-auto"
-          onClick={handleSubmit}
-          disabled={!thoughtText.trim() && !thoughtMedia}
-        >
-          <Send className="h-4 w-4 mr-2" />
-          Share
-        </Button>
+        <div className="flex items-center gap-2 ml-auto">
+          <Button
+            variant="outline"
+            size="sm"
+            onClick={() => setIsTimeCapsule(!isTimeCapsule)}
+            className={isTimeCapsule ? "bg-primary text-white" : ""}
+          >
+            Time Capsule
+          </Button>
+          <Button
+            onClick={handleSubmit}
+            disabled={!thoughtText.trim() && !thoughtMedia}
+          >
+            <Send className="h-4 w-4 mr-2" />
+            Share
+          </Button>
+        </div>
       </div>
     </div>
   );

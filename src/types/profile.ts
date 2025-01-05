@@ -3,6 +3,7 @@ export interface Status {
   type: 'photo' | 'video';
   url: string;
   timestamp: Date;
+  isTimeCapsule?: boolean;
 }
 
 export interface FollowedUser {
