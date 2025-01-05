@@ -10,6 +10,7 @@ import LuckyDraw from "./pages/LuckyDraw";
 import Shop from "./pages/Shop";
 import Games from "./pages/Games";
 import Game2048 from "./pages/Game2048";
+import Social from "./pages/Social";
 
 const queryClient = new QueryClient();
 
@@ -27,6 +28,7 @@ const App = () => (
           <Route path="/shop" element={<Shop />} />
           <Route path="/games" element={<Games />} />
           <Route path="/games/2048" element={<Game2048 />} />
+          <Route path="/social" element={<Social />} />
         </Routes>
       </BrowserRouter>
     </TooltipProvider>
