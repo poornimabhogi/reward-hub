@@ -74,13 +74,6 @@ export const TimeCapsules = ({ timeCapsules }: TimeCapsuleProps) => {
               </div>
             </div>
           ))}
-          
-          {/* Default circle when no capsules exist */}
-          {todaysCapsules.length === 0 && (
-            <div className="flex-none">
-              <div className="w-16 h-16 rounded-full bg-gray-200 ring-2 ring-primary p-0.5" />
-            </div>
-          )}
 
           {/* Add button circle */}
           <div className="flex-none">
