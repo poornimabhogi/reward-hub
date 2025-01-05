@@ -1,11 +1,12 @@
 import { useState, useEffect } from "react";
-import { User, Coins } from "lucide-react";
+import { User, Coins, Dice } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "@/contexts/AuthContext";
 import { LoginForm } from "@/components/auth/LoginForm";
 import { HealthGoals } from "@/components/dashboard/HealthGoals";
 import { WishlistSection } from "@/components/dashboard/WishlistSection";
+import { useToast } from "@/hooks/use-toast";
 
 interface Product {
   id: number;
@@ -25,8 +26,9 @@ interface HealthGoal {
 
 const Index = () => {
   const { isAuthenticated, user, logout } = useAuth();
-  const [coins] = useState(100);
+  const [coins, setCoins] = useState(100);
   const navigate = useNavigate();
+  const { toast } = useToast();
   const [wishlistedProducts, setWishlistedProducts] = useState<Product[]>([]);
   const [healthGoals] = useState<HealthGoal[]>([
     {
@@ -70,6 +72,18 @@ const Index = () => {
     };
   }, []);
 
+  const handleTryLuck = () => {
+    const randomAmount = Math.floor(Math.random() * 50) + 1;
+    setCoins(prevCoins => {
+      const newAmount = prevCoins + randomAmount;
+      toast({
+        title: "Lucky You!",
+        description: `You won ${randomAmount} coins! New balance: ${newAmount}`,
+      });
+      return newAmount;
+    });
+  };
+
   if (!isAuthenticated) {
     return (
       <div className="min-h-screen bg-neutral flex items-center justify-center p-4">
@@ -91,9 +105,20 @@ const Index = () => {
             <User className="h-6 w-6" />
           </Button>
           
-          <div className="flex items-center gap-2 bg-neutral px-3 py-1.5 rounded-full">
-            <Coins className="h-5 w-5 text-yellow-500" />
-            <span className="font-medium">{coins}</span>
+          <div className="flex items-center gap-2">
+            <div className="flex items-center gap-2 bg-neutral px-3 py-1.5 rounded-full">
+              <Coins className="h-5 w-5 text-yellow-500" />
+              <span className="font-medium">{coins}</span>
+            </div>
+            <Button
+              variant="outline"
+              size="sm"
+              onClick={handleTryLuck}
+              className="flex items-center gap-2"
+            >
+              <Dice className="h-4 w-4" />
+              Try Your Luck
+            </Button>
           </div>
           
           <Button 
