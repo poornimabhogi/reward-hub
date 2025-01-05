@@ -52,7 +52,7 @@ const ShopHeader = ({ wishlistedProducts, cartProducts, WishlistContent, CartCon
           className="flex items-center gap-2"
         >
           <PlusCircle className="h-5 w-5" />
-          Sell Item
+          Sell
         </Button>
       </div>
     </div>
