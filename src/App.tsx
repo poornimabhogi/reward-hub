@@ -7,6 +7,7 @@ import Navigation from "./components/Navigation";
 import Index from "./pages/Index";
 import Profile from "./pages/Profile";
 import LuckyDraw from "./pages/LuckyDraw";
+import Shop from "./pages/Shop";
 
 const queryClient = new QueryClient();
 
@@ -21,6 +22,7 @@ const App = () => (
           <Route path="/" element={<Index />} />
           <Route path="/profile" element={<Profile />} />
           <Route path="/lucky-draw" element={<LuckyDraw />} />
+          <Route path="/shop" element={<Shop />} />
         </Routes>
       </BrowserRouter>
     </TooltipProvider>

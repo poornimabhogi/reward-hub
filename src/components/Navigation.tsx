@@ -17,7 +17,7 @@ const Navigation = () => {
             <span className="text-xs mt-1">Home</span>
           </Link>
           
-          <Link to="/marketplace" className={`nav-link flex flex-col items-center ${location.pathname === "/marketplace" ? "text-primary" : "text-gray-500"}`}>
+          <Link to="/shop" className={`nav-link flex flex-col items-center ${location.pathname === "/shop" ? "text-primary" : "text-gray-500"}`}>
             <ShoppingBag className="h-6 w-6" />
             <span className="text-xs mt-1">Shop</span>
           </Link>
