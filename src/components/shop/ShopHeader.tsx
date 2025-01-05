@@ -18,15 +18,6 @@ const ShopHeader = ({ wishlistedProducts, cartProducts, WishlistContent, CartCon
     <div className="flex items-center justify-between mb-6 sticky top-0 bg-white/80 backdrop-blur-md py-4 z-10">
       <div className="text-2xl font-bold">Shop</div>
       <div className="flex items-center gap-4">
-        <Button
-          variant="default"
-          onClick={() => navigate('/sell')}
-          className="flex items-center gap-2"
-        >
-          <PlusCircle className="h-5 w-5" />
-          Sell Item
-        </Button>
-
         <Sheet>
           <SheetTrigger asChild>
             <Button variant="ghost" size="icon" className="relative">
@@ -54,6 +45,15 @@ const ShopHeader = ({ wishlistedProducts, cartProducts, WishlistContent, CartCon
           </SheetTrigger>
           {CartContent}
         </Sheet>
+
+        <Button
+          variant="default"
+          onClick={() => navigate('/sell')}
+          className="flex items-center gap-2"
+        >
+          <PlusCircle className="h-5 w-5" />
+          Sell Item
+        </Button>
       </div>
     </div>
   );
