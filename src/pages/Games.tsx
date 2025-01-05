@@ -10,7 +10,7 @@ const Games = () => {
       
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 max-w-4xl mx-auto">
         <Card 
-          className="group cursor-pointer hover:shadow-lg transition-all duration-300 aspect-square max-w-[300px] justify-self-center w-full"
+          className="group cursor-pointer hover:shadow-lg transition-all duration-300 aspect-square max-w-[240px] justify-self-center w-full"
           onClick={() => navigate('/games/2048')}
         >
           <div className="p-4 h-full flex flex-col">
