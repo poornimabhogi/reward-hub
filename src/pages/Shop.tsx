@@ -97,33 +97,37 @@ const Shop = () => {
   };
 
   return (
-    <div className="container mx-auto px-4 pb-24">
-      <ShopHeader
-        wishlistedProducts={wishlistedProducts}
-        cartProducts={cartProducts}
-        WishlistContent={
-          <WishlistSheet
-            wishlistedProducts={wishlistedProducts}
-            toggleWishlist={toggleWishlist}
-          />
-        }
-        CartContent={
-          <CartSheet
-            cartProducts={cartProducts}
-            toggleCart={toggleCart}
-            handleCheckout={handleCheckout}
-          />
-        }
-      />
+    <div className="flex flex-col h-[calc(100vh-64px)]">
+      <div className="sticky top-0 z-10 bg-white">
+        <ShopHeader
+          wishlistedProducts={wishlistedProducts}
+          cartProducts={cartProducts}
+          WishlistContent={
+            <WishlistSheet
+              wishlistedProducts={wishlistedProducts}
+              toggleWishlist={toggleWishlist}
+            />
+          }
+          CartContent={
+            <CartSheet
+              cartProducts={cartProducts}
+              toggleCart={toggleCart}
+              handleCheckout={handleCheckout}
+            />
+          }
+        />
+      </div>
 
-      <ProductList
-        products={products}
-        categories={categories}
-        selectedCategory={selectedCategory}
-        onSelectCategory={setSelectedCategory}
-        onToggleWishlist={toggleWishlist}
-        onToggleCart={toggleCart}
-      />
+      <div className="flex-1 overflow-y-auto pb-20">
+        <ProductList
+          products={products}
+          categories={categories}
+          selectedCategory={selectedCategory}
+          onSelectCategory={setSelectedCategory}
+          onToggleWishlist={toggleWishlist}
+          onToggleCart={toggleCart}
+        />
+      </div>
     </div>
   );
 };
