@@ -56,7 +56,6 @@ export const ProfileSettings = ({ userProfile }: { userProfile: UserProfile }) =
         accept="image/*,video/*"
         className="hidden"
         onChange={handleFileSelect}
-        capture="environment"
       />
       
       <DropdownMenu>
