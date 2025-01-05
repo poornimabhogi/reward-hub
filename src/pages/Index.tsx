@@ -33,17 +33,17 @@ const Index = () => {
   return (
     <div className="container mx-auto px-4 pb-24">
       <div className="flex items-center justify-between mb-6 sticky top-0 bg-white/80 backdrop-blur-md py-4 z-10">
-        <button className="button-secondary flex items-center space-x-2">
+        <Link to="/profile" className="button-secondary flex items-center space-x-2">
           <User className="h-4 w-4" />
           <span>Profile</span>
-        </button>
+        </Link>
         
         <div className="flex items-center gap-4">
           <div className="flex items-center space-x-2">
             <Coins className="h-5 w-5 text-yellow-500" />
             <span className="text-sm font-medium">{coins}</span>
           </div>
-          <Link to="/gifts" className="button-secondary flex items-center space-x-2">
+          <Link to="/lucky-draw" className="button-secondary flex items-center space-x-2">
             <Gift className="h-4 w-4" />
             <span>Lucky Draw</span>
           </Link>
