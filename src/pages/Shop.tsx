@@ -1,16 +1,8 @@
 import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
-import { Heart, ShoppingCart, PlusCircle } from "lucide-react";
-import { Button } from "@/components/ui/button";
-import { Badge } from "@/components/ui/badge";
-import {
-  Sheet,
-  SheetContent,
-  SheetHeader,
-  SheetTitle,
-  SheetTrigger,
-} from "@/components/ui/sheet";
 import ProductList from "@/components/shop/ProductList";
+import ShopHeader from "@/components/shop/ShopHeader";
+import { WishlistSheet, CartSheet } from "@/components/shop/ShopSheets";
 
 interface Product {
   id: number;
@@ -103,93 +95,23 @@ const Shop = () => {
 
   return (
     <div className="container mx-auto px-4 pb-24">
-      <div className="flex items-center justify-between mb-6 sticky top-0 bg-white/80 backdrop-blur-md py-4 z-10">
-        <div className="text-2xl font-bold">Shop</div>
-        <div className="flex items-center gap-4">
-          <Button
-            variant="default"
-            onClick={() => navigate('/sell')}
-            className="flex items-center gap-2"
-          >
-            <PlusCircle className="h-5 w-5" />
-            Sell Item
-          </Button>
-          <Sheet>
-            <SheetTrigger asChild>
-              <Button variant="ghost" size="icon" className="relative">
-                <Heart className={`h-5 w-5 ${wishlistedProducts.length > 0 ? 'fill-primary text-primary' : ''}`} />
-                {wishlistedProducts.length > 0 && (
-                  <Badge className="absolute -top-2 -right-2 h-5 w-5 flex items-center justify-center p-0">
-                    {wishlistedProducts.length}
-                  </Badge>
-                )}
-              </Button>
-            </SheetTrigger>
-            <SheetContent>
-              <SheetHeader>
-                <SheetTitle>Wishlist</SheetTitle>
-              </SheetHeader>
-              <div className="mt-4 space-y-4">
-                {wishlistedProducts.map((product) => (
-                  <div key={product.id} className="flex items-center justify-between">
-                    <div className="flex items-center gap-3">
-                      <img src={product.image} alt={product.name} className="h-12 w-12 object-cover rounded" />
-                      <div>
-                        <div className="font-medium">{product.name}</div>
-                        <div className="text-sm text-muted-foreground">${product.price}</div>
-                      </div>
-                    </div>
-                    <Button size="icon" variant="ghost" onClick={() => toggleWishlist(product.id)}>
-                      <Heart className="h-5 w-5 fill-primary text-primary" />
-                    </Button>
-                  </div>
-                ))}
-              </div>
-            </SheetContent>
-          </Sheet>
-
-          <Sheet>
-            <SheetTrigger asChild>
-              <Button variant="ghost" size="icon" className="relative">
-                <ShoppingCart className={`h-5 w-5 ${cartProducts.length > 0 ? 'text-primary' : ''}`} />
-                {cartProducts.length > 0 && (
-                  <Badge className="absolute -top-2 -right-2 h-5 w-5 flex items-center justify-center p-0">
-                    {cartProducts.length}
-                  </Badge>
-                )}
-              </Button>
-            </SheetTrigger>
-            <SheetContent>
-              <SheetHeader>
-                <SheetTitle>Shopping Cart</SheetTitle>
-              </SheetHeader>
-              <div className="mt-4 space-y-4">
-                {cartProducts.map((product) => (
-                  <div key={product.id} className="flex items-center justify-between">
-                    <div className="flex items-center gap-3">
-                      <img src={product.image} alt={product.name} className="h-12 w-12 object-cover rounded" />
-                      <div>
-                        <div className="font-medium">{product.name}</div>
-                        <div className="text-sm text-muted-foreground">${product.price}</div>
-                      </div>
-                    </div>
-                    <Button size="icon" variant="ghost" onClick={() => toggleCart(product.id)}>
-                      <ShoppingCart className="h-5 w-5 text-primary" />
-                    </Button>
-                  </div>
-                ))}
-                {cartProducts.length > 0 && (
-                  <div className="pt-4 border-t">
-                    <Button className="w-full" onClick={handleCheckout}>
-                      Proceed to Checkout
-                    </Button>
-                  </div>
-                )}
-              </div>
-            </SheetContent>
-          </Sheet>
-        </div>
-      </div>
+      <ShopHeader
+        wishlistedProducts={wishlistedProducts}
+        cartProducts={cartProducts}
+        WishlistContent={
+          <WishlistSheet
+            wishlistedProducts={wishlistedProducts}
+            toggleWishlist={toggleWishlist}
+          />
+        }
+        CartContent={
+          <CartSheet
+            cartProducts={cartProducts}
+            toggleCart={toggleCart}
+            handleCheckout={handleCheckout}
+          />
+        }
+      />
 
       <ProductList
         products={products}
