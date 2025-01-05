@@ -8,6 +8,8 @@ import Index from "./pages/Index";
 import Profile from "./pages/Profile";
 import LuckyDraw from "./pages/LuckyDraw";
 import Shop from "./pages/Shop";
+import Games from "./pages/Games";
+import Game2048 from "./pages/Game2048";
 
 const queryClient = new QueryClient();
 
@@ -23,6 +25,8 @@ const App = () => (
           <Route path="/profile" element={<Profile />} />
           <Route path="/lucky-draw" element={<LuckyDraw />} />
           <Route path="/shop" element={<Shop />} />
+          <Route path="/games" element={<Games />} />
+          <Route path="/games/2048" element={<Game2048 />} />
         </Routes>
       </BrowserRouter>
     </TooltipProvider>
