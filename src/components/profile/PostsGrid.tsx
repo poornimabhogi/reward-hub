@@ -39,7 +39,7 @@ export const PostsGrid = ({ posts, viewMode: externalViewMode }: PostsGridProps)
                 <Button
                   variant="ghost"
                   size="icon"
-                  className="h-8 w-8"
+                  className="w-8 h-8 flex items-center justify-center"
                   onClick={handleAddPost}
                 >
                   <PlusSquare className="h-8 w-8 text-black" />
@@ -100,7 +100,7 @@ export const PostsGrid = ({ posts, viewMode: externalViewMode }: PostsGridProps)
               key={post.id} 
               className={`${
                 currentViewMode === 'grid'
-                  ? "aspect-square"
+                  ? "aspect-square w-full"
                   : "w-full aspect-[16/9]"
               } relative overflow-hidden rounded-lg shadow-sm hover:shadow-md transition-shadow duration-200`}
             >
