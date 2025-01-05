@@ -1,27 +1,15 @@
 import { useState } from "react";
-import { User, Mail, Phone, MapPin, Coins, Settings2, Image, Video, Plus, Users, Send } from "lucide-react";
+import { User, Coins, Users } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
-import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { ProfileSettings } from "@/components/ProfileSettings";
-import { Textarea } from "@/components/ui/textarea";
-
-interface Status {
-  id: number;
-  type: 'photo' | 'video';
-  url: string;
-  timestamp: Date;
-}
-
-interface FollowedUser {
-  username: string;
-  isFollowing: boolean;
-}
+import { CreatePostForm } from "@/components/profile/CreatePostForm";
+import { PostsGrid } from "@/components/profile/PostsGrid";
+import { Status, FollowedUser, UserProfile } from "@/types/profile";
 
 const Profile = () => {
-  const [userProfile, setUserProfile] = useState({
+  const [userProfile, setUserProfile] = useState<UserProfile>({
     name: "John Doe",
     email: "john@example.com",
     phone: "+1 234 567 8900",
@@ -29,29 +17,12 @@ const Profile = () => {
     coins: 100
   });
 
-  const [statusFeedEnabled, setStatusFeedEnabled] = useState(false);
-  const [statuses, setStatuses] = useState<Status[]>([]);
-  const [thoughtText, setThoughtText] = useState('');
-  const [thoughtMedia, setThoughtMedia] = useState<File | null>(null);
+  const [posts, setPosts] = useState<Status[]>([]);
   
   const [followedUsers, setFollowedUsers] = useState<FollowedUser[]>(() => {
     const storedUsers = localStorage.getItem('followedUsers');
     return storedUsers ? JSON.parse(storedUsers) : [];
   });
-
-  const handleFileUpload = (event: React.ChangeEvent<HTMLInputElement>) => {
-    const file = event.target.files?.[0];
-    if (file) {
-      const fileType = file.type.startsWith('image/') ? 'photo' : 'video';
-      const newStatus: Status = {
-        id: Date.now(),
-        type: fileType,
-        url: URL.createObjectURL(file),
-        timestamp: new Date(),
-      };
-      setStatuses([newStatus, ...statuses]);
-    }
-  };
 
   const handleUnfollow = (username: string) => {
     const updatedUsers = followedUsers.filter(user => user.username !== username);
@@ -59,18 +30,8 @@ const Profile = () => {
     localStorage.setItem('followedUsers', JSON.stringify(updatedUsers));
   };
 
-  const handleThoughtSubmit = () => {
-    if (thoughtText.trim() || thoughtMedia) {
-      const newStatus: Status = {
-        id: Date.now(),
-        type: thoughtMedia?.type.startsWith('image/') ? 'photo' : 'video',
-        url: thoughtMedia ? URL.createObjectURL(thoughtMedia) : '',
-        timestamp: new Date(),
-      };
-      setStatuses([newStatus, ...statuses]);
-      setThoughtText('');
-      setThoughtMedia(null);
-    }
+  const handleNewPost = (newStatus: Status) => {
+    setPosts([newStatus, ...posts]);
   };
 
   return (
@@ -82,7 +43,6 @@ const Profile = () => {
             <div className="w-24 h-24 bg-primary/10 rounded-full flex items-center justify-center">
               <User className="w-12 h-12 text-primary" />
             </div>
-            
             <ProfileSettings userProfile={userProfile} />
           </div>
 
@@ -137,113 +97,16 @@ const Profile = () => {
           </div>
         </div>
 
-        {/* Daily Status Feed */}
+        {/* Create Post Section */}
         <div className="mt-8 bg-white rounded-lg shadow-lg p-6">
-          <div className="flex items-center justify-between mb-4">
-            <h3 className="text-lg font-semibold">Daily Status Feed</h3>
-            <Button
-              variant="ghost"
-              size="sm"
-              onClick={() => setStatusFeedEnabled(!statusFeedEnabled)}
-            >
-              <Plus className="h-4 w-4" />
-            </Button>
-          </div>
-
-          {statusFeedEnabled && (
-            <>
-              <div className="flex gap-4 mb-4">
-                <label className="cursor-pointer">
-                  <input
-                    type="file"
-                    accept="image/*"
-                    className="hidden"
-                    onChange={handleFileUpload}
-                  />
-                  <div className="flex h-12 w-12 items-center justify-center rounded-full bg-muted hover:bg-muted/80">
-                    <Image className="h-6 w-6" />
-                  </div>
-                </label>
-                <label className="cursor-pointer">
-                  <input
-                    type="file"
-                    accept="video/*"
-                    className="hidden"
-                    onChange={handleFileUpload}
-                  />
-                  <div className="flex h-12 w-12 items-center justify-center rounded-full bg-muted hover:bg-muted/80">
-                    <Video className="h-6 w-6" />
-                  </div>
-                </label>
-              </div>
-
-              {/* Status Feed Display */}
-              {statuses.length > 0 && (
-                <div className="overflow-x-auto">
-                  <div className="flex gap-4 pb-2">
-                    {statuses.map((status) => (
-                      <div key={status.id} className="flex-shrink-0 w-32">
-                        {status.type === 'photo' ? (
-                          <img
-                            src={status.url}
-                            alt="Status"
-                            className="w-32 h-32 rounded-lg object-cover"
-                          />
-                        ) : (
-                          <video
-                            src={status.url}
-                            className="w-32 h-32 rounded-lg object-cover"
-                            autoPlay
-                            muted
-                            loop
-                          />
-                        )}
-                      </div>
-                    ))}
-                  </div>
-                </div>
-              )}
-            </>
-          )}
+          <h3 className="text-lg font-semibold mb-4">Create a Post</h3>
+          <CreatePostForm onPost={handleNewPost} />
         </div>
 
-        {/* What's on your mind section */}
+        {/* Posts Grid Section */}
         <div className="mt-8 bg-white rounded-lg shadow-lg p-6">
-          <h3 className="text-lg font-semibold mb-4">What's on your mind?</h3>
-          <div className="space-y-4">
-            <Textarea
-              placeholder="Share your thoughts..."
-              value={thoughtText}
-              onChange={(e) => setThoughtText(e.target.value)}
-              className="min-h-[100px]"
-            />
-            <div className="flex items-center gap-4">
-              <label className="cursor-pointer">
-                <input
-                  type="file"
-                  accept="image/*,video/*"
-                  className="hidden"
-                  onChange={(e) => setThoughtMedia(e.target.files?.[0] || null)}
-                />
-                <div className="flex h-10 w-10 items-center justify-center rounded-full bg-muted hover:bg-muted/80">
-                  <Image className="h-5 w-5" />
-                </div>
-              </label>
-              {thoughtMedia && (
-                <span className="text-sm text-muted-foreground">
-                  {thoughtMedia.name}
-                </span>
-              )}
-              <Button
-                className="ml-auto"
-                onClick={handleThoughtSubmit}
-                disabled={!thoughtText.trim() && !thoughtMedia}
-              >
-                <Send className="h-4 w-4 mr-2" />
-                Share
-              </Button>
-            </div>
-          </div>
+          <h3 className="text-lg font-semibold mb-4">Your Posts</h3>
+          <PostsGrid posts={posts} />
         </div>
       </div>
     </div>
