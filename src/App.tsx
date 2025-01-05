@@ -10,12 +10,12 @@ import * as Pages from "./pages";
 const queryClient = new QueryClient();
 
 const App = () => (
-  <QueryClientProvider client={queryClient}>
-    <TooltipProvider>
+  <BrowserRouter>
+    <QueryClientProvider client={queryClient}>
       <AuthProvider>
-        <Toaster />
-        <Sonner />
-        <BrowserRouter>
+        <TooltipProvider>
+          <Toaster />
+          <Sonner />
           <Navigation />
           <Routes>
             <Route path="/" element={<Pages.Index />} />
@@ -31,10 +31,10 @@ const App = () => (
             <Route path="/social" element={<Pages.Social />} />
             <Route path="/health" element={<Pages.Health />} />
           </Routes>
-        </BrowserRouter>
+        </TooltipProvider>
       </AuthProvider>
-    </TooltipProvider>
-  </QueryClientProvider>
+    </QueryClientProvider>
+  </BrowserRouter>
 );
 
 export default App;
