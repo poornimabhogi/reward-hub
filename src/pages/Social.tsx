@@ -85,72 +85,68 @@ const Social = () => {
   );
 
   return (
-    <div className="flex flex-col h-screen bg-background">
-      <div className="flex-1 overflow-y-auto pb-[80px]"> {/* Adjusted padding to account for fixed navigation height */}
+    <div className="flex flex-col min-h-screen bg-background pb-16">
+      <div className="sticky top-0 z-10 bg-background pb-4 pt-4">
         <div className="container mx-auto px-4">
-          {/* Search Bar */}
-          <div className="sticky top-0 z-10 bg-background pb-4 pt-4">
-            <div className="relative">
-              <Search className="absolute left-3 top-3 h-4 w-4 text-muted-foreground" />
-              <Input
-                placeholder="Search users..."
-                value={searchQuery}
-                onChange={(e) => setSearchQuery(e.target.value)}
-                className="pl-9"
-              />
-            </div>
+          <div className="relative">
+            <Search className="absolute left-3 top-3 h-4 w-4 text-muted-foreground" />
+            <Input
+              placeholder="Search users..."
+              value={searchQuery}
+              onChange={(e) => setSearchQuery(e.target.value)}
+              className="pl-9"
+            />
           </div>
+        </div>
+      </div>
 
-          {/* Posts Grid */}
-          <div className="grid gap-6">
-            {filteredPosts.map((post) => (
-              <div key={post.id} className="relative rounded-lg overflow-hidden bg-white shadow-lg">
-                {/* Username and Follow Button */}
-                <div className="absolute top-0 left-0 right-0 p-4 bg-gradient-to-b from-black/50 to-transparent z-10 flex justify-between items-center">
-                  <div className="flex items-center gap-2">
-                    <User className="h-5 w-5 text-white" />
-                    <span className="text-white font-medium">{post.username}</span>
-                  </div>
-                  <Button
-                    variant={post.isFollowing ? "secondary" : "default"}
-                    size="sm"
-                    onClick={() => handleFollow(post.id)}
-                  >
-                    {post.isFollowing ? "Following" : "Follow"}
-                  </Button>
+      <div className="flex-1 container mx-auto px-4">
+        <div className="grid gap-6">
+          {filteredPosts.map((post) => (
+            <div key={post.id} className="relative rounded-lg overflow-hidden bg-white shadow-lg">
+              <div className="absolute top-0 left-0 right-0 p-4 bg-gradient-to-b from-black/50 to-transparent z-10 flex justify-between items-center">
+                <div className="flex items-center gap-2">
+                  <User className="h-5 w-5 text-white" />
+                  <span className="text-white font-medium">{post.username}</span>
                 </div>
+                <Button
+                  variant={post.isFollowing ? "secondary" : "default"}
+                  size="sm"
+                  onClick={() => handleFollow(post.id)}
+                >
+                  {post.isFollowing ? "Following" : "Follow"}
+                </Button>
+              </div>
 
-                {/* Content */}
-                {post.type === 'photo' ? (
-                  <img
+              {post.type === 'photo' ? (
+                <img
+                  src={post.content}
+                  alt={`Post by ${post.username}`}
+                  className="w-full h-auto"
+                />
+              ) : (
+                <div className="relative">
+                  <video
                     src={post.content}
-                    alt={`Post by ${post.username}`}
+                    autoPlay
+                    loop
+                    muted={post.isMuted}
                     className="w-full h-auto"
                   />
-                ) : (
-                  <div className="relative">
-                    <video
-                      src={post.content}
-                      autoPlay
-                      loop
-                      muted={post.isMuted}
-                      className="w-full h-auto"
-                    />
-                    <button
-                      onClick={() => toggleMute(post.id)}
-                      className="absolute bottom-4 right-4 p-2 rounded-full bg-black/50 text-white"
-                    >
-                      {post.isMuted ? (
-                        <VolumeX className="h-5 w-5" />
-                      ) : (
-                        <Volume2 className="h-5 w-5" />
-                      )}
-                    </button>
-                  </div>
-                )}
-              </div>
-            ))}
-          </div>
+                  <button
+                    onClick={() => toggleMute(post.id)}
+                    className="absolute bottom-4 right-4 p-2 rounded-full bg-black/50 text-white"
+                  >
+                    {post.isMuted ? (
+                      <VolumeX className="h-5 w-5" />
+                    ) : (
+                      <Volume2 className="h-5 w-5" />
+                    )}
+                  </button>
+                </div>
+              )}
+            </div>
+          ))}
         </div>
       </div>
     </div>
