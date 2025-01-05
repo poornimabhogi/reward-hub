@@ -86,7 +86,7 @@ const Sell = () => {
   );
 
   return (
-    <div className="container mx-auto px-4 py-8">
+    <div className="container mx-auto px-4 py-8 pb-24">
       <div className="max-w-2xl mx-auto relative">
         <div className="flex justify-between items-center mb-6">
           <h1 className="text-2xl font-bold">List Item for Sale</h1>
