@@ -2,6 +2,12 @@ import { useState } from "react";
 import { Status } from "@/types/profile";
 import { LayoutGrid, LayoutList } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipProvider,
+  TooltipTrigger,
+} from "@/components/ui/tooltip";
 
 interface PostsGridProps {
   posts: Status[];
@@ -12,7 +18,6 @@ export const PostsGrid = ({ posts, viewMode: externalViewMode }: PostsGridProps)
   const [internalViewMode, setViewMode] = useState<'grid' | 'list'>('grid');
   const featurePosts = posts.filter(post => post.postType === 'feature' || post.postType === 'reel');
   
-  // Use external viewMode if provided, otherwise use internal state
   const currentViewMode = externalViewMode || internalViewMode;
   
   if (featurePosts.length === 0) {
@@ -28,22 +33,38 @@ export const PostsGrid = ({ posts, viewMode: externalViewMode }: PostsGridProps)
   return (
     <div className="space-y-4 mt-8">
       <div className="flex justify-end gap-2">
-        <Button
-          variant={currentViewMode === 'grid' ? 'default' : 'outline'}
-          size="icon"
-          onClick={() => setViewMode('grid')}
-          title="Grid View"
-        >
-          <LayoutGrid className="h-4 w-4" />
-        </Button>
-        <Button
-          variant={currentViewMode === 'list' ? 'default' : 'outline'}
-          size="icon"
-          onClick={() => setViewMode('list')}
-          title="List View"
-        >
-          <LayoutList className="h-4 w-4" />
-        </Button>
+        <TooltipProvider>
+          <Tooltip>
+            <TooltipTrigger asChild>
+              <Button
+                variant={currentViewMode === 'grid' ? 'default' : 'outline'}
+                size="icon"
+                onClick={() => setViewMode('grid')}
+              >
+                <LayoutGrid className="h-4 w-4" />
+              </Button>
+            </TooltipTrigger>
+            <TooltipContent>
+              <p>Featured Posts</p>
+            </TooltipContent>
+          </Tooltip>
+        </TooltipProvider>
+        <TooltipProvider>
+          <Tooltip>
+            <TooltipTrigger asChild>
+              <Button
+                variant={currentViewMode === 'list' ? 'default' : 'outline'}
+                size="icon"
+                onClick={() => setViewMode('list')}
+              >
+                <LayoutList className="h-4 w-4" />
+              </Button>
+            </TooltipTrigger>
+            <TooltipContent>
+              <p>Featured Posts</p>
+            </TooltipContent>
+          </Tooltip>
+        </TooltipProvider>
       </div>
 
       <div 
