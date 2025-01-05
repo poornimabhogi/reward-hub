@@ -21,7 +21,6 @@ export const PostsGrid = ({ posts, viewMode: externalViewMode }: PostsGridProps)
   const currentViewMode = externalViewMode || internalViewMode;
 
   const handleAddPost = () => {
-    // Dispatch a custom event to trigger the file input click in ProfileSettings
     const event = new CustomEvent('openPhotoGallery', { 
       detail: { postType: 'feature' }
     });
@@ -39,10 +38,10 @@ export const PostsGrid = ({ posts, viewMode: externalViewMode }: PostsGridProps)
                 <Button
                   variant="ghost"
                   size="icon"
-                  className="w-8 h-8 flex items-center justify-center"
+                  className="w-10 h-10 flex items-center justify-center"
                   onClick={handleAddPost}
                 >
-                  <PlusSquare className="h-8 w-8 text-black" />
+                  <PlusSquare className="h-10 w-10 text-black" />
                 </Button>
               </TooltipTrigger>
               <TooltipContent>

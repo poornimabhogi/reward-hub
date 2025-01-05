@@ -94,7 +94,7 @@ export const ProfileSettings = ({ userProfile }: { userProfile: UserProfile }) =
         accept="image/*,video/*"
         className="hidden"
         onChange={handleFileSelect}
-        capture={undefined}  // Remove capture attribute to allow gallery access
+        capture={undefined}
       />
       
       <DropdownMenu>
@@ -151,7 +151,7 @@ export const ProfileSettings = ({ userProfile }: { userProfile: UserProfile }) =
       </Dialog>
 
       <Dialog open={isConfirmDialogOpen} onOpenChange={setIsConfirmDialogOpen}>
-        <DialogContent>
+        <DialogContent className="max-w-2xl">
           <DialogHeader>
             <DialogTitle className="flex justify-between items-center">
               <span>Preview Post</span>
@@ -162,17 +162,17 @@ export const ProfileSettings = ({ userProfile }: { userProfile: UserProfile }) =
           </DialogHeader>
           <div className="space-y-4">
             {selectedFile && (
-              <div className="aspect-square w-full relative overflow-hidden rounded-lg">
+              <div className="w-full max-h-[70vh] relative overflow-hidden rounded-lg">
                 {selectedFile.type.startsWith('image/') ? (
                   <img
                     src={URL.createObjectURL(selectedFile)}
                     alt="Preview"
-                    className="w-full h-full object-cover"
+                    className="w-full h-full object-contain"
                   />
                 ) : (
                   <video
                     src={URL.createObjectURL(selectedFile)}
-                    className="w-full h-full object-cover"
+                    className="w-full h-full object-contain"
                     controls
                   />
                 )}
