@@ -86,7 +86,7 @@ const Social = () => {
 
   return (
     <div className="flex flex-col h-screen bg-background">
-      <div className="flex-1 overflow-y-auto pb-32"> {/* Increased bottom padding to account for navigation and purple line */}
+      <div className="flex-1 overflow-y-auto pb-[80px]"> {/* Adjusted padding to account for fixed navigation height */}
         <div className="container mx-auto px-4">
           {/* Search Bar */}
           <div className="sticky top-0 z-10 bg-background pb-4 pt-4">
@@ -102,7 +102,7 @@ const Social = () => {
           </div>
 
           {/* Posts Grid */}
-          <div className="grid gap-6 mb-20"> {/* Increased margin bottom to ensure content stays above purple line */}
+          <div className="grid gap-6">
             {filteredPosts.map((post) => (
               <div key={post.id} className="relative rounded-lg overflow-hidden bg-white shadow-lg">
                 {/* Username and Follow Button */}
