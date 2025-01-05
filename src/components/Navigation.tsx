@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { Link, useLocation } from "react-router-dom";
-import { Home, ShoppingBag, Gamepad2, Video, Heart, ShoppingCart, User, Gift, Coins } from "lucide-react";
+import { Home, ShoppingBag, Gamepad2, Video, Heart } from "lucide-react";
 
 const Navigation = () => {
   const location = useLocation();
@@ -39,11 +39,6 @@ const Navigation = () => {
               <path d="M12 6v4" />
             </svg>
             <span className="text-xs mt-1">Health</span>
-          </Link>
-          
-          <Link to="/profile" className={`nav-link flex flex-col items-center ${location.pathname === "/profile" ? "text-primary" : "text-gray-500"}`}>
-            <User className="h-6 w-6" />
-            <span className="text-xs mt-1">Profile</span>
           </Link>
         </div>
       </div>
