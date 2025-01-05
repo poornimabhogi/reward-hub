@@ -7,7 +7,6 @@ import { CreatePostForm } from "@/components/profile/CreatePostForm";
 import { PostsGrid } from "@/components/profile/PostsGrid";
 import { TimeCapsules } from "@/components/profile/TimeCapsules";
 import { Status, FollowedUser, UserProfile } from "@/types/profile";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 
 const Profile = () => {
   const [userProfile, setUserProfile] = useState<UserProfile>({
@@ -20,7 +19,6 @@ const Profile = () => {
 
   const [posts, setPosts] = useState<Status[]>([]);
   const [timeCapsules, setTimeCapsules] = useState<Status[]>([]);
-  const [viewMode, setViewMode] = useState<'grid' | 'list'>('grid');
   const [isCreatePostOpen, setIsCreatePostOpen] = useState(false);
   const [selectedPostType, setSelectedPostType] = useState<'timeCapsule' | 'feature' | 'reel'>('feature');
   
@@ -108,22 +106,7 @@ const Profile = () => {
       </Dialog>
 
       <div id="posts-section">
-        <Tabs defaultValue="grid" className="w-full">
-          <TabsList className="w-full">
-            <TabsTrigger value="grid" className="flex-1" onClick={() => setViewMode('grid')}>
-              Grid View
-            </TabsTrigger>
-            <TabsTrigger value="list" className="flex-1" onClick={() => setViewMode('list')}>
-              List View
-            </TabsTrigger>
-          </TabsList>
-          <TabsContent value="grid">
-            <PostsGrid posts={posts} viewMode="grid" />
-          </TabsContent>
-          <TabsContent value="list">
-            <PostsGrid posts={posts} viewMode="list" />
-          </TabsContent>
-        </Tabs>
+        <PostsGrid posts={posts} />
       </div>
     </div>
   );
