@@ -19,16 +19,6 @@ export const PostsGrid = ({ posts, viewMode: externalViewMode }: PostsGridProps)
   const featurePosts = posts.filter(post => post.postType === 'feature' || post.postType === 'reel');
   
   const currentViewMode = externalViewMode || internalViewMode;
-  
-  if (featurePosts.length === 0) {
-    return (
-      <div className="mt-8">
-        <p className="text-center text-muted-foreground py-8">
-          No posts yet. Share your first post!
-        </p>
-      </div>
-    );
-  }
 
   return (
     <div className="space-y-4 mt-8">
@@ -74,32 +64,38 @@ export const PostsGrid = ({ posts, viewMode: externalViewMode }: PostsGridProps)
             : "flex flex-col gap-4"
         } animate-fade-in`}
       >
-        {featurePosts.map((post) => (
-          <div 
-            key={post.id} 
-            className={`${
-              currentViewMode === 'grid'
-                ? "aspect-square"
-                : "w-full aspect-[16/9]"
-            } relative overflow-hidden rounded-lg shadow-sm hover:shadow-md transition-shadow duration-200`}
-          >
-            {post.type === 'photo' ? (
-              <img
-                src={post.url}
-                alt="Post"
-                className="w-full h-full object-cover"
-              />
-            ) : (
-              <video
-                src={post.url}
-                className="w-full h-full object-cover"
-                controls
-                muted
-                loop
-              />
-            )}
+        {featurePosts.length > 0 ? (
+          featurePosts.map((post) => (
+            <div 
+              key={post.id} 
+              className={`${
+                currentViewMode === 'grid'
+                  ? "aspect-square"
+                  : "w-full aspect-[16/9]"
+              } relative overflow-hidden rounded-lg shadow-sm hover:shadow-md transition-shadow duration-200`}
+            >
+              {post.type === 'photo' ? (
+                <img
+                  src={post.url}
+                  alt="Post"
+                  className="w-full h-full object-cover"
+                />
+              ) : (
+                <video
+                  src={post.url}
+                  className="w-full h-full object-cover"
+                  controls
+                  muted
+                  loop
+                />
+              )}
+            </div>
+          ))
+        ) : (
+          <div className="col-span-3 text-center text-muted-foreground py-8">
+            No posts yet. Share your first post!
           </div>
-        ))}
+        )}
       </div>
     </div>
   );
