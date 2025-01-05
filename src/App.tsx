@@ -11,6 +11,7 @@ import Shop from "./pages/Shop";
 import Games from "./pages/Games";
 import Game2048 from "./pages/Game2048";
 import Social from "./pages/Social";
+import Health from "./pages/Health";
 
 const queryClient = new QueryClient();
 
@@ -29,6 +30,7 @@ const App = () => (
           <Route path="/games" element={<Games />} />
           <Route path="/games/2048" element={<Game2048 />} />
           <Route path="/social" element={<Social />} />
+          <Route path="/health" element={<Health />} />
         </Routes>
       </BrowserRouter>
     </TooltipProvider>
