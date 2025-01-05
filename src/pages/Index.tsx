@@ -1,13 +1,33 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { User, Coins } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useNavigate } from "react-router-dom";
 import { Card, CardContent } from "@/components/ui/card";
 import { ProfileSettings } from "@/components/ProfileSettings";
 
+// Sample product data structure
+interface Product {
+  id: number;
+  name: string;
+  price: number;
+  image: string;
+  isWishlisted: boolean;
+}
+
 const Index = () => {
   const [coins] = useState(100);
   const navigate = useNavigate();
+  const [wishlistedProducts, setWishlistedProducts] = useState<Product[]>([]);
+
+  useEffect(() => {
+    // Retrieve wishlisted products from localStorage
+    const storedProducts = localStorage.getItem('products');
+    if (storedProducts) {
+      const products: Product[] = JSON.parse(storedProducts);
+      const wishlisted = products.filter(product => product.isWishlisted);
+      setWishlistedProducts(wishlisted);
+    }
+  }, []);
 
   return (
     <div className="container mx-auto px-4 pb-24">
@@ -38,30 +58,27 @@ const Index = () => {
       {/* Wishlist Section */}
       <div className="space-y-4 mt-8">
         <h3 className="text-lg font-semibold">Your Wishlist</h3>
-        <div className="grid grid-cols-2 gap-4">
-          <Card key={1} className="overflow-hidden">
-            <CardContent className="p-3">
-              <img
-                src="/placeholder.svg"
-                alt="Premium Headphones"
-                className="w-full h-32 object-cover rounded-md mb-2"
-              />
-              <h4 className="font-medium text-sm truncate">Premium Headphones</h4>
-              <p className="text-sm text-muted-foreground">$299</p>
-            </CardContent>
-          </Card>
-          <Card key={2} className="overflow-hidden">
-            <CardContent className="p-3">
-              <img
-                src="/placeholder.svg"
-                alt="Smart Watch"
-                className="w-full h-32 object-cover rounded-md mb-2"
-              />
-              <h4 className="font-medium text-sm truncate">Smart Watch</h4>
-              <p className="text-sm text-muted-foreground">$199</p>
-            </CardContent>
-          </Card>
-        </div>
+        {wishlistedProducts.length === 0 ? (
+          <p className="text-muted-foreground text-center py-8">
+            No items in your wishlist yet. Visit the shop to add items!
+          </p>
+        ) : (
+          <div className="grid grid-cols-2 gap-4">
+            {wishlistedProducts.map((product) => (
+              <Card key={product.id} className="overflow-hidden">
+                <CardContent className="p-3">
+                  <img
+                    src={product.image}
+                    alt={product.name}
+                    className="w-full h-32 object-cover rounded-md mb-2"
+                  />
+                  <h4 className="font-medium text-sm truncate">{product.name}</h4>
+                  <p className="text-sm text-muted-foreground">${product.price}</p>
+                </CardContent>
+              </Card>
+            ))}
+          </div>
+        )}
       </div>
     </div>
   );
