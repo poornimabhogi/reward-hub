@@ -1,7 +1,5 @@
 import { useState } from "react";
-import { User, Plus, Settings } from "lucide-react";
-import { Button } from "@/components/ui/button";
-import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
+import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { ProfileSettings } from "@/components/ProfileSettings";
 import { CreatePostForm } from "@/components/profile/CreatePostForm";
@@ -9,12 +7,6 @@ import { PostsGrid } from "@/components/profile/PostsGrid";
 import { TimeCapsules } from "@/components/profile/TimeCapsules";
 import { Status, FollowedUser, UserProfile } from "@/types/profile";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu";
 
 const Profile = () => {
   const [userProfile, setUserProfile] = useState<UserProfile>({
@@ -78,36 +70,7 @@ const Profile = () => {
               </div>
             </div>
           </div>
-          <div className="flex gap-2">
-            <DropdownMenu>
-              <DropdownMenuTrigger asChild>
-                <Button variant="outline" size="icon">
-                  <Plus className="h-4 w-4" />
-                </Button>
-              </DropdownMenuTrigger>
-              <DropdownMenuContent align="end">
-                <DropdownMenuItem onClick={() => {
-                  setSelectedPostType('timeCapsule');
-                  setIsCreatePostOpen(true);
-                }}>
-                  Today's Time Capsule
-                </DropdownMenuItem>
-                <DropdownMenuItem onClick={() => {
-                  setSelectedPostType('feature');
-                  setIsCreatePostOpen(true);
-                }}>
-                  Feature Post
-                </DropdownMenuItem>
-                <DropdownMenuItem onClick={() => {
-                  setSelectedPostType('reel');
-                  setIsCreatePostOpen(true);
-                }}>
-                  Reel
-                </DropdownMenuItem>
-              </DropdownMenuContent>
-            </DropdownMenu>
-            <ProfileSettings userProfile={userProfile} />
-          </div>
+          <ProfileSettings userProfile={userProfile} />
         </div>
       </div>
 
