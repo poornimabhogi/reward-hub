@@ -14,12 +14,13 @@ import {
 
 interface CreatePostFormProps {
   onPost: (newStatus: Status, postType: 'timeCapsule' | 'feature' | 'reel') => void;
+  initialPostType?: 'timeCapsule' | 'feature' | 'reel';
 }
 
-export const CreatePostForm = ({ onPost }: CreatePostFormProps) => {
+export const CreatePostForm = ({ onPost, initialPostType = 'feature' }: CreatePostFormProps) => {
   const [thoughtText, setThoughtText] = useState('');
   const [thoughtMedia, setThoughtMedia] = useState<File | null>(null);
-  const [postType, setPostType] = useState<'timeCapsule' | 'feature' | 'reel'>('feature');
+  const [postType, setPostType] = useState<'timeCapsule' | 'feature' | 'reel'>(initialPostType);
 
   const handleSubmit = () => {
     if (thoughtText.trim() || thoughtMedia) {
