@@ -6,6 +6,7 @@ import { BrowserRouter, Routes, Route } from "react-router-dom";
 import { AuthProvider } from "./contexts/AuthContext";
 import Navigation from "./components/Navigation";
 import Index from "./pages/Index";
+import Signup from "./pages/Signup";
 import Profile from "./pages/Profile";
 import LuckyDraw from "./pages/LuckyDraw";
 import Shop from "./pages/Shop";
@@ -26,6 +27,7 @@ const App = () => (
           <Navigation />
           <Routes>
             <Route path="/" element={<Index />} />
+            <Route path="/signup" element={<Signup />} />
             <Route path="/profile" element={<Profile />} />
             <Route path="/lucky-draw" element={<LuckyDraw />} />
             <Route path="/shop" element={<Shop />} />

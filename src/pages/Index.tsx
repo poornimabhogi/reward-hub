@@ -1,11 +1,13 @@
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import { User, Coins, Activity, Target } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
 import { useNavigate } from "react-router-dom";
+import { useToast } from "@/components/ui/use-toast";
+import { useAuth } from "@/contexts/AuthContext";
 import { Card, CardContent } from "@/components/ui/card";
 import { Progress } from "@/components/ui/progress";
 import { useIsMobile } from "@/hooks/use-mobile";
-import { useAuth } from "@/contexts/AuthContext";
 import { LoginForm } from "@/components/LoginForm";
 
 interface Product {
@@ -74,10 +76,77 @@ const Index = () => {
 
   if (!isAuthenticated) {
     return (
-      <div className="min-h-screen bg-white p-4">
-        <div className="max-w-md mx-auto pt-10">
-          <h1 className="text-2xl font-bold text-center mb-8">Welcome to Reward Hub</h1>
-          <LoginForm />
+      <div className="min-h-screen bg-neutral flex items-center justify-center p-4">
+        <div className="w-full max-w-md space-y-8 bg-white p-6 rounded-lg shadow-lg">
+          <div className="text-center">
+            <h2 className="text-2xl font-bold">Welcome back</h2>
+            <p className="text-muted-foreground mt-2">Sign in to your account</p>
+          </div>
+
+          <form onSubmit={handleLogin} className="space-y-4">
+            <div className="space-y-2">
+              <Input
+                type="email"
+                placeholder="Email"
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
+                required
+              />
+            </div>
+            <div className="space-y-2">
+              <Input
+                type="password"
+                placeholder="Password"
+                value={password}
+                onChange={(e) => setPassword(e.target.value)}
+                required
+              />
+            </div>
+            <Button type="submit" className="w-full">
+              Sign In
+            </Button>
+          </form>
+
+          <div className="relative">
+            <div className="absolute inset-0 flex items-center">
+              <span className="w-full border-t" />
+            </div>
+            <div className="relative flex justify-center text-xs uppercase">
+              <span className="bg-white px-2 text-muted-foreground">
+                Or continue with
+              </span>
+            </div>
+          </div>
+
+          <div className="space-y-3">
+            <Button
+              variant="outline"
+              className="w-full"
+              onClick={handleGoogleLogin}
+            >
+              Continue with Google
+            </Button>
+            <Button
+              variant="outline"
+              className="w-full"
+              onClick={continueAsGuest}
+            >
+              Continue as Guest
+            </Button>
+          </div>
+
+          <div className="text-center">
+            <p className="text-sm text-muted-foreground">
+              Don't have an account?{" "}
+              <Button
+                variant="link"
+                onClick={() => navigate("/signup")}
+                className="p-0"
+              >
+                Sign up
+              </Button>
+            </p>
+          </div>
         </div>
       </div>
     );
