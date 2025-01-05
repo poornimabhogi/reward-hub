@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { User } from "lucide-react";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { ScrollArea } from "@/components/ui/scroll-area";
@@ -28,6 +28,22 @@ const Profile = () => {
     const storedUsers = localStorage.getItem('followedUsers');
     return storedUsers ? JSON.parse(storedUsers) : [];
   });
+
+  useEffect(() => {
+    const handleNewTimeCapsule = (event: CustomEvent<Status>) => {
+      const newStatus = event.detail;
+      if (newStatus.postType === 'timeCapsule') {
+        setTimeCapsules(prev => [newStatus, ...prev]);
+      } else {
+        setPosts(prev => [newStatus, ...prev]);
+      }
+    };
+
+    window.addEventListener('newTimeCapsule', handleNewTimeCapsule as EventListener);
+    return () => {
+      window.removeEventListener('newTimeCapsule', handleNewTimeCapsule as EventListener);
+    };
+  }, []);
 
   const handleUnfollow = (username: string) => {
     const updatedUsers = followedUsers.filter(user => user.username !== username);

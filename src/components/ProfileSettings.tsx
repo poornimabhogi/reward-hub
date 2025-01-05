@@ -4,6 +4,7 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from 
 import { Button } from "@/components/ui/button";
 import { ViewDetailsDropdown } from "./profile/ViewDetailsDropdown";
 import { EditProfileForm } from "./profile/EditProfileForm";
+import { toast } from "sonner";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -38,10 +39,21 @@ export const ProfileSettings = ({ userProfile }: { userProfile: UserProfile }) =
   const handleFileSelect = (event: React.ChangeEvent<HTMLInputElement>) => {
     const file = event.target.files?.[0];
     if (file) {
-      // Here you can handle the selected file, for example by opening the create post dialog
-      // with the selected file and post type
-      console.log('Selected file:', file);
-      console.log('Post type:', selectedPostType);
+      const newStatus = {
+        id: Date.now(),
+        type: file.type.startsWith('image/') ? 'photo' : 'video',
+        url: URL.createObjectURL(file),
+        timestamp: new Date(),
+        postType: selectedPostType
+      };
+
+      // Dispatch a custom event to notify the parent component
+      const customEvent = new CustomEvent('newTimeCapsule', { 
+        detail: newStatus 
+      });
+      window.dispatchEvent(customEvent);
+      
+      toast.success("Time capsule added!");
       
       // Reset the input value so the same file can be selected again
       event.target.value = '';
