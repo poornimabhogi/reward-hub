@@ -7,7 +7,7 @@ interface User {
 
 interface AuthContextType {
   user: User | null;
-  login: (email: string, password: string) => void;
+  login: (email: string, password: string) => boolean;
   logout: () => void;
   isAuthenticated: boolean;
 }
@@ -17,11 +17,13 @@ const AuthContext = createContext<AuthContextType | undefined>(undefined);
 export function AuthProvider({ children }: { children: ReactNode }) {
   const [user, setUser] = useState<User | null>(null);
 
-  const login = (email: string, password: string) => {
+  const login = (email: string, password: string): boolean => {
     // In a real app, you'd validate credentials against a backend
     if (email && password.length >= 6) {
       setUser({ email, name: email.split('@')[0] });
+      return true;
     }
+    return false;
   };
 
   const logout = () => {

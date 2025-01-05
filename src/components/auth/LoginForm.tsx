@@ -21,19 +21,27 @@ export const LoginForm = () => {
         description: "Logged in successfully",
       });
       navigate("/");
+    } else {
+      toast({
+        title: "Error",
+        description: "Invalid credentials",
+        variant: "destructive",
+      });
     }
   };
 
   const handleGoogleLogin = () => {
     // Placeholder for Google login
     console.log("Google login clicked");
-    login("google@example.com", "google123");
-    navigate("/");
+    if (login("google@example.com", "google123")) {
+      navigate("/");
+    }
   };
 
   const continueAsGuest = () => {
-    login("guest@example.com", "guest123456");
-    navigate("/");
+    if (login("guest@example.com", "guest123456")) {
+      navigate("/");
+    }
   };
 
   return (
