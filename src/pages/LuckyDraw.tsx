@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Gift, Trophy, Calendar } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useToast } from "@/hooks/use-toast";
@@ -14,6 +14,7 @@ const LuckyDraw = () => {
   const { toast } = useToast();
   const [isSpinning, setIsSpinning] = useState(false);
   const [prize, setPrize] = useState<string | null>(null);
+  const [countdowns, setCountdowns] = useState<{ [key: number]: string }>({});
 
   const prizes = [
     "50% Off Coupon",
@@ -28,25 +29,56 @@ const LuckyDraw = () => {
     {
       id: 1,
       title: "Weekend Bonanza",
-      date: "This Weekend",
+      date: "2024-04-20T00:00:00",
       description: "Double your chances to win premium prizes!",
       prize: "iPhone 15"
     },
     {
       id: 2,
       title: "Holiday Special",
-      date: "Dec 25",
+      date: "2024-12-25T00:00:00",
       description: "Special holiday draws with exclusive rewards",
       prize: "PS5"
     },
     {
       id: 3,
       title: "New Year Blast",
-      date: "Dec 31",
+      date: "2024-12-31T00:00:00",
       description: "Biggest prizes of the year up for grabs",
       prize: "MacBook Pro"
     }
   ];
+
+  useEffect(() => {
+    const updateCountdowns = () => {
+      const newCountdowns: { [key: number]: string } = {};
+      
+      upcomingEvents.forEach(event => {
+        const targetDate = new Date(event.date);
+        const now = new Date();
+        const difference = targetDate.getTime() - now.getTime();
+        
+        if (difference > 0) {
+          const days = Math.floor(difference / (1000 * 60 * 60 * 24));
+          const hours = Math.floor((difference % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+          const minutes = Math.floor((difference % (1000 * 60 * 60)) / (1000 * 60));
+          const seconds = Math.floor((difference % (1000 * 60)) / 1000);
+          
+          newCountdowns[event.id] = `${days}d ${hours}h ${minutes}m ${seconds}s`;
+        } else {
+          newCountdowns[event.id] = "Event Started!";
+        }
+      });
+      
+      setCountdowns(newCountdowns);
+    };
+
+    // Update countdowns immediately and then every second
+    updateCountdowns();
+    const interval = setInterval(updateCountdowns, 1000);
+
+    return () => clearInterval(interval);
+  }, []);
 
   const spinWheel = () => {
     setIsSpinning(true);
@@ -108,10 +140,13 @@ const LuckyDraw = () => {
                         <div className="flex-1">
                           <h3 className="font-semibold">{event.title}</h3>
                           <p className="text-sm text-muted-foreground">{event.description}</p>
+                          <p className="text-sm font-medium text-primary mt-2">
+                            Time Remaining: {countdowns[event.id]}
+                          </p>
                         </div>
                         <div className="flex items-center gap-2 text-sm text-primary">
                           <Calendar className="w-4 h-4" />
-                          {event.date}
+                          {new Date(event.date).toLocaleDateString()}
                         </div>
                       </div>
                     </div>
@@ -125,6 +160,10 @@ const LuckyDraw = () => {
                       <div className="bg-neutral p-4 rounded-lg">
                         <p className="font-semibold">Grand Prize</p>
                         <p className="text-primary">{event.prize}</p>
+                      </div>
+                      <div className="bg-neutral p-4 rounded-lg">
+                        <p className="font-semibold">Time Remaining</p>
+                        <p className="text-primary">{countdowns[event.id]}</p>
                       </div>
                       <Button onClick={() => toast({
                         title: "Reminder Set!",
