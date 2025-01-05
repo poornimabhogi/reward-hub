@@ -39,7 +39,6 @@ const Social = () => {
     },
   ]);
 
-  // Initialize posts with following status from localStorage
   useEffect(() => {
     const followedUsers = JSON.parse(localStorage.getItem('followedUsers') || '[]');
     setPosts(posts.map(post => ({
@@ -53,7 +52,6 @@ const Social = () => {
       if (post.id === postId) {
         const newState = !post.isFollowing;
         
-        // Update localStorage
         const followedUsers = JSON.parse(localStorage.getItem('followedUsers') || '[]');
         if (newState) {
           followedUsers.push({ username: post.username, isFollowing: true });
@@ -88,7 +86,7 @@ const Social = () => {
 
   return (
     <div className="flex flex-col h-screen bg-background">
-      <div className="flex-1 overflow-y-auto pb-16">
+      <div className="flex-1 overflow-y-auto pb-24"> {/* Increased bottom padding to prevent overlap */}
         <div className="container mx-auto px-4">
           {/* Search Bar */}
           <div className="sticky top-0 z-10 bg-background pb-4 pt-4">
@@ -104,7 +102,7 @@ const Social = () => {
           </div>
 
           {/* Posts Grid */}
-          <div className="grid gap-6">
+          <div className="grid gap-6 mb-16"> {/* Added margin bottom to ensure last post is fully visible */}
             {filteredPosts.map((post) => (
               <div key={post.id} className="relative rounded-lg overflow-hidden bg-white shadow-lg">
                 {/* Username and Follow Button */}
