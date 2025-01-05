@@ -27,24 +27,28 @@ const ProductCard = ({ product, onToggleWishlist, onToggleCart }: ProductCardPro
           <Button
             size="icon"
             variant="secondary"
-            className="h-8 w-8"
+            className="h-8 w-8 bg-white/80 hover:bg-white"
             onClick={() => onToggleWishlist(product.id)}
           >
             <Heart
               className={`h-4 w-4 ${
-                product.isWishlisted ? "fill-primary text-primary" : ""
+                product.isWishlisted 
+                  ? "fill-primary text-primary" 
+                  : "text-muted-foreground"
               }`}
             />
           </Button>
           <Button
             size="icon"
             variant="secondary"
-            className="h-8 w-8"
+            className="h-8 w-8 bg-white/80 hover:bg-white"
             onClick={() => onToggleCart(product.id)}
           >
             <ShoppingCart
               className={`h-4 w-4 ${
-                product.inCart ? "text-primary" : ""
+                product.inCart 
+                  ? "text-primary" 
+                  : "text-muted-foreground"
               }`}
             />
           </Button>
