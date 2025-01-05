@@ -24,6 +24,10 @@
     --input: 252 89% 66%;
     --ring: 252 85% 60%;
     --radius: 0.75rem;
+    --success: 142 76% 36%;
+    --success-foreground: 0 0% 100%;
+    --neutral: 252 20% 98%;
+    --neutral-foreground: 252 10% 45%;
   }
 }
 
@@ -49,7 +53,7 @@
 }
 
 .card {
-  @apply relative overflow-hidden rounded-lg bg-white p-6 shadow-lg transition-all duration-300 hover:shadow-xl;
+  @apply relative overflow-hidden rounded-lg bg-card p-6 shadow-lg transition-all duration-300 hover:shadow-xl;
 }
 
 .button-primary {
