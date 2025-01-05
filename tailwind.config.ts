@@ -25,11 +25,11 @@ export default {
         background: "hsl(var(--background))",
         foreground: "hsl(var(--foreground))",
         primary: {
-          DEFAULT: "#FF6B6B",
+          DEFAULT: "#9b87f5", // Zenpurple primary
           foreground: "#FFFFFF",
         },
         secondary: {
-          DEFAULT: "#1A1A1A",
+          DEFAULT: "#7E69AB", // Zenpurple secondary
           foreground: "#F5F7FA",
         },
         success: {
@@ -37,20 +37,20 @@ export default {
           foreground: "#FFFFFF",
         },
         neutral: {
-          DEFAULT: "#E9ECEF",
-          foreground: "#1A1A1A",
+          DEFAULT: "#E5DEFF", // Soft purple for neutral backgrounds
+          foreground: "#1A1F2C", // Dark purple for text
         },
         destructive: {
           DEFAULT: "hsl(var(--destructive))",
           foreground: "hsl(var(--destructive-foreground))",
         },
         muted: {
-          DEFAULT: "hsl(var(--muted))",
-          foreground: "hsl(var(--muted-foreground))",
+          DEFAULT: "#D6BCFA", // Light purple for muted elements
+          foreground: "#6E59A5", // Tertiary purple for muted text
         },
         accent: {
-          DEFAULT: "hsl(var(--accent))",
-          foreground: "hsl(var(--accent-foreground))",
+          DEFAULT: "#8B5CF6", // Vivid purple for accents
+          foreground: "#FFFFFF",
         },
         popover: {
           DEFAULT: "hsl(var(--popover))",
