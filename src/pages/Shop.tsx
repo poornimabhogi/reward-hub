@@ -1,4 +1,5 @@
 import { useState, useEffect } from "react";
+import { useNavigate } from "react-router-dom";
 import { Heart, ShoppingCart } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
@@ -22,6 +23,7 @@ interface Product {
 }
 
 const Shop = () => {
+  const navigate = useNavigate();
   const categories = ["Electronics", "Fashion", "Home & Living", "Books"];
   
   const [products, setProducts] = useState<Product[]>([
@@ -65,7 +67,6 @@ const Shop = () => {
 
   const [selectedCategory, setSelectedCategory] = useState(categories[0]);
 
-  // Load products from localStorage on component mount
   useEffect(() => {
     const storedProducts = localStorage.getItem('products');
     if (storedProducts) {
@@ -80,7 +81,6 @@ const Shop = () => {
         : product
     );
     setProducts(updatedProducts);
-    // Save to localStorage whenever products are updated
     localStorage.setItem('products', JSON.stringify(updatedProducts));
   };
 
@@ -91,12 +91,15 @@ const Shop = () => {
         : product
     );
     setProducts(updatedProducts);
-    // Save to localStorage whenever products are updated
     localStorage.setItem('products', JSON.stringify(updatedProducts));
   };
 
   const wishlistedProducts = products.filter(p => p.isWishlisted);
   const cartProducts = products.filter(p => p.inCart);
+
+  const handleCheckout = () => {
+    navigate('/payment', { state: { products: cartProducts } });
+  };
 
   return (
     <div className="container mx-auto px-4 pb-24">
@@ -167,6 +170,13 @@ const Shop = () => {
                     </Button>
                   </div>
                 ))}
+                {cartProducts.length > 0 && (
+                  <div className="pt-4 border-t">
+                    <Button className="w-full" onClick={handleCheckout}>
+                      Proceed to Checkout
+                    </Button>
+                  </div>
+                )}
               </div>
             </SheetContent>
           </Sheet>

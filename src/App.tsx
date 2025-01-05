@@ -14,6 +14,7 @@ import Games from "./pages/Games";
 import Game2048 from "./pages/Game2048";
 import Social from "./pages/Social";
 import Health from "./pages/Health";
+import Payment from "./pages/Payment";
 
 const queryClient = new QueryClient();
 
@@ -31,6 +32,7 @@ const App = () => (
             <Route path="/profile" element={<Profile />} />
             <Route path="/lucky-draw" element={<LuckyDraw />} />
             <Route path="/shop" element={<Shop />} />
+            <Route path="/payment" element={<Payment />} />
             <Route path="/games" element={<Games />} />
             <Route path="/games/2048" element={<Game2048 />} />
             <Route path="/social" element={<Social />} />
