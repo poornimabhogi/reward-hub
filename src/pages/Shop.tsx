@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
-import { Heart, ShoppingCart } from "lucide-react";
+import { Heart, ShoppingCart, PlusCircle } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import {
@@ -106,6 +106,14 @@ const Shop = () => {
       <div className="flex items-center justify-between mb-6 sticky top-0 bg-white/80 backdrop-blur-md py-4 z-10">
         <div className="text-2xl font-bold">Shop</div>
         <div className="flex items-center gap-4">
+          <Button
+            variant="default"
+            onClick={() => navigate('/sell')}
+            className="flex items-center gap-2"
+          >
+            <PlusCircle className="h-5 w-5" />
+            Sell Item
+          </Button>
           <Sheet>
             <SheetTrigger asChild>
               <Button variant="ghost" size="icon" className="relative">
