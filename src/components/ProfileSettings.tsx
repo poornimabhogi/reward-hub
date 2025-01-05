@@ -1,6 +1,5 @@
 import { useState } from "react";
 import { Settings2, Plus } from "lucide-react";
-import { useNavigate } from "react-router-dom";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
 import { ViewDetailsDropdown } from "./profile/ViewDetailsDropdown";
@@ -22,15 +21,19 @@ interface UserProfile {
 export const ProfileSettings = ({ userProfile }: { userProfile: UserProfile }) => {
   const [isEditing, setIsEditing] = useState(false);
   const [editableProfile, setEditableProfile] = useState(userProfile);
-  const navigate = useNavigate();
 
   const handleSave = () => {
     setIsEditing(false);
   };
 
   const handleDropdownItemClick = (postType: 'timeCapsule' | 'feature' | 'reel') => {
-    // Navigate to gallery first, passing the post type as state
-    navigate('/gallery', { state: { selectedPostType: postType } });
+    // Scroll to the posts grid section
+    const postsSection = document.getElementById('posts-section');
+    if (postsSection) {
+      postsSection.scrollIntoView({ behavior: 'smooth' });
+    }
+    // You can also set the selected post type in the Profile component if needed
+    // For example, by lifting this state up and passing a callback prop
   };
 
   return (

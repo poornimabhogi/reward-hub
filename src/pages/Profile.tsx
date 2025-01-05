@@ -91,22 +91,24 @@ const Profile = () => {
         </DialogContent>
       </Dialog>
 
-      <Tabs defaultValue="grid" className="w-full">
-        <TabsList className="w-full">
-          <TabsTrigger value="grid" className="flex-1" onClick={() => setViewMode('grid')}>
-            Grid View
-          </TabsTrigger>
-          <TabsTrigger value="list" className="flex-1" onClick={() => setViewMode('list')}>
-            List View
-          </TabsTrigger>
-        </TabsList>
-        <TabsContent value="grid">
-          <PostsGrid posts={posts} viewMode="grid" />
-        </TabsContent>
-        <TabsContent value="list">
-          <PostsGrid posts={posts} viewMode="list" />
-        </TabsContent>
-      </Tabs>
+      <div id="posts-section">
+        <Tabs defaultValue="grid" className="w-full">
+          <TabsList className="w-full">
+            <TabsTrigger value="grid" className="flex-1" onClick={() => setViewMode('grid')}>
+              Grid View
+            </TabsTrigger>
+            <TabsTrigger value="list" className="flex-1" onClick={() => setViewMode('list')}>
+              List View
+            </TabsTrigger>
+          </TabsList>
+          <TabsContent value="grid">
+            <PostsGrid posts={posts} viewMode="grid" />
+          </TabsContent>
+          <TabsContent value="list">
+            <PostsGrid posts={posts} viewMode="list" />
+          </TabsContent>
+        </Tabs>
+      </div>
     </div>
   );
 };
