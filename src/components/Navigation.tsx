@@ -1,12 +1,19 @@
 import { useState } from "react";
 import { Link, useLocation } from "react-router-dom";
 import { Home, ShoppingBag, Gamepad2, Video, Heart } from "lucide-react";
+import { useAuth } from "@/contexts/AuthContext";
 
 const Navigation = () => {
   const location = useLocation();
   const [wishlistCount] = useState(0);
   const [cartCount] = useState(0);
   const [coins] = useState(100);
+  const { isAuthenticated } = useAuth();
+
+  // Don't render navigation if user is not authenticated
+  if (!isAuthenticated) {
+    return null;
+  }
 
   return (
     <nav className="fixed bottom-0 left-0 right-0 bg-white border-t">
