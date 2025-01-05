@@ -86,7 +86,7 @@ const ProductDetail = () => {
           <img
             src={product.image}
             alt={product.name}
-            className="w-full h-auto rounded-lg object-cover aspect-square max-h-[400px]"
+            className="w-full h-[300px] rounded-lg object-cover"
           />
           <Button
             size="icon"
