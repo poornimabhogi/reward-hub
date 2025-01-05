@@ -13,13 +13,13 @@ import {
 } from "@/components/ui/select";
 
 interface CreatePostFormProps {
-  onPost: (newStatus: Status, postType: string) => void;
+  onPost: (newStatus: Status, postType: 'timeCapsule' | 'feature' | 'reel') => void;
 }
 
 export const CreatePostForm = ({ onPost }: CreatePostFormProps) => {
   const [thoughtText, setThoughtText] = useState('');
   const [thoughtMedia, setThoughtMedia] = useState<File | null>(null);
-  const [postType, setPostType] = useState('feature');
+  const [postType, setPostType] = useState<'timeCapsule' | 'feature' | 'reel'>('feature');
 
   const handleSubmit = () => {
     if (thoughtText.trim() || thoughtMedia) {
@@ -48,7 +48,7 @@ export const CreatePostForm = ({ onPost }: CreatePostFormProps) => {
         >
           <Plus className="h-4 w-4" />
         </Button>
-        <Select value={postType} onValueChange={setPostType}>
+        <Select value={postType} onValueChange={(value: 'timeCapsule' | 'feature' | 'reel') => setPostType(value)}>
           <SelectTrigger className="w-[180px]">
             <SelectValue placeholder="Select post type" />
           </SelectTrigger>

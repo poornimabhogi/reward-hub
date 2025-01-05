@@ -5,11 +5,15 @@ import { Button } from "@/components/ui/button";
 
 interface PostsGridProps {
   posts: Status[];
+  viewMode?: 'grid' | 'list';
 }
 
-export const PostsGrid = ({ posts }: PostsGridProps) => {
-  const [viewMode, setViewMode] = useState<'grid' | 'list'>('grid');
+export const PostsGrid = ({ posts, viewMode: externalViewMode }: PostsGridProps) => {
+  const [internalViewMode, setViewMode] = useState<'grid' | 'list'>('grid');
   const featurePosts = posts.filter(post => post.postType === 'feature' || post.postType === 'reel');
+  
+  // Use external viewMode if provided, otherwise use internal state
+  const currentViewMode = externalViewMode || internalViewMode;
   
   if (featurePosts.length === 0) {
     return (
@@ -23,14 +27,14 @@ export const PostsGrid = ({ posts }: PostsGridProps) => {
     <div className="space-y-4">
       <div className="flex justify-end gap-2">
         <Button
-          variant={viewMode === 'grid' ? 'default' : 'outline'}
+          variant={currentViewMode === 'grid' ? 'default' : 'outline'}
           size="icon"
           onClick={() => setViewMode('grid')}
         >
           <LayoutGrid className="h-4 w-4" />
         </Button>
         <Button
-          variant={viewMode === 'list' ? 'default' : 'outline'}
+          variant={currentViewMode === 'list' ? 'default' : 'outline'}
           size="icon"
           onClick={() => setViewMode('list')}
         >
@@ -38,14 +42,14 @@ export const PostsGrid = ({ posts }: PostsGridProps) => {
         </Button>
       </div>
 
-      <div className={viewMode === 'grid' 
+      <div className={currentViewMode === 'grid' 
         ? "grid grid-cols-3 gap-1"
         : "flex flex-col gap-4"
       }>
         {featurePosts.map((post) => (
           <div 
             key={post.id} 
-            className={viewMode === 'grid'
+            className={currentViewMode === 'grid'
               ? "aspect-square relative"
               : "w-full aspect-[16/9] relative"
             }

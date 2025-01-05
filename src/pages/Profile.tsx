@@ -34,8 +34,8 @@ const Profile = () => {
     localStorage.setItem('followedUsers', JSON.stringify(updatedUsers));
   };
 
-  const handleNewPost = (newStatus: Status, isTimeCapsule: boolean) => {
-    if (isTimeCapsule) {
+  const handleNewPost = (newStatus: Status, postType: 'timeCapsule' | 'feature' | 'reel') => {
+    if (postType === 'timeCapsule') {
       setTimeCapsules([newStatus, ...timeCapsules]);
     } else {
       setPosts([newStatus, ...posts]);
