@@ -1,14 +1,11 @@
-import { useState } from "react";
-import { User, Coins, Activity, Target } from "lucide-react";
+import { useState, useEffect } from "react";
+import { User, Coins } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
 import { useNavigate } from "react-router-dom";
-import { useToast } from "@/components/ui/use-toast";
 import { useAuth } from "@/contexts/AuthContext";
-import { Card, CardContent } from "@/components/ui/card";
-import { Progress } from "@/components/ui/progress";
-import { useIsMobile } from "@/hooks/use-mobile";
-import { LoginForm } from "@/components/LoginForm";
+import { LoginForm } from "@/components/auth/LoginForm";
+import { HealthGoals } from "@/components/dashboard/HealthGoals";
+import { WishlistSection } from "@/components/dashboard/WishlistSection";
 
 interface Product {
   id: number;
@@ -30,9 +27,8 @@ const Index = () => {
   const { isAuthenticated, user, logout } = useAuth();
   const [coins] = useState(100);
   const navigate = useNavigate();
-  const isMobile = useIsMobile();
   const [wishlistedProducts, setWishlistedProducts] = useState<Product[]>([]);
-  const [healthGoals, setHealthGoals] = useState<HealthGoal[]>([
+  const [healthGoals] = useState<HealthGoal[]>([
     {
       id: 1,
       title: "Daily Steps",
@@ -77,77 +73,7 @@ const Index = () => {
   if (!isAuthenticated) {
     return (
       <div className="min-h-screen bg-neutral flex items-center justify-center p-4">
-        <div className="w-full max-w-md space-y-8 bg-white p-6 rounded-lg shadow-lg">
-          <div className="text-center">
-            <h2 className="text-2xl font-bold">Welcome back</h2>
-            <p className="text-muted-foreground mt-2">Sign in to your account</p>
-          </div>
-
-          <form onSubmit={handleLogin} className="space-y-4">
-            <div className="space-y-2">
-              <Input
-                type="email"
-                placeholder="Email"
-                value={email}
-                onChange={(e) => setEmail(e.target.value)}
-                required
-              />
-            </div>
-            <div className="space-y-2">
-              <Input
-                type="password"
-                placeholder="Password"
-                value={password}
-                onChange={(e) => setPassword(e.target.value)}
-                required
-              />
-            </div>
-            <Button type="submit" className="w-full">
-              Sign In
-            </Button>
-          </form>
-
-          <div className="relative">
-            <div className="absolute inset-0 flex items-center">
-              <span className="w-full border-t" />
-            </div>
-            <div className="relative flex justify-center text-xs uppercase">
-              <span className="bg-white px-2 text-muted-foreground">
-                Or continue with
-              </span>
-            </div>
-          </div>
-
-          <div className="space-y-3">
-            <Button
-              variant="outline"
-              className="w-full"
-              onClick={handleGoogleLogin}
-            >
-              Continue with Google
-            </Button>
-            <Button
-              variant="outline"
-              className="w-full"
-              onClick={continueAsGuest}
-            >
-              Continue as Guest
-            </Button>
-          </div>
-
-          <div className="text-center">
-            <p className="text-sm text-muted-foreground">
-              Don't have an account?{" "}
-              <Button
-                variant="link"
-                onClick={() => navigate("/signup")}
-                className="p-0"
-              >
-                Sign up
-              </Button>
-            </p>
-          </div>
-        </div>
+        <LoginForm />
       </div>
     );
   }
@@ -181,70 +107,8 @@ const Index = () => {
       </div>
 
       <div className="max-w-md mx-auto px-4 pb-24 pt-6 space-y-6">
-        {/* Health Goals Section */}
-        <section>
-          <div className="flex items-center justify-between mb-4">
-            <h3 className="text-lg font-semibold">Pending Goals</h3>
-            <Button 
-              variant="ghost" 
-              size="sm" 
-              onClick={() => navigate('/health')}
-              className="flex items-center gap-2 text-primary"
-            >
-              <Activity className="h-4 w-4" />
-              View All
-            </Button>
-          </div>
-          <div className="space-y-3">
-            {healthGoals.map((goal) => (
-              <Card key={goal.id} className="border border-neutral">
-                <CardContent className="p-4">
-                  <div className="flex items-center justify-between mb-2">
-                    <div className="flex items-center gap-2">
-                      <Target className="h-4 w-4 text-primary" />
-                      <h4 className="font-medium">{goal.title}</h4>
-                    </div>
-                    <span className="text-sm text-muted-foreground">
-                      {goal.current} / {goal.target} {goal.unit}
-                    </span>
-                  </div>
-                  <Progress 
-                    value={(goal.current / goal.target) * 100} 
-                    className="h-2"
-                  />
-                </CardContent>
-              </Card>
-            ))}
-          </div>
-        </section>
-
-        {/* Wishlist Section */}
-        <section>
-          <h3 className="text-lg font-semibold mb-4">Your Wishlist</h3>
-          {wishlistedProducts.length === 0 ? (
-            <Card className="border border-neutral">
-              <CardContent className="p-6 text-center text-muted-foreground">
-                No items in your wishlist yet. Visit the shop to add items!
-              </CardContent>
-            </Card>
-          ) : (
-            <div className="grid grid-cols-2 gap-3">
-              {wishlistedProducts.map((product) => (
-                <Card key={product.id} className="border border-neutral">
-                  <CardContent className="p-3">
-                    <img
-                      src={product.image}
-                      alt={product.name}
-                      className="w-full aspect-square object-cover rounded-md mb-2"
-                    />
-                    <h4 className="font-medium text-sm truncate">{product.name}</h4>
-                    <p className="text-sm text-muted-foreground">${product.price}</p>
-                  </CardContent>
-                </Card>
-              ))}
-            </div>
-          )}
-        </section>
+        <HealthGoals goals={healthGoals} />
+        <WishlistSection products={wishlistedProducts} />
       </div>
     </div>
   );
