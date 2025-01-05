@@ -3,9 +3,7 @@ import { User, Coins } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useNavigate } from "react-router-dom";
 import { Card, CardContent } from "@/components/ui/card";
-import { ProfileSettings } from "@/components/ProfileSettings";
 
-// Sample product data structure
 interface Product {
   id: number;
   name: string;
@@ -20,13 +18,25 @@ const Index = () => {
   const [wishlistedProducts, setWishlistedProducts] = useState<Product[]>([]);
 
   useEffect(() => {
-    // Retrieve wishlisted products from localStorage
-    const storedProducts = localStorage.getItem('products');
-    if (storedProducts) {
-      const products: Product[] = JSON.parse(storedProducts);
-      const wishlisted = products.filter(product => product.isWishlisted);
-      setWishlistedProducts(wishlisted);
-    }
+    // Add event listener for storage changes
+    const handleStorageChange = () => {
+      const storedProducts = localStorage.getItem('products');
+      if (storedProducts) {
+        const products: Product[] = JSON.parse(storedProducts);
+        const wishlisted = products.filter(product => product.isWishlisted);
+        setWishlistedProducts(wishlisted);
+      }
+    };
+
+    // Initial load
+    handleStorageChange();
+
+    // Listen for changes
+    window.addEventListener('storage', handleStorageChange);
+    
+    return () => {
+      window.removeEventListener('storage', handleStorageChange);
+    };
   }, []);
 
   return (
@@ -63,7 +73,7 @@ const Index = () => {
             No items in your wishlist yet. Visit the shop to add items!
           </p>
         ) : (
-          <div className="grid grid-cols-2 gap-4">
+          <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
             {wishlistedProducts.map((product) => (
               <Card key={product.id} className="overflow-hidden">
                 <CardContent className="p-3">
