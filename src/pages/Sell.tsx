@@ -5,6 +5,13 @@ import { Textarea } from "@/components/ui/textarea";
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { toast } from "sonner";
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from "@/components/ui/dialog";
 
 const Sell = () => {
   const navigate = useNavigate();
@@ -33,7 +40,7 @@ const Sell = () => {
     
     // Create a new product object
     const newProduct = {
-      id: Date.now(), // Generate a temporary ID
+      id: Date.now(),
       name: formData.name,
       price: parseFloat(formData.price),
       image: formData.image ? URL.createObjectURL(formData.image) : "/placeholder.svg",
@@ -56,6 +63,27 @@ const Sell = () => {
     toast.success("Item listed successfully!");
     navigate("/shop");
   };
+
+  const PreviewProduct = () => (
+    <div className="space-y-4">
+      {formData.image && (
+        <div className="relative aspect-square w-full overflow-hidden rounded-lg">
+          <img
+            src={URL.createObjectURL(formData.image)}
+            alt="Product preview"
+            className="object-contain w-full h-full"
+          />
+        </div>
+      )}
+      <div className="space-y-2">
+        <h3 className="font-semibold">{formData.name || "Product Name"}</h3>
+        <p className="text-lg font-bold">${formData.price || "0.00"}</p>
+        {formData.size && <p className="text-sm text-gray-500">Size: {formData.size}</p>}
+        <p className="text-sm text-gray-600">{formData.description || "No description provided"}</p>
+        <p className="text-sm text-gray-500">Category: {formData.category}</p>
+      </div>
+    </div>
+  );
 
   return (
     <div className="container mx-auto px-4 py-8">
@@ -132,7 +160,22 @@ const Sell = () => {
             />
           </div>
 
-          <Button type="submit" className="w-full">List Item</Button>
+          <div className="flex gap-4">
+            <Dialog>
+              <DialogTrigger asChild>
+                <Button type="button" variant="outline" className="w-full">
+                  Preview Product
+                </Button>
+              </DialogTrigger>
+              <DialogContent>
+                <DialogHeader>
+                  <DialogTitle>Product Preview</DialogTitle>
+                </DialogHeader>
+                <PreviewProduct />
+              </DialogContent>
+            </Dialog>
+            <Button type="submit" className="w-full">List Item</Button>
+          </div>
         </form>
       </div>
     </div>
