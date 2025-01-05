@@ -1,11 +1,12 @@
 import { useState } from "react";
-import { User, Mail, Phone, MapPin, Coins, Settings2, Image, Video, Plus, Users } from "lucide-react";
+import { User, Mail, Phone, MapPin, Coins, Settings2, Image, Video, Plus, Users, Send } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { ProfileSettings } from "@/components/ProfileSettings";
+import { Textarea } from "@/components/ui/textarea";
 
 interface Status {
   id: number;
@@ -30,8 +31,9 @@ const Profile = () => {
 
   const [statusFeedEnabled, setStatusFeedEnabled] = useState(false);
   const [statuses, setStatuses] = useState<Status[]>([]);
+  const [thoughtText, setThoughtText] = useState('');
+  const [thoughtMedia, setThoughtMedia] = useState<File | null>(null);
   
-  // Get followed users from localStorage or initialize empty array
   const [followedUsers, setFollowedUsers] = useState<FollowedUser[]>(() => {
     const storedUsers = localStorage.getItem('followedUsers');
     return storedUsers ? JSON.parse(storedUsers) : [];
@@ -57,6 +59,20 @@ const Profile = () => {
     localStorage.setItem('followedUsers', JSON.stringify(updatedUsers));
   };
 
+  const handleThoughtSubmit = () => {
+    if (thoughtText.trim() || thoughtMedia) {
+      const newStatus: Status = {
+        id: Date.now(),
+        type: thoughtMedia?.type.startsWith('image/') ? 'photo' : 'video',
+        url: thoughtMedia ? URL.createObjectURL(thoughtMedia) : '',
+        timestamp: new Date(),
+      };
+      setStatuses([newStatus, ...statuses]);
+      setThoughtText('');
+      setThoughtMedia(null);
+    }
+  };
+
   return (
     <div className="container mx-auto px-4 py-8">
       <div className="max-w-2xl mx-auto">
@@ -78,7 +94,7 @@ const Profile = () => {
                 <span className="font-medium">{userProfile.coins} coins</span>
               </div>
               
-              {/* Followers Dialog */}
+              {/* Followers Dialog - Reduced size */}
               <Dialog>
                 <DialogTrigger asChild>
                   <Button variant="outline" className="gap-2">
@@ -86,11 +102,11 @@ const Profile = () => {
                     Following ({followedUsers.length})
                   </Button>
                 </DialogTrigger>
-                <DialogContent>
+                <DialogContent className="max-w-sm">
                   <DialogHeader>
                     <DialogTitle>Following</DialogTitle>
                   </DialogHeader>
-                  <ScrollArea className="h-[300px] pr-4">
+                  <ScrollArea className="h-[200px] pr-4">
                     {followedUsers.length > 0 ? (
                       <div className="space-y-4">
                         {followedUsers.map((user) => (
@@ -189,6 +205,45 @@ const Profile = () => {
               )}
             </>
           )}
+        </div>
+
+        {/* What's on your mind section */}
+        <div className="mt-8 bg-white rounded-lg shadow-lg p-6">
+          <h3 className="text-lg font-semibold mb-4">What's on your mind?</h3>
+          <div className="space-y-4">
+            <Textarea
+              placeholder="Share your thoughts..."
+              value={thoughtText}
+              onChange={(e) => setThoughtText(e.target.value)}
+              className="min-h-[100px]"
+            />
+            <div className="flex items-center gap-4">
+              <label className="cursor-pointer">
+                <input
+                  type="file"
+                  accept="image/*,video/*"
+                  className="hidden"
+                  onChange={(e) => setThoughtMedia(e.target.files?.[0] || null)}
+                />
+                <div className="flex h-10 w-10 items-center justify-center rounded-full bg-muted hover:bg-muted/80">
+                  <Image className="h-5 w-5" />
+                </div>
+              </label>
+              {thoughtMedia && (
+                <span className="text-sm text-muted-foreground">
+                  {thoughtMedia.name}
+                </span>
+              )}
+              <Button
+                className="ml-auto"
+                onClick={handleThoughtSubmit}
+                disabled={!thoughtText.trim() && !thoughtMedia}
+              >
+                <Send className="h-4 w-4 mr-2" />
+                Share
+              </Button>
+            </div>
+          </div>
         </div>
       </div>
     </div>
