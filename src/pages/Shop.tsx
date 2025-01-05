@@ -18,7 +18,7 @@ const Shop = () => {
   const navigate = useNavigate();
   const categories = ["Electronics", "Fashion", "Home & Living", "Books"];
   
-  const [products, setProducts] = useState<Product[]>([
+  const initialProducts = [
     {
       id: 1,
       name: "Premium Headphones",
@@ -55,13 +55,17 @@ const Shop = () => {
       isWishlisted: false,
       inCart: false,
     },
-  ]);
+  ];
 
+  const [products, setProducts] = useState<Product[]>(initialProducts);
   const [selectedCategory, setSelectedCategory] = useState(categories[0]);
 
   useEffect(() => {
+    // Initialize localStorage with products if it doesn't exist
     const storedProducts = localStorage.getItem('products');
-    if (storedProducts) {
+    if (!storedProducts) {
+      localStorage.setItem('products', JSON.stringify(initialProducts));
+    } else {
       setProducts(JSON.parse(storedProducts));
     }
   }, []);
