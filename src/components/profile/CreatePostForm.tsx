@@ -36,7 +36,7 @@ export const CreatePostForm = ({ onPost }: CreatePostFormProps) => {
         placeholder="Share your thoughts..."
         value={thoughtText}
         onChange={(e) => setThoughtText(e.target.value)}
-        className="min-h-[100px]"
+        className="min-h-[80px]"
       />
       <div className="flex items-center gap-4">
         <div className="flex gap-2">
@@ -47,8 +47,8 @@ export const CreatePostForm = ({ onPost }: CreatePostFormProps) => {
               className="hidden"
               onChange={(e) => setThoughtMedia(e.target.files?.[0] || null)}
             />
-            <div className="flex h-10 w-10 items-center justify-center rounded-full bg-muted hover:bg-muted/80">
-              <Image className="h-5 w-5" />
+            <div className="flex h-8 w-8 items-center justify-center rounded-full bg-muted hover:bg-muted/80">
+              <Image className="h-4 w-4" />
             </div>
           </label>
           <label className="cursor-pointer">
@@ -58,8 +58,8 @@ export const CreatePostForm = ({ onPost }: CreatePostFormProps) => {
               className="hidden"
               onChange={(e) => setThoughtMedia(e.target.files?.[0] || null)}
             />
-            <div className="flex h-10 w-10 items-center justify-center rounded-full bg-muted hover:bg-muted/80">
-              <Film className="h-5 w-5" />
+            <div className="flex h-8 w-8 items-center justify-center rounded-full bg-muted hover:bg-muted/80">
+              <Film className="h-4 w-4" />
             </div>
           </label>
         </div>
@@ -75,9 +75,10 @@ export const CreatePostForm = ({ onPost }: CreatePostFormProps) => {
             onClick={() => setIsTimeCapsule(!isTimeCapsule)}
             className={isTimeCapsule ? "bg-primary text-white" : ""}
           >
-            Time Capsule
+            Story
           </Button>
           <Button
+            size="sm"
             onClick={handleSubmit}
             disabled={!thoughtText.trim() && !thoughtMedia}
           >
