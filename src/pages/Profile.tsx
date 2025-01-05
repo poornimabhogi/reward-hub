@@ -1,27 +1,101 @@
-import { User, Mail, Phone, MapPin, Coins } from "lucide-react";
+import { useState } from "react";
+import { User, Mail, Phone, MapPin, Coins, Settings2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from "@/components/ui/dialog";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
 
 const Profile = () => {
-  const userProfile = {
+  const [userProfile, setUserProfile] = useState({
     name: "John Doe",
     email: "john@example.com",
     phone: "+1 234 567 8900",
     address: "123 Main St, City, Country",
     coins: 100
+  });
+
+  const [editableProfile, setEditableProfile] = useState({ ...userProfile });
+
+  const handleSave = () => {
+    setUserProfile(editableProfile);
   };
 
   return (
     <div className="container mx-auto px-4 py-8">
       <div className="max-w-2xl mx-auto">
         <div className="bg-white rounded-lg shadow-lg p-6 space-y-6">
-          <div className="flex items-center justify-center mb-8">
+          <div className="flex items-center justify-between mb-8">
             <div className="w-24 h-24 bg-primary/10 rounded-full flex items-center justify-center">
               <User className="w-12 h-12 text-primary" />
             </div>
+            <Dialog>
+              <DialogTrigger asChild>
+                <Button variant="ghost" size="icon">
+                  <Settings2 className="h-5 w-5" />
+                </Button>
+              </DialogTrigger>
+              <DialogContent>
+                <DialogHeader>
+                  <DialogTitle>Edit Profile</DialogTitle>
+                </DialogHeader>
+                <div className="space-y-4 py-4">
+                  <div className="space-y-2">
+                    <Label htmlFor="name">Name</Label>
+                    <Input
+                      id="name"
+                      value={editableProfile.name}
+                      onChange={(e) =>
+                        setEditableProfile({ ...editableProfile, name: e.target.value })
+                      }
+                    />
+                  </div>
+                  <div className="space-y-2">
+                    <Label htmlFor="email">Email</Label>
+                    <Input
+                      id="email"
+                      type="email"
+                      value={editableProfile.email}
+                      onChange={(e) =>
+                        setEditableProfile({ ...editableProfile, email: e.target.value })
+                      }
+                    />
+                  </div>
+                  <div className="space-y-2">
+                    <Label htmlFor="phone">Phone</Label>
+                    <Input
+                      id="phone"
+                      value={editableProfile.phone}
+                      onChange={(e) =>
+                        setEditableProfile({ ...editableProfile, phone: e.target.value })
+                      }
+                    />
+                  </div>
+                  <div className="space-y-2">
+                    <Label htmlFor="address">Address</Label>
+                    <Input
+                      id="address"
+                      value={editableProfile.address}
+                      onChange={(e) =>
+                        setEditableProfile({ ...editableProfile, address: e.target.value })
+                      }
+                    />
+                  </div>
+                </div>
+                <div className="flex justify-end">
+                  <Button onClick={handleSave}>Save Changes</Button>
+                </div>
+              </DialogContent>
+            </Dialog>
           </div>
 
           <div className="space-y-4">
-            <div className="flex items-center space-x-4 p-3 bg-secondary/50 rounded-lg">
+            <div className="flex items-center space-x-4 p-3 bg-secondary/10 rounded-lg">
               <User className="w-5 h-5 text-primary" />
               <div>
                 <p className="text-sm text-muted-foreground">Name</p>
@@ -29,7 +103,7 @@ const Profile = () => {
               </div>
             </div>
 
-            <div className="flex items-center space-x-4 p-3 bg-secondary/50 rounded-lg">
+            <div className="flex items-center space-x-4 p-3 bg-secondary/10 rounded-lg">
               <Mail className="w-5 h-5 text-primary" />
               <div>
                 <p className="text-sm text-muted-foreground">Email</p>
@@ -37,7 +111,7 @@ const Profile = () => {
               </div>
             </div>
 
-            <div className="flex items-center space-x-4 p-3 bg-secondary/50 rounded-lg">
+            <div className="flex items-center space-x-4 p-3 bg-secondary/10 rounded-lg">
               <Phone className="w-5 h-5 text-primary" />
               <div>
                 <p className="text-sm text-muted-foreground">Phone</p>
@@ -45,7 +119,7 @@ const Profile = () => {
               </div>
             </div>
 
-            <div className="flex items-center space-x-4 p-3 bg-secondary/50 rounded-lg">
+            <div className="flex items-center space-x-4 p-3 bg-secondary/10 rounded-lg">
               <MapPin className="w-5 h-5 text-primary" />
               <div>
                 <p className="text-sm text-muted-foreground">Address</p>
@@ -53,19 +127,13 @@ const Profile = () => {
               </div>
             </div>
 
-            <div className="flex items-center space-x-4 p-3 bg-secondary/50 rounded-lg">
+            <div className="flex items-center space-x-4 p-3 bg-secondary/10 rounded-lg">
               <Coins className="w-5 h-5 text-yellow-500" />
               <div>
                 <p className="text-sm text-muted-foreground">Available Coins</p>
                 <p className="font-medium">{userProfile.coins}</p>
               </div>
             </div>
-          </div>
-
-          <div className="flex justify-center pt-6">
-            <Button variant="outline" className="w-full max-w-xs">
-              Edit Profile
-            </Button>
           </div>
         </div>
       </div>
