@@ -16,6 +16,7 @@ interface ProductCardProps {
     name: string;
     price: number;
     image: string;
+    size?: string;
     isWishlisted: boolean;
     inCart: boolean;
   };
@@ -35,6 +36,7 @@ const ProductCard = ({ product, onToggleWishlist, onToggleCart }: ProductCardPro
           name: product.name,
           price: product.price,
           image: product.image,
+          size: product.size,
           isWishlisted: product.isWishlisted,
           inCart: product.inCart,
         },
@@ -87,7 +89,10 @@ const ProductCard = ({ product, onToggleWishlist, onToggleCart }: ProductCardPro
         </div>
       </div>
       <h3 className="font-medium text-sm mb-1">{product.name}</h3>
-      <p className="text-sm text-gray-600 mb-3">${product.price}</p>
+      <p className="text-sm text-gray-600 mb-2">${product.price}</p>
+      {product.size && (
+        <p className="text-sm text-gray-500 mb-3">Size: {product.size}</p>
+      )}
       
       <div onClick={(e) => e.stopPropagation()}>
         <Select value={quantity} onValueChange={setQuantity}>

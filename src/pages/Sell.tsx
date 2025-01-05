@@ -13,11 +13,46 @@ const Sell = () => {
     price: "",
     description: "",
     category: "Electronics",
-    image: "/placeholder.svg",
+    size: "",
+    image: null as File | null,
   });
+
+  const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    if (e.target.files && e.target.files[0]) {
+      const file = e.target.files[0];
+      if (file.type.startsWith('image/') || file.type.startsWith('video/')) {
+        setFormData({ ...formData, image: file });
+      } else {
+        toast.error("Please upload an image or video file");
+      }
+    }
+  };
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
+    
+    // Create a new product object
+    const newProduct = {
+      id: Date.now(), // Generate a temporary ID
+      name: formData.name,
+      price: parseFloat(formData.price),
+      image: formData.image ? URL.createObjectURL(formData.image) : "/placeholder.svg",
+      category: formData.category,
+      size: formData.size,
+      description: formData.description,
+      isWishlisted: false,
+      inCart: false,
+    };
+
+    // Get existing products from localStorage or initialize empty array
+    const existingProducts = JSON.parse(localStorage.getItem('products') || '[]');
+    
+    // Add new product to the array
+    const updatedProducts = [...existingProducts, newProduct];
+    
+    // Save back to localStorage
+    localStorage.setItem('products', JSON.stringify(updatedProducts));
+    
     toast.success("Item listed successfully!");
     navigate("/shop");
   };
@@ -36,6 +71,7 @@ const Sell = () => {
               required
             />
           </div>
+          
           <div>
             <Label htmlFor="price">Price ($)</Label>
             <Input
@@ -48,6 +84,17 @@ const Sell = () => {
               required
             />
           </div>
+
+          <div>
+            <Label htmlFor="size">Size (optional)</Label>
+            <Input
+              id="size"
+              value={formData.size}
+              onChange={(e) => setFormData({ ...formData, size: e.target.value })}
+              placeholder="e.g., Small, Medium, Large, or specific dimensions"
+            />
+          </div>
+
           <div>
             <Label htmlFor="description">Description</Label>
             <Textarea
@@ -57,6 +104,7 @@ const Sell = () => {
               required
             />
           </div>
+
           <div>
             <Label htmlFor="category">Category</Label>
             <select
@@ -71,6 +119,19 @@ const Sell = () => {
               <option>Books</option>
             </select>
           </div>
+
+          <div>
+            <Label htmlFor="image">Product Image/Video</Label>
+            <Input
+              id="image"
+              type="file"
+              accept="image/*,video/*"
+              onChange={handleFileChange}
+              className="cursor-pointer"
+              required
+            />
+          </div>
+
           <Button type="submit" className="w-full">List Item</Button>
         </form>
       </div>
