@@ -1,4 +1,4 @@
-import { useState, useRef } from "react";
+import { useState, useRef, useEffect } from "react";
 import { Settings2, Plus } from "lucide-react";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
@@ -26,6 +26,20 @@ export const ProfileSettings = ({ userProfile }: { userProfile: UserProfile }) =
   const [selectedPostType, setSelectedPostType] = useState<'timeCapsule' | 'feature' | 'reel'>('feature');
   const [selectedFile, setSelectedFile] = useState<File | null>(null);
   const [isConfirmDialogOpen, setIsConfirmDialogOpen] = useState(false);
+
+  useEffect(() => {
+    const handleOpenPhotoGallery = (event: CustomEvent<{ postType: 'timeCapsule' | 'feature' | 'reel' }>) => {
+      setSelectedPostType(event.detail.postType);
+      if (fileInputRef.current) {
+        fileInputRef.current.click();
+      }
+    };
+
+    window.addEventListener('openPhotoGallery', handleOpenPhotoGallery as EventListener);
+    return () => {
+      window.removeEventListener('openPhotoGallery', handleOpenPhotoGallery as EventListener);
+    };
+  }, []);
 
   const handleSave = () => {
     setIsEditing(false);

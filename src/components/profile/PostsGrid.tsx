@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { Status } from "@/types/profile";
-import { LayoutGrid, LayoutList } from "lucide-react";
+import { LayoutGrid, LayoutList, Plus } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import {
   Tooltip,
@@ -20,10 +20,37 @@ export const PostsGrid = ({ posts, viewMode: externalViewMode }: PostsGridProps)
   
   const currentViewMode = externalViewMode || internalViewMode;
 
+  const handleAddPost = () => {
+    // Dispatch a custom event to trigger the file input click in ProfileSettings
+    const event = new CustomEvent('openPhotoGallery', { 
+      detail: { postType: 'feature' }
+    });
+    window.dispatchEvent(event);
+  };
+
   return (
     <div className="space-y-4">
       <div className="flex justify-between items-center border-t pt-4">
-        <h3 className="text-lg font-medium">Feature Posts</h3>
+        <div className="flex items-center gap-2">
+          <h3 className="text-lg font-medium">Feature Posts</h3>
+          <TooltipProvider>
+            <Tooltip>
+              <TooltipTrigger asChild>
+                <Button
+                  variant="ghost"
+                  size="icon"
+                  className="h-6 w-6"
+                  onClick={handleAddPost}
+                >
+                  <Plus className="h-4 w-4" />
+                </Button>
+              </TooltipTrigger>
+              <TooltipContent>
+                <p>Add Feature Post</p>
+              </TooltipContent>
+            </Tooltip>
+          </TooltipProvider>
+        </div>
         <div className="flex gap-2">
           <TooltipProvider>
             <Tooltip>
@@ -63,7 +90,7 @@ export const PostsGrid = ({ posts, viewMode: externalViewMode }: PostsGridProps)
       <div 
         className={`${
           currentViewMode === 'grid' 
-            ? "grid grid-cols-2 gap-6" // Changed from grid-cols-3 to grid-cols-2 and increased gap
+            ? "grid grid-cols-2 gap-6"
             : "flex flex-col gap-4"
         } animate-fade-in`}
       >
