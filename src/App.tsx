@@ -4,18 +4,8 @@ import { TooltipProvider } from "@/components/ui/tooltip";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 import { AuthProvider } from "./contexts/AuthContext";
-import Navigation from "./components/Navigation";
-import Index from "./pages/Index";
-import Signup from "./pages/Signup";
-import Profile from "./pages/Profile";
-import LuckyDraw from "./pages/LuckyDraw";
-import Shop from "./pages/Shop";
-import Sell from "./pages/Sell";
-import Games from "./pages/Games";
-import Game2048 from "./pages/Game2048";
-import Social from "./pages/Social";
-import Health from "./pages/Health";
-import Payment from "./pages/Payment";
+import Navigation from "./components/layout/Navigation";
+import * as Pages from "./pages";
 
 const queryClient = new QueryClient();
 
@@ -28,17 +18,17 @@ const App = () => (
         <BrowserRouter>
           <Navigation />
           <Routes>
-            <Route path="/" element={<Index />} />
-            <Route path="/signup" element={<Signup />} />
-            <Route path="/profile" element={<Profile />} />
-            <Route path="/lucky-draw" element={<LuckyDraw />} />
-            <Route path="/shop" element={<Shop />} />
-            <Route path="/sell" element={<Sell />} />
-            <Route path="/payment" element={<Payment />} />
-            <Route path="/games" element={<Games />} />
-            <Route path="/games/2048" element={<Game2048 />} />
-            <Route path="/social" element={<Social />} />
-            <Route path="/health" element={<Health />} />
+            <Route path="/" element={<Pages.Index />} />
+            <Route path="/signup" element={<Pages.Signup />} />
+            <Route path="/profile" element={<Pages.Profile />} />
+            <Route path="/lucky-draw" element={<Pages.LuckyDraw />} />
+            <Route path="/shop" element={<Pages.Shop />} />
+            <Route path="/sell" element={<Pages.Sell />} />
+            <Route path="/payment" element={<Pages.Payment />} />
+            <Route path="/games" element={<Pages.Games />} />
+            <Route path="/games/2048" element={<Pages.Game2048 />} />
+            <Route path="/social" element={<Pages.Social />} />
+            <Route path="/health" element={<Pages.Health />} />
           </Routes>
         </BrowserRouter>
       </AuthProvider>
