@@ -72,18 +72,6 @@ const Index = () => {
     };
   }, []);
 
-  const handleTryLuck = () => {
-    const randomAmount = Math.floor(Math.random() * 50) + 1;
-    setCoins(prevCoins => {
-      const newAmount = prevCoins + randomAmount;
-      toast({
-        title: "Lucky You!",
-        description: `You won ${randomAmount} coins! New balance: ${newAmount}`,
-      });
-      return newAmount;
-    });
-  };
-
   if (!isAuthenticated) {
     return (
       <div className="min-h-screen bg-neutral flex items-center justify-center p-4">
@@ -113,11 +101,11 @@ const Index = () => {
             <Button
               variant="outline"
               size="sm"
-              onClick={handleTryLuck}
+              onClick={() => navigate('/lucky-draw')}
               className="flex items-center gap-2"
             >
               <Dice1 className="h-4 w-4" />
-              Try Your Luck
+              Lucky Draw
             </Button>
           </div>
           

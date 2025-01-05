@@ -1,7 +1,14 @@
 import { useState } from "react";
-import { Gift, Trophy } from "lucide-react";
+import { Gift, Trophy, Calendar } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import { useToast } from "@/components/ui/use-toast";
+import { useToast } from "@/hooks/use-toast";
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from "@/components/ui/dialog";
 
 const LuckyDraw = () => {
   const { toast } = useToast();
@@ -15,6 +22,30 @@ const LuckyDraw = () => {
     "Mystery Gift",
     "Buy 1 Get 1 Free",
     "Better Luck Next Time"
+  ];
+
+  const upcomingEvents = [
+    {
+      id: 1,
+      title: "Weekend Bonanza",
+      date: "This Weekend",
+      description: "Double your chances to win premium prizes!",
+      prize: "iPhone 15"
+    },
+    {
+      id: 2,
+      title: "Holiday Special",
+      date: "Dec 25",
+      description: "Special holiday draws with exclusive rewards",
+      prize: "PS5"
+    },
+    {
+      id: 3,
+      title: "New Year Blast",
+      date: "Dec 31",
+      description: "Biggest prizes of the year up for grabs",
+      prize: "MacBook Pro"
+    }
   ];
 
   const spinWheel = () => {
@@ -66,12 +97,45 @@ const LuckyDraw = () => {
             {isSpinning ? "Spinning..." : "Spin (10 coins)"}
           </Button>
 
-          <div className="mt-8 pt-6 border-t">
-            <h2 className="font-semibold mb-4">Previous Wins</h2>
-            <div className="space-y-2 text-sm text-muted-foreground">
-              <p>50% Off Coupon - 2 days ago</p>
-              <p>100 Bonus Coins - 5 days ago</p>
-              <p>Mystery Gift - 1 week ago</p>
+          <div className="mt-12 pt-6 border-t">
+            <h2 className="text-xl font-semibold mb-6">Upcoming Events</h2>
+            <div className="grid gap-4">
+              {upcomingEvents.map((event) => (
+                <Dialog key={event.id}>
+                  <DialogTrigger asChild>
+                    <div className="bg-neutral p-4 rounded-lg cursor-pointer hover:bg-neutral/80 transition-colors">
+                      <div className="flex items-start justify-between">
+                        <div className="flex-1">
+                          <h3 className="font-semibold">{event.title}</h3>
+                          <p className="text-sm text-muted-foreground">{event.description}</p>
+                        </div>
+                        <div className="flex items-center gap-2 text-sm text-primary">
+                          <Calendar className="w-4 h-4" />
+                          {event.date}
+                        </div>
+                      </div>
+                    </div>
+                  </DialogTrigger>
+                  <DialogContent>
+                    <DialogHeader>
+                      <DialogTitle>{event.title}</DialogTitle>
+                    </DialogHeader>
+                    <div className="space-y-4">
+                      <p>{event.description}</p>
+                      <div className="bg-neutral p-4 rounded-lg">
+                        <p className="font-semibold">Grand Prize</p>
+                        <p className="text-primary">{event.prize}</p>
+                      </div>
+                      <Button onClick={() => toast({
+                        title: "Reminder Set!",
+                        description: "We'll notify you when this event starts.",
+                      })}>
+                        Set Reminder
+                      </Button>
+                    </div>
+                  </DialogContent>
+                </Dialog>
+              ))}
             </div>
           </div>
         </div>
