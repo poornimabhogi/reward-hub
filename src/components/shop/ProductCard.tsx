@@ -70,12 +70,12 @@ const ProductCard = ({ product, onToggleWishlist, onToggleCart }: ProductCardPro
       <div>
         <Select value={quantity} onValueChange={setQuantity}>
           <SelectTrigger className="w-full">
-            <SelectValue placeholder="Select quantity" />
+            <SelectValue>Quantity: {quantity}</SelectValue>
           </SelectTrigger>
           <SelectContent>
             {[1, 2, 3, 4, 5, 6, 7, 8, 9, 10].map((num) => (
               <SelectItem key={num} value={num.toString()}>
-                {num}
+                Quantity: {num}
               </SelectItem>
             ))}
           </SelectContent>
