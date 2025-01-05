@@ -1,127 +1,112 @@
-import { useLocation, useNavigate, useParams } from "react-router-dom";
+import { useState, useEffect } from "react";
+import { useLocation, useParams, useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
+import { Heart } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
-import { ArrowLeft, Heart, ShoppingCart } from "lucide-react";
+import {
+  Carousel,
+  CarouselContent,
+  CarouselItem,
+  CarouselNext,
+  CarouselPrevious,
+} from "@/components/ui/carousel";
+
+interface Product {
+  id: number;
+  name: string;
+  price: number;
+  description: string;
+  image: string;
+  isWishlisted: boolean;
+}
 
 const ProductDetail = () => {
-  const { state } = useLocation();
   const { id } = useParams();
+  const location = useLocation();
   const navigate = useNavigate();
   const { toast } = useToast();
+  const [product, setProduct] = useState<Product | null>(null);
 
   const getProduct = () => {
-    if (state?.product) return state.product;
-    
-    const storedProducts = localStorage.getItem('products');
-    if (storedProducts) {
-      const products = JSON.parse(storedProducts);
-      return products.find((p: any) => p.id === Number(id));
-    }
-    return null;
+    const products = JSON.parse(localStorage.getItem('products') || '[]');
+    return products.find((product: Product) => product.id === Number(id));
   };
 
-  const product = getProduct();
+  useEffect(() => {
+    const foundProduct = getProduct();
+    if (foundProduct) {
+      setProduct(foundProduct);
+    }
+  }, [id]);
 
-  if (!product) {
-    return (
-      <div className="container mx-auto px-4 py-8">
-        <Button
-          variant="ghost"
-          className="mb-6"
-          onClick={() => navigate('/shop')}
-        >
-          <ArrowLeft className="mr-2" />
-          Back to Shop
-        </Button>
-        <div className="text-center">Product not found</div>
-      </div>
-    );
-  }
+  const handleWishlist = () => {
+    if (product) {
+      product.isWishlisted = !product.isWishlisted;
+      localStorage.setItem('products', JSON.stringify([...JSON.parse(localStorage.getItem('products') || '[]'), product]));
+      toast({
+        title: product.isWishlisted ? "Added to Wishlist" : "Removed from Wishlist",
+      });
+    }
+  };
 
   const handleAddToCart = () => {
-    const storedProducts = localStorage.getItem('products');
-    if (storedProducts) {
-      const products = JSON.parse(storedProducts);
-      const updatedProducts = products.map((p: any) => 
-        p.id === product.id ? { ...p, inCart: true } : p
-      );
-      localStorage.setItem('products', JSON.stringify(updatedProducts));
-    }
-
     toast({
-      title: "Added to cart",
-      description: `${product.name} has been added to your cart.`,
+      title: "Added to Cart",
     });
   };
 
-  const handleToggleWishlist = () => {
-    const storedProducts = localStorage.getItem('products');
-    if (storedProducts) {
-      const products = JSON.parse(storedProducts);
-      const updatedProducts = products.map((p: any) => 
-        p.id === product.id ? { ...p, isWishlisted: !p.isWishlisted } : p
-      );
-      localStorage.setItem('products', JSON.stringify(updatedProducts));
-    }
-  };
-
-  const handleBuyNow = () => {
-    handleAddToCart();
-    navigate('/payment', { state: { products: [product] } });
-  };
+  if (!product) {
+    return <div>Product not found</div>;
+  }
 
   return (
     <div className="container mx-auto px-4 py-8">
-      <Button
-        variant="ghost"
-        className="mb-6"
-        onClick={() => navigate(-1)}
-      >
-        <ArrowLeft className="mr-2" />
-        Back
-      </Button>
-
       <div className="grid md:grid-cols-2 gap-8">
-        <div className="relative">
-          <img
-            src={product.image}
-            alt={product.name}
-            className="w-full h-[300px] rounded-lg object-cover"
-          />
+        <div className="space-y-4">
+          <Carousel className="w-full">
+            <CarouselContent>
+              {[product.image, product.image].map((image, index) => (
+                <CarouselItem key={index}>
+                  <div className="relative">
+                    <img
+                      src={image}
+                      alt={`${product.name} - View ${index + 1}`}
+                      className="w-full h-[300px] rounded-lg object-cover"
+                    />
+                  </div>
+                </CarouselItem>
+              ))}
+            </CarouselContent>
+            <CarouselPrevious className="left-2" />
+            <CarouselNext className="right-2" />
+          </Carousel>
           <Button
             size="icon"
-            variant="secondary"
-            className="absolute top-4 right-4 h-10 w-10 bg-white/80 hover:bg-white"
-            onClick={handleToggleWishlist}
+            variant="outline"
+            className="absolute top-4 right-4"
+            onClick={handleWishlist}
           >
             <Heart
-              className={`h-5 w-5 ${
-                product.isWishlisted 
-                  ? "fill-primary text-primary" 
-                  : "text-muted-foreground"
-              }`}
+              className={`h-4 w-4 ${product.isWishlisted ? "fill-red-500 text-red-500" : ""}`}
             />
           </Button>
         </div>
 
-        <div className="space-y-6">
-          <div>
-            <h1 className="text-2xl font-bold mb-2">{product.name}</h1>
-            <p className="text-xl font-semibold text-primary">${product.price}</p>
-          </div>
-
-          <div className="space-y-4">
-            <Button
-              className="w-full"
-              variant="outline"
+        <div className="space-y-4">
+          <h1 className="text-2xl font-bold">{product.name}</h1>
+          <p className="text-xl font-semibold">${product.price}</p>
+          <p className="text-gray-600">{product.description}</p>
+          <div className="space-y-2">
+            <Button 
+              className="w-full" 
               onClick={handleAddToCart}
             >
-              <ShoppingCart className="mr-2" />
               Add to Cart
             </Button>
-            <Button
-              className="w-full"
-              onClick={handleBuyNow}
+            <Button 
+              className="w-full" 
+              variant="secondary"
+              onClick={() => navigate('/payment', { state: { product }})}
             >
               Buy Now
             </Button>
