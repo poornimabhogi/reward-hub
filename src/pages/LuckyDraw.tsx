@@ -1,7 +1,8 @@
 import { useState, useEffect } from "react";
-import { Gift, Trophy, Calendar } from "lucide-react";
+import { Gift, Trophy, Calendar, ArrowLeft } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useToast } from "@/hooks/use-toast";
+import { useNavigate } from "react-router-dom";
 import {
   Dialog,
   DialogContent,
@@ -12,6 +13,7 @@ import {
 
 const LuckyDraw = () => {
   const { toast } = useToast();
+  const navigate = useNavigate();
   const [isSpinning, setIsSpinning] = useState(false);
   const [prize, setPrize] = useState<string | null>(null);
   const [countdowns, setCountdowns] = useState<{ [key: number]: string }>({});
@@ -100,6 +102,17 @@ const LuckyDraw = () => {
   return (
     <div className="container mx-auto px-4 py-8">
       <div className="max-w-2xl mx-auto text-center">
+        <div className="relative">
+          <Button
+            variant="ghost"
+            size="icon"
+            className="absolute left-0 top-0"
+            onClick={() => navigate('/')}
+          >
+            <ArrowLeft className="h-6 w-6" />
+          </Button>
+        </div>
+
         <div className="bg-white rounded-lg shadow-lg p-6 space-y-6">
           <div className="flex justify-center mb-6">
             <Gift className="w-16 h-16 text-primary" />
