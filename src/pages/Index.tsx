@@ -5,6 +5,8 @@ import { useNavigate } from "react-router-dom";
 import { Card, CardContent } from "@/components/ui/card";
 import { Progress } from "@/components/ui/progress";
 import { useIsMobile } from "@/hooks/use-mobile";
+import { useAuth } from "@/contexts/AuthContext";
+import { LoginForm } from "@/components/LoginForm";
 
 interface Product {
   id: number;
@@ -23,6 +25,7 @@ interface HealthGoal {
 }
 
 const Index = () => {
+  const { isAuthenticated, user, logout } = useAuth();
   const [coins] = useState(100);
   const navigate = useNavigate();
   const isMobile = useIsMobile();
@@ -69,9 +72,19 @@ const Index = () => {
     };
   }, []);
 
+  if (!isAuthenticated) {
+    return (
+      <div className="min-h-screen bg-white p-4">
+        <div className="max-w-md mx-auto pt-10">
+          <h1 className="text-2xl font-bold text-center mb-8">Welcome to Reward Hub</h1>
+          <LoginForm />
+        </div>
+      </div>
+    );
+  }
+
   return (
     <div className="min-h-screen bg-white">
-      {/* Mobile-optimized Top Bar */}
       <div className="sticky top-0 bg-white/80 backdrop-blur-md border-b z-50">
         <div className="flex items-center justify-between p-4 max-w-md mx-auto">
           <Button 
@@ -89,12 +102,11 @@ const Index = () => {
           </div>
           
           <Button 
-            onClick={() => navigate('/lucky-draw')}
-            variant="default"
+            onClick={logout}
+            variant="outline"
             size="sm"
-            className="bg-primary hover:bg-secondary"
           >
-            Lucky Draw
+            Logout
           </Button>
         </div>
       </div>
