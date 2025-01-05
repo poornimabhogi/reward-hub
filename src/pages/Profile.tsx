@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { User, Coins, Users } from "lucide-react";
+import { User, Coins, Users, LayoutGrid, LayoutList } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
 import { ScrollArea } from "@/components/ui/scroll-area";
@@ -20,6 +20,7 @@ const Profile = () => {
 
   const [posts, setPosts] = useState<Status[]>([]);
   const [timeCapsules, setTimeCapsules] = useState<Status[]>([]);
+  const [viewMode, setViewMode] = useState<'grid' | 'list'>('grid');
   
   const [followedUsers, setFollowedUsers] = useState<FollowedUser[]>(() => {
     const storedUsers = localStorage.getItem('followedUsers');
@@ -44,26 +45,26 @@ const Profile = () => {
     <div className="container mx-auto px-4 py-8">
       <div className="max-w-3xl mx-auto">
         {/* Profile Header - Reduced size */}
-        <div className="bg-white rounded-lg shadow-lg p-4 relative mb-8">
-          <div className="flex items-center justify-between mb-4">
-            <div className="w-16 h-16 bg-primary/10 rounded-full flex items-center justify-center">
-              <User className="w-8 h-8 text-primary" />
+        <div className="bg-white rounded-lg shadow-lg p-4 relative mb-6">
+          <div className="flex items-center justify-between mb-3">
+            <div className="w-12 h-12 bg-primary/10 rounded-full flex items-center justify-center">
+              <User className="w-6 h-6 text-primary" />
             </div>
             <ProfileSettings userProfile={userProfile} />
           </div>
 
-          <div className="text-center space-y-2">
-            <h2 className="text-xl font-semibold">{userProfile.name}</h2>
+          <div className="text-center space-y-1">
+            <h2 className="text-lg font-semibold">{userProfile.name}</h2>
             <div className="flex items-center justify-center gap-4">
-              <div className="flex items-center gap-2">
+              <div className="flex items-center gap-1">
                 <Coins className="w-4 h-4 text-yellow-500" />
-                <span className="font-medium">{userProfile.coins} coins</span>
+                <span className="font-medium text-sm">{userProfile.coins} coins</span>
               </div>
               
               {/* Followers Dialog - Reduced size */}
               <Dialog>
                 <DialogTrigger asChild>
-                  <Button variant="outline" size="sm" className="gap-2">
+                  <Button variant="outline" size="sm" className="gap-1 text-sm">
                     <Users className="h-4 w-4" />
                     Following ({followedUsers.length})
                   </Button>
@@ -72,13 +73,13 @@ const Profile = () => {
                   <DialogHeader>
                     <DialogTitle>Following</DialogTitle>
                   </DialogHeader>
-                  <ScrollArea className="h-[150px] pr-4">
+                  <ScrollArea className="h-[120px] pr-4">
                     {followedUsers.length > 0 ? (
-                      <div className="space-y-3">
+                      <div className="space-y-2">
                         {followedUsers.map((user) => (
                           <div key={user.username} className="flex items-center justify-between">
                             <div className="flex items-center gap-2">
-                              <User className="h-6 w-6 text-muted-foreground" />
+                              <User className="h-4 w-4 text-muted-foreground" />
                               <span className="font-medium text-sm">{user.username}</span>
                             </div>
                             <Button
@@ -104,18 +105,36 @@ const Profile = () => {
         </div>
 
         {/* Create Post Section */}
-        <div className="bg-white rounded-lg shadow-lg p-6 mb-8">
+        <div className="bg-white rounded-lg shadow-lg p-6 mb-6">
           <h3 className="text-lg font-semibold mb-4">Create a Post</h3>
           <CreatePostForm onPost={handleNewPost} />
         </div>
 
-        {/* Time Capsules Section */}
+        {/* Time Capsules Section - Reduced height */}
         <TimeCapsules timeCapsules={timeCapsules} />
 
-        {/* Posts Grid Section */}
+        {/* Posts Section with View Toggle */}
         <div className="bg-white rounded-lg shadow-lg p-6">
-          <h3 className="text-lg font-semibold mb-4">Your Posts</h3>
-          <PostsGrid posts={posts} />
+          <div className="flex items-center justify-between mb-4">
+            <h3 className="text-lg font-semibold">Your Posts</h3>
+            <div className="flex gap-2">
+              <Button
+                variant={viewMode === 'grid' ? 'default' : 'outline'}
+                size="sm"
+                onClick={() => setViewMode('grid')}
+              >
+                <LayoutGrid className="h-4 w-4" />
+              </Button>
+              <Button
+                variant={viewMode === 'list' ? 'default' : 'outline'}
+                size="sm"
+                onClick={() => setViewMode('list')}
+              >
+                <LayoutList className="h-4 w-4" />
+              </Button>
+            </div>
+          </div>
+          <PostsGrid posts={posts} viewMode={viewMode} />
         </div>
       </div>
     </div>
