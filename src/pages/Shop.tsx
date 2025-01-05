@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Heart, ShoppingCart } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
@@ -65,20 +65,34 @@ const Shop = () => {
 
   const [selectedCategory, setSelectedCategory] = useState(categories[0]);
 
+  // Load products from localStorage on component mount
+  useEffect(() => {
+    const storedProducts = localStorage.getItem('products');
+    if (storedProducts) {
+      setProducts(JSON.parse(storedProducts));
+    }
+  }, []);
+
   const toggleWishlist = (productId: number) => {
-    setProducts(products.map(product => 
+    const updatedProducts = products.map(product => 
       product.id === productId 
         ? { ...product, isWishlisted: !product.isWishlisted }
         : product
-    ));
+    );
+    setProducts(updatedProducts);
+    // Save to localStorage whenever products are updated
+    localStorage.setItem('products', JSON.stringify(updatedProducts));
   };
 
   const toggleCart = (productId: number) => {
-    setProducts(products.map(product => 
+    const updatedProducts = products.map(product => 
       product.id === productId 
         ? { ...product, inCart: !product.inCart }
         : product
-    ));
+    );
+    setProducts(updatedProducts);
+    // Save to localStorage whenever products are updated
+    localStorage.setItem('products', JSON.stringify(updatedProducts));
   };
 
   const wishlistedProducts = products.filter(p => p.isWishlisted);
