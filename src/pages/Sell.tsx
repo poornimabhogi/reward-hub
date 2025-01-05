@@ -87,9 +87,18 @@ const Sell = () => {
 
   return (
     <div className="container mx-auto px-4 py-8">
-      <div className="max-w-2xl mx-auto">
-        <h1 className="text-2xl font-bold mb-6">List Item for Sale</h1>
-        <form onSubmit={handleSubmit} className="space-y-6">
+      <div className="max-w-2xl mx-auto relative">
+        <div className="flex justify-between items-center mb-6">
+          <h1 className="text-2xl font-bold">List Item for Sale</h1>
+          <Button 
+            type="submit"
+            form="sellForm"
+            className="bg-primary hover:bg-primary/90"
+          >
+            Add Product
+          </Button>
+        </div>
+        <form id="sellForm" onSubmit={handleSubmit} className="space-y-6">
           <div>
             <Label htmlFor="name">Item Name</Label>
             <Input
@@ -160,22 +169,19 @@ const Sell = () => {
             />
           </div>
 
-          <div className="flex gap-4">
-            <Dialog>
-              <DialogTrigger asChild>
-                <Button type="button" variant="outline" className="w-full">
-                  Preview Product
-                </Button>
-              </DialogTrigger>
-              <DialogContent>
-                <DialogHeader>
-                  <DialogTitle>Product Preview</DialogTitle>
-                </DialogHeader>
-                <PreviewProduct />
-              </DialogContent>
-            </Dialog>
-            <Button type="submit" className="w-full">List Item</Button>
-          </div>
+          <Dialog>
+            <DialogTrigger asChild>
+              <Button type="button" variant="outline" className="w-full">
+                Preview Product
+              </Button>
+            </DialogTrigger>
+            <DialogContent>
+              <DialogHeader>
+                <DialogTitle>Product Preview</DialogTitle>
+              </DialogHeader>
+              <PreviewProduct />
+            </DialogContent>
+          </Dialog>
         </form>
       </div>
     </div>
