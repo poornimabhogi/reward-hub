@@ -4,6 +4,7 @@ import { Button } from "@/components/ui/button";
 import { useNavigate } from "react-router-dom";
 import { Card, CardContent } from "@/components/ui/card";
 import { Progress } from "@/components/ui/progress";
+import { useIsMobile } from "@/hooks/use-mobile";
 
 interface Product {
   id: number;
@@ -24,6 +25,7 @@ interface HealthGoal {
 const Index = () => {
   const [coins] = useState(100);
   const navigate = useNavigate();
+  const isMobile = useIsMobile();
   const [wishlistedProducts, setWishlistedProducts] = useState<Product[]>([]);
   const [healthGoals, setHealthGoals] = useState<HealthGoal[]>([
     {
@@ -50,7 +52,6 @@ const Index = () => {
   ]);
 
   useEffect(() => {
-    // Add event listener for storage changes
     const handleStorageChange = () => {
       const storedProducts = localStorage.getItem('products');
       if (storedProducts) {
@@ -60,10 +61,7 @@ const Index = () => {
       }
     };
 
-    // Initial load
     handleStorageChange();
-
-    // Listen for changes
     window.addEventListener('storage', handleStorageChange);
     
     return () => {
@@ -72,92 +70,100 @@ const Index = () => {
   }, []);
 
   return (
-    <div className="container mx-auto px-4 pb-24">
-      {/* Top Bar */}
-      <div className="flex items-center justify-between py-4">
-        <Button 
-          variant="ghost" 
-          size="icon"
-          onClick={() => navigate('/profile')}
-        >
-          <User className="h-6 w-6" />
-        </Button>
-        
-        <div className="flex items-center gap-2">
-          <Coins className="h-5 w-5 text-yellow-500" />
-          <span className="font-medium">{coins} coins</span>
-        </div>
-        
-        <Button 
-          onClick={() => navigate('/lucky-draw')}
-          variant="default"
-          size="sm"
-        >
-          Try Your Luck!
-        </Button>
-      </div>
-
-      {/* Health Goals Section */}
-      <div className="space-y-4 mt-8">
-        <div className="flex items-center justify-between">
-          <h3 className="text-lg font-semibold">Pending Goals</h3>
+    <div className="min-h-screen bg-white">
+      {/* Mobile-optimized Top Bar */}
+      <div className="sticky top-0 bg-white/80 backdrop-blur-md border-b z-50">
+        <div className="flex items-center justify-between p-4 max-w-md mx-auto">
           <Button 
             variant="ghost" 
-            size="sm" 
-            onClick={() => navigate('/health')}
-            className="flex items-center gap-2"
+            size="icon"
+            onClick={() => navigate('/profile')}
+            className="relative"
           >
-            <Activity className="h-4 w-4" />
-            View All
+            <User className="h-6 w-6" />
           </Button>
-        </div>
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-          {healthGoals.map((goal) => (
-            <Card key={goal.id} className="overflow-hidden">
-              <CardContent className="p-4">
-                <div className="flex items-center justify-between mb-2">
-                  <div className="flex items-center gap-2">
-                    <Target className="h-4 w-4 text-primary" />
-                    <h4 className="font-medium">{goal.title}</h4>
-                  </div>
-                  <span className="text-sm text-muted-foreground">
-                    {goal.current} / {goal.target} {goal.unit}
-                  </span>
-                </div>
-                <Progress 
-                  value={(goal.current / goal.target) * 100} 
-                  className="h-2"
-                />
-              </CardContent>
-            </Card>
-          ))}
+          
+          <div className="flex items-center gap-2 bg-neutral px-3 py-1.5 rounded-full">
+            <Coins className="h-5 w-5 text-yellow-500" />
+            <span className="font-medium">{coins}</span>
+          </div>
+          
+          <Button 
+            onClick={() => navigate('/lucky-draw')}
+            variant="default"
+            size="sm"
+            className="bg-primary hover:bg-secondary"
+          >
+            Lucky Draw
+          </Button>
         </div>
       </div>
 
-      {/* Wishlist Section */}
-      <div className="space-y-4 mt-8">
-        <h3 className="text-lg font-semibold">Your Wishlist</h3>
-        {wishlistedProducts.length === 0 ? (
-          <p className="text-muted-foreground text-center py-8">
-            No items in your wishlist yet. Visit the shop to add items!
-          </p>
-        ) : (
-          <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
-            {wishlistedProducts.map((product) => (
-              <Card key={product.id} className="overflow-hidden">
-                <CardContent className="p-3">
-                  <img
-                    src={product.image}
-                    alt={product.name}
-                    className="w-full h-32 object-cover rounded-md mb-2"
+      <div className="max-w-md mx-auto px-4 pb-24 pt-6 space-y-6">
+        {/* Health Goals Section */}
+        <section>
+          <div className="flex items-center justify-between mb-4">
+            <h3 className="text-lg font-semibold">Pending Goals</h3>
+            <Button 
+              variant="ghost" 
+              size="sm" 
+              onClick={() => navigate('/health')}
+              className="flex items-center gap-2 text-primary"
+            >
+              <Activity className="h-4 w-4" />
+              View All
+            </Button>
+          </div>
+          <div className="space-y-3">
+            {healthGoals.map((goal) => (
+              <Card key={goal.id} className="border border-neutral">
+                <CardContent className="p-4">
+                  <div className="flex items-center justify-between mb-2">
+                    <div className="flex items-center gap-2">
+                      <Target className="h-4 w-4 text-primary" />
+                      <h4 className="font-medium">{goal.title}</h4>
+                    </div>
+                    <span className="text-sm text-muted-foreground">
+                      {goal.current} / {goal.target} {goal.unit}
+                    </span>
+                  </div>
+                  <Progress 
+                    value={(goal.current / goal.target) * 100} 
+                    className="h-2"
                   />
-                  <h4 className="font-medium text-sm truncate">{product.name}</h4>
-                  <p className="text-sm text-muted-foreground">${product.price}</p>
                 </CardContent>
               </Card>
             ))}
           </div>
-        )}
+        </section>
+
+        {/* Wishlist Section */}
+        <section>
+          <h3 className="text-lg font-semibold mb-4">Your Wishlist</h3>
+          {wishlistedProducts.length === 0 ? (
+            <Card className="border border-neutral">
+              <CardContent className="p-6 text-center text-muted-foreground">
+                No items in your wishlist yet. Visit the shop to add items!
+              </CardContent>
+            </Card>
+          ) : (
+            <div className="grid grid-cols-2 gap-3">
+              {wishlistedProducts.map((product) => (
+                <Card key={product.id} className="border border-neutral">
+                  <CardContent className="p-3">
+                    <img
+                      src={product.image}
+                      alt={product.name}
+                      className="w-full aspect-square object-cover rounded-md mb-2"
+                    />
+                    <h4 className="font-medium text-sm truncate">{product.name}</h4>
+                    <p className="text-sm text-muted-foreground">${product.price}</p>
+                  </CardContent>
+                </Card>
+              ))}
+            </div>
+          )}
+        </section>
       </div>
     </div>
   );
