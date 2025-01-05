@@ -9,7 +9,6 @@ const ProductDetail = () => {
   const navigate = useNavigate();
   const { toast } = useToast();
 
-  // Get product either from navigation state or localStorage
   const getProduct = () => {
     if (state?.product) return state.product;
     
@@ -87,7 +86,7 @@ const ProductDetail = () => {
           <img
             src={product.image}
             alt={product.name}
-            className="w-full h-auto rounded-lg object-cover aspect-square"
+            className="w-full h-auto rounded-lg object-cover aspect-square max-h-[400px]"
           />
           <Button
             size="icon"
