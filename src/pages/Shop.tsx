@@ -61,7 +61,6 @@ const Shop = () => {
   const [selectedCategory, setSelectedCategory] = useState(categories[0]);
 
   useEffect(() => {
-    // Initialize localStorage with products if it doesn't exist
     const storedProducts = localStorage.getItem('products');
     if (!storedProducts) {
       localStorage.setItem('products', JSON.stringify(initialProducts));
