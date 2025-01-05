@@ -47,7 +47,7 @@ const ProductCard = ({ product, onToggleWishlist, onToggleCart }: ProductCardPro
             <ShoppingCart
               className={`h-4 w-4 ${
                 product.inCart 
-                  ? "text-primary" 
+                  ? "fill-primary text-primary" 
                   : "text-muted-foreground"
               }`}
             />
