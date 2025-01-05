@@ -1,6 +1,7 @@
 import { Heart, ShoppingCart } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useState } from "react";
+import { useNavigate } from "react-router-dom";
 import {
   Select,
   SelectContent,
@@ -24,9 +25,27 @@ interface ProductCardProps {
 
 const ProductCard = ({ product, onToggleWishlist, onToggleCart }: ProductCardProps) => {
   const [quantity, setQuantity] = useState("1");
+  const navigate = useNavigate();
+
+  const handleCardClick = () => {
+    navigate(`/shop/product/${product.id}`, {
+      state: {
+        product: {
+          ...product,
+          onToggleWishlist,
+          onToggleCart,
+        },
+      },
+    });
+  };
+
+  const handleActionClick = (e: React.MouseEvent, action: () => void) => {
+    e.stopPropagation();
+    action();
+  };
 
   return (
-    <div className="card group">
+    <div className="card group cursor-pointer" onClick={handleCardClick}>
       <div className="relative aspect-square mb-4 overflow-hidden rounded-md">
         <img
           src={product.image}
@@ -38,7 +57,7 @@ const ProductCard = ({ product, onToggleWishlist, onToggleCart }: ProductCardPro
             size="icon"
             variant="secondary"
             className="h-8 w-8 bg-white/80 hover:bg-white"
-            onClick={() => onToggleWishlist(product.id)}
+            onClick={(e) => handleActionClick(e, () => onToggleWishlist(product.id))}
           >
             <Heart
               className={`h-4 w-4 ${
@@ -52,7 +71,7 @@ const ProductCard = ({ product, onToggleWishlist, onToggleCart }: ProductCardPro
             size="icon"
             variant="secondary"
             className="h-8 w-8 bg-white/80 hover:bg-white"
-            onClick={() => onToggleCart(product.id)}
+            onClick={(e) => handleActionClick(e, () => onToggleCart(product.id))}
           >
             <ShoppingCart
               className={`h-4 w-4 ${
@@ -67,7 +86,7 @@ const ProductCard = ({ product, onToggleWishlist, onToggleCart }: ProductCardPro
       <h3 className="font-medium text-sm mb-1">{product.name}</h3>
       <p className="text-sm text-gray-600 mb-3">${product.price}</p>
       
-      <div>
+      <div onClick={(e) => e.stopPropagation()}>
         <Select value={quantity} onValueChange={setQuantity}>
           <SelectTrigger className="w-full">
             <SelectValue>Quantity: {quantity}</SelectValue>
