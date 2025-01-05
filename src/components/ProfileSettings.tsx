@@ -28,19 +28,6 @@ export const ProfileSettings = ({ userProfile }: { userProfile: UserProfile }) =
 
   return (
     <div className="absolute right-4 top-4 flex items-center gap-2">
-      <DropdownMenu>
-        <DropdownMenuTrigger asChild>
-          <Button variant="ghost" size="icon">
-            <Plus className="h-5 w-5" />
-          </Button>
-        </DropdownMenuTrigger>
-        <DropdownMenuContent align="end">
-          <DropdownMenuItem>Today's Time Capsule</DropdownMenuItem>
-          <DropdownMenuItem>Feature Post</DropdownMenuItem>
-          <DropdownMenuItem>Reel</DropdownMenuItem>
-        </DropdownMenuContent>
-      </DropdownMenu>
-
       <Dialog>
         <DialogTrigger asChild>
           <Button variant="ghost" size="icon">
@@ -74,6 +61,19 @@ export const ProfileSettings = ({ userProfile }: { userProfile: UserProfile }) =
           </div>
         </DialogContent>
       </Dialog>
+
+      <DropdownMenu>
+        <DropdownMenuTrigger asChild>
+          <Button variant="ghost" size="icon">
+            <Plus className="h-5 w-5" />
+          </Button>
+        </DropdownMenuTrigger>
+        <DropdownMenuContent align="end">
+          <DropdownMenuItem>Today's Time Capsule</DropdownMenuItem>
+          <DropdownMenuItem>Feature Post</DropdownMenuItem>
+          <DropdownMenuItem>Reel</DropdownMenuItem>
+        </DropdownMenuContent>
+      </DropdownMenu>
     </div>
   );
 };
