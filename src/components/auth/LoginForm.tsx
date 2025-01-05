@@ -3,25 +3,37 @@ import { useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { useAuth } from "@/contexts/AuthContext";
+import { useToast } from "@/components/ui/use-toast";
 
 export const LoginForm = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const navigate = useNavigate();
   const { login } = useAuth();
+  const { toast } = useToast();
 
-  const handleLogin = (e: React.FormEvent) => {
+  const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
-    login(email, password);
+    const success = login(email, password);
+    if (success) {
+      toast({
+        title: "Success",
+        description: "Logged in successfully",
+      });
+      navigate("/");
+    }
   };
 
   const handleGoogleLogin = () => {
     // Placeholder for Google login
     console.log("Google login clicked");
+    login("google@example.com", "google123");
+    navigate("/");
   };
 
   const continueAsGuest = () => {
     login("guest@example.com", "guest123456");
+    navigate("/");
   };
 
   return (

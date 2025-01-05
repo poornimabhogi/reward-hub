@@ -3,6 +3,7 @@ import { Input } from "@/components/ui/input";
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { useToast } from "@/components/ui/use-toast";
+import { useAuth } from "@/contexts/AuthContext";
 
 const Signup = () => {
   const [username, setUsername] = useState("");
@@ -11,6 +12,7 @@ const Signup = () => {
   const [confirmPassword, setConfirmPassword] = useState("");
   const navigate = useNavigate();
   const { toast } = useToast();
+  const { login } = useAuth();
 
   const handleSignup = (e: React.FormEvent) => {
     e.preventDefault();
@@ -26,10 +28,15 @@ const Signup = () => {
 
     // This is where you would integrate with your backend
     console.log("Signup:", { username, email, password });
+    
+    // For now, we'll automatically log the user in after signup
+    login(email, password);
+    
     toast({
       title: "Success",
       description: "Account created successfully",
     });
+    
     navigate("/");
   };
 
