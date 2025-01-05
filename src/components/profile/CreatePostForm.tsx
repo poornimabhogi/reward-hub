@@ -1,18 +1,25 @@
 import { useState } from "react";
-import { Image, Send, Film, LayoutGrid, LayoutList } from "lucide-react";
+import { Image, Send, Film, CircleDot, LayoutGrid, Plus } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
 import { Status } from "@/types/profile";
 import { toast } from "sonner";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 
 interface CreatePostFormProps {
-  onPost: (newStatus: Status, isTimeCapsule: boolean) => void;
+  onPost: (newStatus: Status, postType: string) => void;
 }
 
 export const CreatePostForm = ({ onPost }: CreatePostFormProps) => {
   const [thoughtText, setThoughtText] = useState('');
   const [thoughtMedia, setThoughtMedia] = useState<File | null>(null);
-  const [isTimeCapsule, setIsTimeCapsule] = useState(false);
+  const [postType, setPostType] = useState('feature');
 
   const handleSubmit = () => {
     if (thoughtText.trim() || thoughtMedia) {
@@ -21,71 +28,68 @@ export const CreatePostForm = ({ onPost }: CreatePostFormProps) => {
         type: thoughtMedia?.type.startsWith('image/') ? 'photo' : 'video',
         url: thoughtMedia ? URL.createObjectURL(thoughtMedia) : '',
         timestamp: new Date(),
-        isTimeCapsule
+        postType
       };
-      onPost(newStatus, isTimeCapsule);
+      onPost(newStatus, postType);
       setThoughtText('');
       setThoughtMedia(null);
-      toast.success(isTimeCapsule ? "Time capsule created!" : "Post created!");
+      toast.success(`${postType === 'timeCapsule' ? "Time capsule" : "Post"} created!`);
     }
   };
 
   return (
     <div className="space-y-4">
+      <div className="flex items-center gap-4 mb-4">
+        <Button
+          variant="outline"
+          size="icon"
+          className="rounded-full"
+          onClick={() => document.getElementById('photoInput')?.click()}
+        >
+          <Plus className="h-4 w-4" />
+        </Button>
+        <Select value={postType} onValueChange={setPostType}>
+          <SelectTrigger className="w-[180px]">
+            <SelectValue placeholder="Select post type" />
+          </SelectTrigger>
+          <SelectContent>
+            <SelectItem value="timeCapsule">Today's Capsule</SelectItem>
+            <SelectItem value="feature">Feature Post</SelectItem>
+            <SelectItem value="reel">Reel</SelectItem>
+          </SelectContent>
+        </Select>
+      </div>
+
+      <input
+        id="photoInput"
+        type="file"
+        accept="image/*,video/*"
+        className="hidden"
+        onChange={(e) => setThoughtMedia(e.target.files?.[0] || null)}
+      />
+
       <Textarea
         placeholder="Share your thoughts..."
         value={thoughtText}
         onChange={(e) => setThoughtText(e.target.value)}
         className="min-h-[80px]"
       />
-      <div className="flex items-center gap-4">
-        <div className="flex gap-2">
-          <label className="cursor-pointer">
-            <input
-              type="file"
-              accept="image/*"
-              className="hidden"
-              onChange={(e) => setThoughtMedia(e.target.files?.[0] || null)}
-            />
-            <div className="flex h-8 w-8 items-center justify-center rounded-full bg-muted hover:bg-muted/80">
-              <Image className="h-4 w-4" />
-            </div>
-          </label>
-          <label className="cursor-pointer">
-            <input
-              type="file"
-              accept="video/*"
-              className="hidden"
-              onChange={(e) => setThoughtMedia(e.target.files?.[0] || null)}
-            />
-            <div className="flex h-8 w-8 items-center justify-center rounded-full bg-muted hover:bg-muted/80">
-              <Film className="h-4 w-4" />
-            </div>
-          </label>
-        </div>
-        {thoughtMedia && (
-          <span className="text-sm text-muted-foreground">
-            {thoughtMedia.name}
-          </span>
-        )}
-        <div className="flex items-center gap-2 ml-auto">
-          <Button
-            variant="outline"
-            size="sm"
-            onClick={() => setIsTimeCapsule(!isTimeCapsule)}
-            className={isTimeCapsule ? "bg-primary text-white" : ""}
-          >
-            Story
-          </Button>
-          <Button
-            size="sm"
-            onClick={handleSubmit}
-            disabled={!thoughtText.trim() && !thoughtMedia}
-          >
-            <Send className="h-4 w-4 mr-2" />
-            Share
-          </Button>
-        </div>
+      
+      {thoughtMedia && (
+        <span className="text-sm text-muted-foreground">
+          Selected: {thoughtMedia.name}
+        </span>
+      )}
+
+      <div className="flex justify-end">
+        <Button
+          size="sm"
+          onClick={handleSubmit}
+          disabled={!thoughtText.trim() && !thoughtMedia}
+        >
+          <Send className="h-4 w-4 mr-2" />
+          Share
+        </Button>
       </div>
     </div>
   );
