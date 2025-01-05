@@ -40,26 +40,28 @@
   }
 }
 
-.nav-link {
-  @apply relative px-4 py-2 text-sm font-medium transition-colors;
-}
+@layer components {
+  .nav-link {
+    @apply relative px-4 py-2 text-sm font-medium transition-colors;
+  }
 
-.nav-link::after {
-  @apply content-[''] absolute left-0 bottom-0 w-full h-0.5 bg-primary scale-x-0 transition-transform duration-300 origin-bottom-right;
-}
+  .nav-link::after {
+    @apply content-[''] absolute left-0 bottom-0 w-full h-0.5 bg-primary scale-x-0 transition-transform duration-300 origin-bottom-right;
+  }
 
-.nav-link:hover::after {
-  @apply scale-x-100 origin-bottom-left;
-}
+  .nav-link:hover::after {
+    @apply scale-x-100 origin-bottom-left;
+  }
 
-.card {
-  @apply relative overflow-hidden rounded-lg bg-card p-6 shadow-lg transition-all duration-300 hover:shadow-xl;
-}
+  .card {
+    @apply relative overflow-hidden rounded-lg bg-card p-6 shadow-lg transition-all duration-300 hover:shadow-xl;
+  }
 
-.button-primary {
-  @apply inline-flex items-center justify-center rounded-md bg-primary px-4 py-2 text-sm font-medium text-primary-foreground shadow transition-colors hover:bg-primary/90 focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:pointer-events-none disabled:opacity-50;
-}
+  .button-primary {
+    @apply inline-flex items-center justify-center rounded-md bg-primary px-4 py-2 text-sm font-medium text-primary-foreground shadow transition-colors hover:bg-primary/90 focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:pointer-events-none disabled:opacity-50;
+  }
 
-.button-secondary {
-  @apply inline-flex items-center justify-center rounded-md bg-secondary px-4 py-2 text-sm font-medium text-secondary-foreground shadow-sm transition-colors hover:bg-secondary/80 focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:pointer-events-none disabled:opacity-50;
+  .button-secondary {
+    @apply inline-flex items-center justify-center rounded-md bg-secondary px-4 py-2 text-sm font-medium text-secondary-foreground shadow-sm transition-colors hover:bg-secondary/80 focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:pointer-events-none disabled:opacity-50;
+  }
 }
