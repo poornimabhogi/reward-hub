@@ -75,7 +75,7 @@ const ProductCard = ({ product, onToggleWishlist, onToggleCart }: ProductCardPro
           <SelectContent>
             {[1, 2, 3, 4, 5, 6, 7, 8, 9, 10].map((num) => (
               <SelectItem key={num} value={num.toString()}>
-                Quantity: {num}
+                {num}
               </SelectItem>
             ))}
           </SelectContent>
