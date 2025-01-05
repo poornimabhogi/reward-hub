@@ -18,12 +18,32 @@ const ProductDetail = () => {
   }
 
   const handleAddToCart = () => {
-    // Reuse the existing cart toggle logic
-    product.onToggleCart(product.id);
+    // Get products from localStorage
+    const storedProducts = localStorage.getItem('products');
+    if (storedProducts) {
+      const products = JSON.parse(storedProducts);
+      const updatedProducts = products.map((p: any) => 
+        p.id === product.id ? { ...p, inCart: true } : p
+      );
+      localStorage.setItem('products', JSON.stringify(updatedProducts));
+    }
+
     toast({
       title: "Added to cart",
       description: `${product.name} has been added to your cart.`,
     });
+  };
+
+  const handleToggleWishlist = () => {
+    // Get products from localStorage
+    const storedProducts = localStorage.getItem('products');
+    if (storedProducts) {
+      const products = JSON.parse(storedProducts);
+      const updatedProducts = products.map((p: any) => 
+        p.id === product.id ? { ...p, isWishlisted: !p.isWishlisted } : p
+      );
+      localStorage.setItem('products', JSON.stringify(updatedProducts));
+    }
   };
 
   const handleBuyNow = () => {
@@ -53,7 +73,7 @@ const ProductDetail = () => {
             size="icon"
             variant="secondary"
             className="absolute top-4 right-4 h-10 w-10 bg-white/80 hover:bg-white"
-            onClick={() => product.onToggleWishlist(product.id)}
+            onClick={handleToggleWishlist}
           >
             <Heart
               className={`h-5 w-5 ${

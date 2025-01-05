@@ -31,9 +31,12 @@ const ProductCard = ({ product, onToggleWishlist, onToggleCart }: ProductCardPro
     navigate(`/shop/product/${product.id}`, {
       state: {
         product: {
-          ...product,
-          onToggleWishlist,
-          onToggleCart,
+          id: product.id,
+          name: product.name,
+          price: product.price,
+          image: product.image,
+          isWishlisted: product.isWishlisted,
+          inCart: product.inCart,
         },
       },
     });
