@@ -21,8 +21,8 @@ export const PostsGrid = ({ posts, viewMode: externalViewMode }: PostsGridProps)
   const currentViewMode = externalViewMode || internalViewMode;
 
   return (
-    <div className="space-y-4 mt-8">
-      <div className="flex justify-between items-center">
+    <div className="space-y-4">
+      <div className="flex justify-between items-center border-t pt-4">
         <h3 className="text-lg font-medium">Feature Posts</h3>
         <div className="flex gap-2">
           <TooltipProvider>
