@@ -1,36 +1,28 @@
 import { loadStripe } from '@stripe/stripe-js';
 
-// Initialize Stripe with your publishable key
-const stripePromise = loadStripe('pk_test_51OxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxY');
+const stripePromise = loadStripe('pk_test_your_publishable_key');
 
 export const createCheckoutSession = async (product: {
   name: string;
   price: number;
   quantity: number;
 }) => {
-  const stripe = await stripePromise;
-  if (!stripe) throw new Error('Stripe failed to initialize');
-
-  // Create a Stripe Checkout Session
-  const { error } = await stripe.redirectToCheckout({
-    mode: 'payment',
-    lineItems: [
-      {
-        price_data: {
-          currency: 'usd',
-          product_data: {
-            name: product.name,
-          },
-          unit_amount: product.price * 100, // Stripe expects amount in cents
-        },
-        quantity: product.quantity,
+  try {
+    // Create checkout session on backend
+    const response = await fetch('http://localhost:3000/stripe/create-checkout-session', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
       },
-    ],
-    successUrl: `${window.location.origin}/shop?success=true`,
-    cancelUrl: `${window.location.origin}/shop?canceled=true`,
-  });
+      body: JSON.stringify(product),
+    });
 
-  if (error) {
-    throw new Error(error.message);
+    const { url } = await response.json();
+    
+    // Redirect to checkout
+    window.location.href = url;
+  } catch (error) {
+    console.error('Error creating checkout session:', error);
+    throw error;
   }
 };
