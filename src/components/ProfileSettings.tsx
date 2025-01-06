@@ -43,7 +43,7 @@ export const ProfileSettings = ({ userProfile }: { userProfile: UserProfile }) =
       
       const newCapsule = {
         id: Date.now(),
-        type: selectedFile.type.startsWith('image/') ? 'photo' : 'video',
+        type: selectedFile.type.startsWith('image/') ? 'photo' : 'video' as const,
         url: fileUrl,
         timestamp: new Date().toISOString(),
         postType: selectedPostType,
