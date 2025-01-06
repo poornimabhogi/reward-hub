@@ -47,30 +47,30 @@ export const MonthlyEvent = ({ totalAccumulation }: MonthlyEventProps) => {
   return (
     <Dialog>
       <DialogTrigger asChild>
-        <div className="bg-neutral rounded-lg cursor-pointer hover:bg-neutral/80 transition-colors p-6">
-          <div className="flex flex-col space-y-2">
-            <div className="flex items-center justify-between">
-              <h3 className="text-lg font-semibold">Monthly Lucky Draw</h3>
-              <div className="flex items-center gap-2 text-primary">
-                <Calendar className="w-4 h-4" />
-                <span className="text-sm">4/20/2024</span>
-              </div>
+        <div className="bg-neutral rounded-lg cursor-pointer hover:bg-neutral/80 transition-colors p-4 mb-4">
+          <div className="flex flex-col items-center text-center space-y-3">
+            <div className="flex items-center gap-2">
+              <h3 className="text-xl font-semibold">Monthly Lucky Draw</h3>
+              <Calendar className="w-5 h-5 text-primary" />
             </div>
-            <p className="text-sm text-muted-foreground">
+            <div className="text-primary font-medium">
+              4/20/2024
+            </div>
+            <p className="text-muted-foreground">
               Monthly prize pool from accumulated earnings!
             </p>
-            <p className="text-sm text-primary">
+            <p className="text-primary font-medium">
               Time Remaining: {countdown}
             </p>
           </div>
         </div>
       </DialogTrigger>
-      <DialogContent>
+      <DialogContent className="max-w-md">
         <DialogHeader>
           <DialogTitle>Monthly Lucky Draw</DialogTitle>
         </DialogHeader>
-        <div className="space-y-4">
-          <p>Monthly prize pool from accumulated earnings!</p>
+        <div className="space-y-4 py-4">
+          <p className="text-center">Monthly prize pool from accumulated earnings!</p>
           <div className="bg-neutral p-4 rounded-lg">
             <p className="font-semibold">Grand Prize</p>
             <p className="text-primary">{totalAccumulation} Coins Prize Pool</p>
@@ -79,10 +79,13 @@ export const MonthlyEvent = ({ totalAccumulation }: MonthlyEventProps) => {
             <p className="font-semibold">Time Remaining</p>
             <p className="text-primary">{countdown}</p>
           </div>
-          <Button onClick={() => toast({
-            title: "Reminder Set!",
-            description: "We'll notify you when this event starts.",
-          })}>
+          <Button 
+            className="w-full" 
+            onClick={() => toast({
+              title: "Reminder Set!",
+              description: "We'll notify you when this event starts.",
+            })}
+          >
             Set Reminder
           </Button>
         </div>
