@@ -3,6 +3,7 @@ import { Search, Volume2, VolumeX, User } from "lucide-react";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { useToast } from "@/components/ui/use-toast";
+import { SocialTimeCapsules } from "@/components/social/SocialTimeCapsules";
 
 interface Post {
   id: number;
@@ -21,6 +22,10 @@ interface FollowedUser {
 const Social = () => {
   const { toast } = useToast();
   const [searchQuery, setSearchQuery] = useState("");
+  const [followedUsers, setFollowedUsers] = useState<FollowedUser[]>(() => {
+    const stored = localStorage.getItem('followedUsers');
+    return stored ? JSON.parse(stored) : [];
+  });
   const [posts, setPosts] = useState<Post[]>([
     {
       id: 1,
@@ -40,10 +45,10 @@ const Social = () => {
   ]);
 
   useEffect(() => {
-    const followedUsers = JSON.parse(localStorage.getItem('followedUsers') || '[]');
+    const storedUsers = JSON.parse(localStorage.getItem('followedUsers') || '[]');
     setPosts(posts.map(post => ({
       ...post,
-      isFollowing: followedUsers.some((user: FollowedUser) => user.username === post.username)
+      isFollowing: storedUsers.some((user: FollowedUser) => user.username === post.username)
     })));
   }, []);
 
@@ -52,14 +57,16 @@ const Social = () => {
       if (post.id === postId) {
         const newState = !post.isFollowing;
         
-        const followedUsers = JSON.parse(localStorage.getItem('followedUsers') || '[]');
+        const updatedFollowedUsers = [...followedUsers];
         if (newState) {
-          followedUsers.push({ username: post.username, isFollowing: true });
+          updatedFollowedUsers.push({ username: post.username, isFollowing: true });
         } else {
-          const index = followedUsers.findIndex((user: FollowedUser) => user.username === post.username);
-          if (index > -1) followedUsers.splice(index, 1);
+          const index = updatedFollowedUsers.findIndex(user => user.username === post.username);
+          if (index > -1) updatedFollowedUsers.splice(index, 1);
         }
-        localStorage.setItem('followedUsers', JSON.stringify(followedUsers));
+        
+        setFollowedUsers(updatedFollowedUsers);
+        localStorage.setItem('followedUsers', JSON.stringify(updatedFollowedUsers));
 
         toast({
           title: newState ? "Following" : "Unfollowed",
@@ -101,6 +108,8 @@ const Social = () => {
       </div>
 
       <div className="container mx-auto px-4">
+        <SocialTimeCapsules followedUsers={followedUsers} />
+        
         <div className="grid gap-6">
           {filteredPosts.map((post) => (
             <div key={post.id} className="relative rounded-lg overflow-hidden bg-white shadow-lg">
