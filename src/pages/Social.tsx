@@ -78,8 +78,8 @@ const Social = () => {
   );
 
   return (
-    <div className="min-h-screen bg-background">
-      <div className="sticky top-0 z-50 bg-background pb-4 pt-4">
+    <div className="pb-20">
+      <div className="sticky top-0 z-10 bg-background pb-4 pt-4">
         <div className="container mx-auto px-4">
           {/* Search Section */}
           <div className="relative mb-6">
@@ -93,7 +93,7 @@ const Social = () => {
           </div>
 
           {/* Time Capsules Section */}
-          <div className="bg-white rounded-lg shadow-sm p-4 mb-6">
+          <div className="bg-white rounded-lg shadow-sm p-4">
             <h3 className="text-sm font-medium mb-3">Today's Time Capsules</h3>
             <ScrollArea className="w-full whitespace-nowrap">
               <div className="flex gap-4">
@@ -126,7 +126,7 @@ const Social = () => {
         </div>
       </div>
 
-      <div className="container mx-auto px-4 pb-20">
+      <div className="container mx-auto px-4">
         <div className="grid gap-6">
           {filteredPosts.map((post) => (
             <div key={post.id} className="relative rounded-lg overflow-hidden bg-white shadow-lg">
