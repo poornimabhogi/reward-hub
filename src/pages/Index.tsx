@@ -25,7 +25,7 @@ interface HealthGoal {
 }
 
 const Index = () => {
-  const { isAuthenticated, user, logout } = useAuth();
+  const { isAuthenticated, user, logout, isLoading } = useAuth();
   const [coins, setCoins] = useState(100);
   const navigate = useNavigate();
   const { toast } = useToast();
@@ -72,6 +72,16 @@ const Index = () => {
     };
   }, []);
 
+  // Show loading state
+  if (isLoading) {
+    return (
+      <div className="min-h-screen bg-neutral flex items-center justify-center p-4">
+        <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary"></div>
+      </div>
+    );
+  }
+
+  // Show login form if not authenticated
   if (!isAuthenticated) {
     return (
       <div className="min-h-screen bg-neutral flex items-center justify-center p-4">
