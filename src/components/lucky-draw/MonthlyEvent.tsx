@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { Calendar, Coins } from "lucide-react";
+import { Calendar } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useToast } from "@/hooks/use-toast";
 import {
@@ -47,21 +47,21 @@ export const MonthlyEvent = ({ totalAccumulation }: MonthlyEventProps) => {
   return (
     <Dialog>
       <DialogTrigger asChild>
-        <div className="bg-neutral p-4 rounded-lg cursor-pointer hover:bg-neutral/80 transition-colors">
-          <div className="flex items-start justify-between">
-            <div className="flex-1">
-              <h3 className="font-semibold">Monthly Lucky Draw</h3>
-              <p className="text-sm text-muted-foreground">
-                Monthly prize pool from accumulated earnings!
-              </p>
-              <p className="text-sm font-medium text-primary mt-2">
-                Time Remaining: {countdown}
-              </p>
+        <div className="bg-neutral rounded-lg cursor-pointer hover:bg-neutral/80 transition-colors p-6">
+          <div className="flex flex-col space-y-2">
+            <div className="flex items-center justify-between">
+              <h3 className="text-lg font-semibold">Monthly Lucky Draw</h3>
+              <div className="flex items-center gap-2 text-primary">
+                <Calendar className="w-4 h-4" />
+                <span className="text-sm">4/20/2024</span>
+              </div>
             </div>
-            <div className="flex items-center gap-2 text-sm text-primary">
-              <Calendar className="w-4 h-4" />
-              {new Date(eventDate).toLocaleDateString()}
-            </div>
+            <p className="text-sm text-muted-foreground">
+              Monthly prize pool from accumulated earnings!
+            </p>
+            <p className="text-sm text-primary">
+              Time Remaining: {countdown}
+            </p>
           </div>
         </div>
       </DialogTrigger>
