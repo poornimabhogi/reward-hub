@@ -16,7 +16,7 @@ const Navigation = () => {
   }
 
   return (
-    <nav className="fixed bottom-0 left-0 right-0 bg-white border-t">
+    <nav className="fixed bottom-0 left-0 right-0 bg-white border-t z-50">
       <div className="container mx-auto px-4">
         <div className="flex items-center justify-around py-3">
           <Link to="/" className={`nav-link flex flex-col items-center ${location.pathname === "/" ? "text-primary" : "text-gray-500"}`}>

@@ -85,8 +85,8 @@ const Social = () => {
   );
 
   return (
-    <div className="flex flex-col min-h-screen bg-background pb-16">
-      <div className="sticky top-0 z-10 bg-background pb-4 pt-4">
+    <div className="flex flex-col min-h-screen bg-background relative">
+      <div className="sticky top-0 z-20 bg-background pb-4 pt-4">
         <div className="container mx-auto px-4">
           <div className="relative">
             <Search className="absolute left-3 top-3 h-4 w-4 text-muted-foreground" />
@@ -100,7 +100,7 @@ const Social = () => {
         </div>
       </div>
 
-      <div className="flex-1 container mx-auto px-4">
+      <div className="flex-1 container mx-auto px-4 pb-24">
         <div className="grid gap-6">
           {filteredPosts.map((post) => (
             <div key={post.id} className="relative rounded-lg overflow-hidden bg-white shadow-lg">
