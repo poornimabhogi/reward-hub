@@ -5,7 +5,7 @@ import { Button } from "@/components/ui/button";
 import { ViewDetailsDropdown } from "./profile/ViewDetailsDropdown";
 import { EditProfileForm } from "./profile/EditProfileForm";
 import { toast } from "sonner";
-import { addTimeCapsule } from "@/utils/timeCapsuleUtils";
+import { addTimeCapsule, TimeCapsule } from "@/utils/timeCapsuleUtils";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -40,10 +40,11 @@ export const ProfileSettings = ({ userProfile }: { userProfile: UserProfile }) =
   const handleConfirmPost = () => {
     if (selectedFile) {
       const fileUrl = URL.createObjectURL(selectedFile);
+      const fileType = selectedFile.type.startsWith('image/') ? 'photo' as const : 'video' as const;
       
-      const newCapsule = {
+      const newCapsule: TimeCapsule = {
         id: Date.now(),
-        type: selectedFile.type.startsWith('image/') ? 'photo' : 'video' as const,
+        type: fileType,
         url: fileUrl,
         timestamp: new Date().toISOString(),
         postType: selectedPostType,
@@ -52,6 +53,7 @@ export const ProfileSettings = ({ userProfile }: { userProfile: UserProfile }) =
 
       addTimeCapsule(newCapsule);
       toast.success(`${selectedPostType === 'timeCapsule' ? "Time capsule" : "Post"} added!`);
+      console.log('New time capsule added:', newCapsule);
       
       setSelectedFile(null);
       setIsConfirmDialogOpen(false);

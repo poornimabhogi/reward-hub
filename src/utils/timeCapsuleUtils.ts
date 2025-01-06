@@ -17,7 +17,7 @@ export const addTimeCapsule = (capsule: TimeCapsule) => {
     detail: capsule
   });
   window.dispatchEvent(event);
-  console.log('Time capsule added:', capsule);
+  console.log('Time capsule added and event dispatched:', capsule);
 };
 
 export const getTimeCapsules = (): TimeCapsule[] => {
