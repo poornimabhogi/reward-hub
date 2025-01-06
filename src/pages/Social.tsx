@@ -46,7 +46,9 @@ const Social = () => {
     const handleNewTimeCapsule = (event: CustomEvent<Status>) => {
       const newStatus = event.detail;
       if (newStatus.postType === 'timeCapsule') {
-        setTimeCapsules(prev => [newStatus, ...prev]);
+        setTimeCapsules(prev => [newStatus, ...prev].sort((a, b) => 
+          new Date(b.timestamp).getTime() - new Date(a.timestamp).getTime()
+        ));
       }
     };
 
@@ -60,6 +62,16 @@ const Social = () => {
     const updatedUsers = followedUsers.filter(user => user.username !== username);
     setFollowedUsers(updatedUsers);
     localStorage.setItem('followedUsers', JSON.stringify(updatedUsers));
+  };
+
+  const toggleMute = (postId: number) => {
+    setPosts(prevPosts => 
+      prevPosts.map(post => 
+        post.id === postId 
+          ? { ...post, isMuted: !post.isMuted }
+          : post
+      )
+    );
   };
 
   const filteredPosts = posts.filter(post =>
