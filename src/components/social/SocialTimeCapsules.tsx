@@ -1,7 +1,5 @@
 import { useState, useEffect } from "react";
 import { ScrollArea, ScrollBar } from "@/components/ui/scroll-area";
-import { Avatar, AvatarImage, AvatarFallback } from "@/components/ui/avatar";
-import { User } from "lucide-react";
 
 interface TimeCapsule {
   id: number;
@@ -17,21 +15,23 @@ interface SocialTimeCapsuleProps {
 
 export const SocialTimeCapsules = ({ followedUsers }: SocialTimeCapsuleProps) => {
   const [timeCapsules, setTimeCapsules] = useState<TimeCapsule[]>([]);
-  const currentUser = "John Doe"; // This should match the current user's name from your auth context
+  const currentUser = "John Doe"; // This should match the current user's name
 
   useEffect(() => {
     const handleNewTimeCapsule = (event: CustomEvent<any>) => {
+      console.log('New time capsule event received:', event.detail); // Debug log
       const newCapsule = event.detail;
-      setTimeCapsules(prev => [
-        {
+      
+      setTimeCapsules(prev => {
+        console.log('Previous capsules:', prev); // Debug log
+        return [{
           id: newCapsule.id,
-          username: currentUser, // Set the current user as the creator
+          username: newCapsule.username || currentUser,
           type: newCapsule.type,
           url: newCapsule.url,
           timestamp: new Date(newCapsule.timestamp)
-        },
-        ...prev
-      ]);
+        }, ...prev];
+      });
     };
 
     window.addEventListener('newTimeCapsule', handleNewTimeCapsule as EventListener);
@@ -45,7 +45,13 @@ export const SocialTimeCapsules = ({ followedUsers }: SocialTimeCapsuleProps) =>
     return () => {
       window.removeEventListener('newTimeCapsule', handleNewTimeCapsule as EventListener);
     };
-  }, []);
+  }, [currentUser]);
+
+  // Save to localStorage whenever timeCapsules changes
+  useEffect(() => {
+    console.log('Saving time capsules:', timeCapsules); // Debug log
+    localStorage.setItem('socialTimeCapsules', JSON.stringify(timeCapsules));
+  }, [timeCapsules]);
 
   // Filter and sort time capsules
   const sortedTimeCapsules = timeCapsules

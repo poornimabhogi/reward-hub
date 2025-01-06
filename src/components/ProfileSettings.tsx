@@ -69,10 +69,11 @@ export const ProfileSettings = ({ userProfile }: { userProfile: UserProfile }) =
         type: selectedFile.type.startsWith('image/') ? 'photo' : 'video',
         url: URL.createObjectURL(selectedFile),
         timestamp: new Date(),
-        postType: selectedPostType
+        postType: selectedPostType,
+        username: userProfile.name // Add username to the event data
       };
 
-      // Dispatch a custom event to notify the parent component
+      // Dispatch a custom event to notify other components
       const customEvent = new CustomEvent('newTimeCapsule', { 
         detail: newStatus 
       });
