@@ -1,7 +1,7 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import { ScrollArea, ScrollBar } from "@/components/ui/scroll-area";
 import { getTimeCapsules, TimeCapsule } from "@/utils/timeCapsuleUtils";
-import { Button } from "@/components/ui/button";
+import { toast } from "sonner";
 
 interface SocialTimeCapsuleProps {
   followedUsers: { username: string; isFollowing: boolean; }[];
@@ -10,11 +10,11 @@ interface SocialTimeCapsuleProps {
 export const SocialTimeCapsules = ({ followedUsers }: SocialTimeCapsuleProps) => {
   const [timeCapsules, setTimeCapsules] = useState<TimeCapsule[]>([]);
   const currentUser = "John Doe";
+  const clickTimestamps = useRef<{ [key: number]: number }>({});
 
   useEffect(() => {
     const loadTimeCapsules = () => {
       const capsules = getTimeCapsules().filter(capsule => {
-        // Verify the URL is valid and accessible
         try {
           new URL(capsule.url);
           return capsule.url && 
@@ -41,7 +41,6 @@ export const SocialTimeCapsules = ({ followedUsers }: SocialTimeCapsuleProps) =>
     };
   }, []);
 
-  // Filter and sort time capsules
   const filteredCapsules = timeCapsules
     .filter(capsule => 
       capsule.postType === 'timeCapsule' &&
@@ -50,9 +49,28 @@ export const SocialTimeCapsules = ({ followedUsers }: SocialTimeCapsuleProps) =>
     )
     .sort((a, b) => new Date(b.timestamp).getTime() - new Date(a.timestamp).getTime());
 
+  const handleDelete = (capsuleId: number, username: string) => {
+    if (username !== currentUser) {
+      toast.error("You can only delete your own time capsules!");
+      return;
+    }
+
+    const now = Date.now();
+    const lastClick = clickTimestamps.current[capsuleId] || 0;
+    
+    if (now - lastClick < 300) { // Double click within 300ms
+      const updatedCapsules = getTimeCapsules().filter(tc => tc.id !== capsuleId);
+      localStorage.setItem('timeCapsules', JSON.stringify(updatedCapsules));
+      setTimeCapsules(prev => prev.filter(tc => tc.id !== capsuleId));
+      toast.success("Time capsule deleted!");
+      clickTimestamps.current[capsuleId] = 0; // Reset timestamp
+    } else {
+      clickTimestamps.current[capsuleId] = now;
+    }
+  };
+
   const handleMediaError = (capsuleId: number) => {
     setTimeCapsules(prev => prev.filter(tc => tc.id !== capsuleId));
-    // Also remove from localStorage
     const storedCapsules = getTimeCapsules();
     localStorage.setItem('timeCapsules', JSON.stringify(
       storedCapsules.filter(tc => tc.id !== capsuleId)
@@ -65,7 +83,11 @@ export const SocialTimeCapsules = ({ followedUsers }: SocialTimeCapsuleProps) =>
       <ScrollArea className="w-full whitespace-nowrap">
         <div className="flex gap-4">
           {filteredCapsules.map((capsule) => (
-            <div key={capsule.id} className="flex-none">
+            <div 
+              key={capsule.id} 
+              className="flex-none cursor-pointer"
+              onClick={() => handleDelete(capsule.id, capsule.username)}
+            >
               <div className="relative">
                 <div className="w-16 h-16 rounded-full overflow-hidden ring-2 ring-primary p-0.5 bg-neutral">
                   {capsule.type === 'photo' ? (

@@ -12,12 +12,11 @@ interface TimeCapsuleProps {
 export const TimeCapsules = ({ timeCapsules: propTimeCapsules }: TimeCapsuleProps) => {
   const [localTimeCapsules, setLocalTimeCapsules] = useState<TimeCapsule[]>([]);
   const fileInputRef = useRef<HTMLInputElement>(null);
+  const clickTimestamps = useRef<{ [key: number]: number }>({});
 
   useEffect(() => {
-    // Load initial time capsules from localStorage and filter out any invalid ones
     const loadTimeCapsules = () => {
       const capsules = getTimeCapsules().filter(capsule => {
-        // Verify the URL is valid and the capsule has all required properties
         return capsule.url && 
                capsule.username && 
                capsule.postType === 'timeCapsule' &&
@@ -38,6 +37,21 @@ export const TimeCapsules = ({ timeCapsules: propTimeCapsules }: TimeCapsuleProp
       window.removeEventListener('newTimeCapsule', handleNewTimeCapsule);
     };
   }, []);
+
+  const handleDelete = (capsuleId: number) => {
+    const now = Date.now();
+    const lastClick = clickTimestamps.current[capsuleId] || 0;
+    
+    if (now - lastClick < 300) { // Double click within 300ms
+      const updatedCapsules = getTimeCapsules().filter(tc => tc.id !== capsuleId);
+      localStorage.setItem('timeCapsules', JSON.stringify(updatedCapsules));
+      setLocalTimeCapsules(prev => prev.filter(tc => tc.id !== capsuleId));
+      toast.success("Time capsule deleted!");
+      clickTimestamps.current[capsuleId] = 0; // Reset timestamp
+    } else {
+      clickTimestamps.current[capsuleId] = now;
+    }
+  };
 
   const todaysCapsules = localTimeCapsules.filter(capsule => capsule.postType === 'timeCapsule');
 
@@ -79,7 +93,11 @@ export const TimeCapsules = ({ timeCapsules: propTimeCapsules }: TimeCapsuleProp
       <ScrollArea className="w-full whitespace-nowrap">
         <div className="flex gap-4">
           {todaysCapsules.map((capsule) => (
-            <div key={capsule.id} className="flex-none">
+            <div 
+              key={capsule.id} 
+              className="flex-none cursor-pointer"
+              onClick={() => handleDelete(capsule.id)}
+            >
               <div className="w-16 h-16 rounded-full overflow-hidden ring-2 ring-primary p-0.5 bg-neutral">
                 {capsule.type === 'photo' ? (
                   <img
@@ -87,7 +105,6 @@ export const TimeCapsules = ({ timeCapsules: propTimeCapsules }: TimeCapsuleProp
                     alt="Time Capsule"
                     className="w-full h-full object-cover rounded-full"
                     onError={(e) => {
-                      // Remove the capsule if the image fails to load
                       setLocalTimeCapsules(prev => 
                         prev.filter(tc => tc.id !== capsule.id)
                       );
@@ -102,7 +119,6 @@ export const TimeCapsules = ({ timeCapsules: propTimeCapsules }: TimeCapsuleProp
                     loop
                     playsInline
                     onError={(e) => {
-                      // Remove the capsule if the video fails to load
                       setLocalTimeCapsules(prev => 
                         prev.filter(tc => tc.id !== capsule.id)
                       );
