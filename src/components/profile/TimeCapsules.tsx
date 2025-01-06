@@ -1,16 +1,39 @@
-import { useState, useRef } from "react";
+import { useState, useRef, useEffect } from "react";
 import { Plus } from "lucide-react";
-import { Status } from "@/types/profile";
+import { getTimeCapsules, TimeCapsule } from "@/utils/timeCapsuleUtils";
 import { ScrollArea, ScrollBar } from "@/components/ui/scroll-area";
 import { Button } from "@/components/ui/button";
 
 interface TimeCapsuleProps {
-  timeCapsules: Status[];
+  timeCapsules: TimeCapsule[];
 }
 
-export const TimeCapsules = ({ timeCapsules }: TimeCapsuleProps) => {
-  const todaysCapsules = timeCapsules.filter(capsule => capsule.postType === 'timeCapsule');
+export const TimeCapsules = ({ timeCapsules: propTimeCapsules }: TimeCapsuleProps) => {
+  const [localTimeCapsules, setLocalTimeCapsules] = useState<TimeCapsule[]>([]);
   const fileInputRef = useRef<HTMLInputElement>(null);
+
+  useEffect(() => {
+    // Load initial time capsules from localStorage
+    const loadTimeCapsules = () => {
+      const capsules = getTimeCapsules();
+      console.log('Loaded time capsules in profile:', capsules);
+      setLocalTimeCapsules(capsules);
+    };
+
+    loadTimeCapsules();
+
+    // Handle new time capsule events
+    const handleNewTimeCapsule = () => {
+      loadTimeCapsules(); // Reload from localStorage when new capsule is added
+    };
+
+    window.addEventListener('newTimeCapsule', handleNewTimeCapsule);
+    return () => {
+      window.removeEventListener('newTimeCapsule', handleNewTimeCapsule);
+    };
+  }, []);
+
+  const todaysCapsules = localTimeCapsules.filter(capsule => capsule.postType === 'timeCapsule');
 
   const handleAddClick = () => {
     if (fileInputRef.current) {
@@ -23,10 +46,11 @@ export const TimeCapsules = ({ timeCapsules }: TimeCapsuleProps) => {
     if (file) {
       const newStatus = {
         id: Date.now(),
-        type: file.type.startsWith('image/') ? 'photo' : 'video',
+        type: file.type.startsWith('image/') ? 'photo' as const : 'video' as const,
         url: URL.createObjectURL(file),
-        timestamp: new Date(),
-        postType: 'timeCapsule'
+        timestamp: new Date().toISOString(),
+        postType: 'timeCapsule' as const,
+        username: "John Doe" // Using hardcoded username for now
       };
 
       // Dispatch a custom event to notify the parent component

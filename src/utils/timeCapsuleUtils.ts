@@ -7,10 +7,14 @@ export interface TimeCapsule {
   postType: 'timeCapsule' | 'feature' | 'reel';
 }
 
+const STORAGE_KEY = 'timeCapsules';
+
 export const addTimeCapsule = (capsule: TimeCapsule) => {
   const existingCapsules = getTimeCapsules();
   const updatedCapsules = [capsule, ...existingCapsules];
-  localStorage.setItem('socialTimeCapsules', JSON.stringify(updatedCapsules));
+  
+  // Store in localStorage
+  localStorage.setItem(STORAGE_KEY, JSON.stringify(updatedCapsules));
   
   // Dispatch event with the new capsule
   const event = new CustomEvent('newTimeCapsule', { 
@@ -21,6 +25,6 @@ export const addTimeCapsule = (capsule: TimeCapsule) => {
 };
 
 export const getTimeCapsules = (): TimeCapsule[] => {
-  const stored = localStorage.getItem('socialTimeCapsules');
+  const stored = localStorage.getItem(STORAGE_KEY);
   return stored ? JSON.parse(stored) : [];
 };

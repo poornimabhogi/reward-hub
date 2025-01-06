@@ -12,18 +12,23 @@ export const SocialTimeCapsules = ({ followedUsers }: SocialTimeCapsuleProps) =>
   const currentUser = "John Doe";
 
   useEffect(() => {
-    // Load initial time capsules
-    setTimeCapsules(getTimeCapsules());
-
-    // Handle new time capsule events
-    const handleNewTimeCapsule = (event: CustomEvent<TimeCapsule>) => {
-      console.log('New time capsule received in Social:', event.detail);
-      setTimeCapsules(prev => [event.detail, ...prev]);
+    // Load initial time capsules from localStorage
+    const loadTimeCapsules = () => {
+      const capsules = getTimeCapsules();
+      console.log('Loaded time capsules:', capsules);
+      setTimeCapsules(capsules);
     };
 
-    window.addEventListener('newTimeCapsule', handleNewTimeCapsule as EventListener);
+    loadTimeCapsules();
+
+    // Handle new time capsule events
+    const handleNewTimeCapsule = () => {
+      loadTimeCapsules(); // Reload from localStorage when new capsule is added
+    };
+
+    window.addEventListener('newTimeCapsule', handleNewTimeCapsule);
     return () => {
-      window.removeEventListener('newTimeCapsule', handleNewTimeCapsule as EventListener);
+      window.removeEventListener('newTimeCapsule', handleNewTimeCapsule);
     };
   }, []);
 
