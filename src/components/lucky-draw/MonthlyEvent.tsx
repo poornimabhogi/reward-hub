@@ -2,6 +2,7 @@ import { useState, useEffect } from "react";
 import { Calendar } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useToast } from "@/hooks/use-toast";
+import { calculateLuckyDrawAmount } from "@/utils/luckyDrawCalculations";
 import {
   Dialog,
   DialogContent,
@@ -14,13 +15,14 @@ interface MonthlyEventProps {
   totalAccumulation: number;
 }
 
-export const MonthlyEvent = ({ totalAccumulation }: MonthlyEventProps) => {
+export const MonthlyEvent = ({ totalAccumulation: baseAmount }: MonthlyEventProps) => {
   const { toast } = useToast();
   const [countdown, setCountdown] = useState("");
   const [isEnrolled, setIsEnrolled] = useState(false);
   const [isDialogOpen, setIsDialogOpen] = useState(false);
   
   const eventDate = "2024-04-20T00:00:00";
+  const { totalAccumulation } = calculateLuckyDrawAmount(baseAmount);
   const luckyAmount = Math.floor(totalAccumulation * 0.1); // 10% of total accumulation
   
   const formatNumber = (num: number) => {
