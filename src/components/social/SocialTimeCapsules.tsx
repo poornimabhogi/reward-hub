@@ -6,7 +6,8 @@ interface TimeCapsule {
   username: string;
   type: 'photo' | 'video';
   url: string;
-  timestamp: Date;
+  timestamp: string;
+  postType?: 'timeCapsule' | 'feature' | 'reel';
 }
 
 interface SocialTimeCapsuleProps {
@@ -15,57 +16,56 @@ interface SocialTimeCapsuleProps {
 
 export const SocialTimeCapsules = ({ followedUsers }: SocialTimeCapsuleProps) => {
   const [timeCapsules, setTimeCapsules] = useState<TimeCapsule[]>([]);
-  const currentUser = "John Doe"; // This should match the current user's name
+  const currentUser = "John Doe";
 
   useEffect(() => {
-    const handleNewTimeCapsule = (event: CustomEvent<any>) => {
-      console.log('New time capsule event received:', event.detail); // Debug log
+    // Load initial time capsules from localStorage
+    const loadTimeCapsules = () => {
+      const stored = localStorage.getItem('socialTimeCapsules');
+      if (stored) {
+        const parsedCapsules = JSON.parse(stored);
+        console.log('Loaded time capsules:', parsedCapsules);
+        setTimeCapsules(parsedCapsules);
+      }
+    };
+
+    // Handle new time capsule events
+    const handleNewTimeCapsule = (event: CustomEvent<TimeCapsule>) => {
       const newCapsule = event.detail;
+      console.log('New time capsule received:', newCapsule);
       
       if (newCapsule.postType === 'timeCapsule') {
         setTimeCapsules(prev => {
-          console.log('Previous capsules:', prev); // Debug log
-          return [{
-            id: newCapsule.id,
-            username: newCapsule.username || currentUser,
-            type: newCapsule.type,
-            url: newCapsule.url,
-            timestamp: new Date(newCapsule.timestamp)
-          }, ...prev];
+          const updated = [newCapsule, ...prev];
+          console.log('Updated time capsules:', updated);
+          return updated;
         });
       }
     };
 
+    // Initial load
+    loadTimeCapsules();
+
+    // Event listener setup
     window.addEventListener('newTimeCapsule', handleNewTimeCapsule as EventListener);
     
-    // Load existing time capsules from localStorage
-    const storedCapsules = localStorage.getItem('socialTimeCapsules');
-    if (storedCapsules) {
-      setTimeCapsules(JSON.parse(storedCapsules));
-    }
-
     return () => {
       window.removeEventListener('newTimeCapsule', handleNewTimeCapsule as EventListener);
     };
-  }, [currentUser]);
-
-  // Save to localStorage whenever timeCapsules changes
-  useEffect(() => {
-    console.log('Saving time capsules:', timeCapsules); // Debug log
-    localStorage.setItem('socialTimeCapsules', JSON.stringify(timeCapsules));
-  }, [timeCapsules]);
+  }, []);
 
   // Filter and sort time capsules
-  const sortedTimeCapsules = timeCapsules
+  const filteredCapsules = timeCapsules
     .filter(capsule => 
-      capsule.username === currentUser || 
-      followedUsers.some(user => user.username === capsule.username && user.isFollowing)
+      capsule.postType === 'timeCapsule' &&
+      (capsule.username === currentUser || 
+       followedUsers.some(user => user.username === capsule.username && user.isFollowing))
     )
     .sort((a, b) => {
-      // Current user's capsules always come first
+      // Current user's capsules first
       if (a.username === currentUser && b.username !== currentUser) return -1;
       if (b.username === currentUser && a.username !== currentUser) return 1;
-      // For other cases, sort by timestamp (newest first)
+      // Then sort by timestamp (newest first)
       return new Date(b.timestamp).getTime() - new Date(a.timestamp).getTime();
     });
 
@@ -74,7 +74,7 @@ export const SocialTimeCapsules = ({ followedUsers }: SocialTimeCapsuleProps) =>
       <h3 className="text-sm font-medium mb-3">Today's Time Capsules</h3>
       <ScrollArea className="w-full whitespace-nowrap">
         <div className="flex gap-4">
-          {sortedTimeCapsules.map((capsule) => (
+          {filteredCapsules.map((capsule) => (
             <div key={capsule.id} className="flex-none">
               <div className="relative">
                 <div className="w-16 h-16 rounded-full overflow-hidden ring-2 ring-primary p-0.5 bg-neutral">

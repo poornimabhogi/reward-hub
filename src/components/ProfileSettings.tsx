@@ -64,24 +64,31 @@ export const ProfileSettings = ({ userProfile }: { userProfile: UserProfile }) =
 
   const handleConfirmPost = () => {
     if (selectedFile) {
-      console.log('Creating new time capsule with username:', userProfile.name); // Debug log
+      // Create blob URL for the file
+      const fileUrl = URL.createObjectURL(selectedFile);
       
+      // Create new status object
       const newStatus = {
         id: Date.now(),
         type: selectedFile.type.startsWith('image/') ? 'photo' : 'video',
-        url: URL.createObjectURL(selectedFile),
-        timestamp: new Date(),
+        url: fileUrl,
+        timestamp: new Date().toISOString(),
         postType: selectedPostType,
         username: userProfile.name
       };
 
-      // Dispatch a custom event to notify other components
+      // Store in localStorage
+      const existingCapsules = JSON.parse(localStorage.getItem('socialTimeCapsules') || '[]');
+      const updatedCapsules = [newStatus, ...existingCapsules];
+      localStorage.setItem('socialTimeCapsules', JSON.stringify(updatedCapsules));
+
+      // Dispatch custom event
       const customEvent = new CustomEvent('newTimeCapsule', { 
         detail: newStatus 
       });
       window.dispatchEvent(customEvent);
       
-      console.log('Dispatched new time capsule event:', newStatus); // Debug log
+      console.log('New time capsule created:', newStatus);
       
       toast.success(`${selectedPostType === 'timeCapsule' ? "Time capsule" : "Post"} added!`);
       
