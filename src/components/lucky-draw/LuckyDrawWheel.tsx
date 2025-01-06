@@ -40,12 +40,12 @@ export const LuckyDrawWheel = ({ prizes }: LuckyDrawWheelProps) => {
         Spin the wheel to win exciting prizes! Each spin costs 10 coins.
       </p>
 
-      <div className="relative w-64 h-64 mx-auto mb-8">
+      <div className="relative w-48 h-48 mx-auto mb-8">
         <div className={`absolute inset-0 rounded-full border-4 border-primary flex items-center justify-center ${isSpinning ? 'animate-spin' : ''}`}>
           {prize && !isSpinning && (
             <div className="text-center p-4">
-              <Trophy className="w-8 h-8 text-yellow-500 mx-auto mb-2" />
-              <p className="font-bold text-lg">{prize}</p>
+              <Trophy className="w-6 h-6 text-yellow-500 mx-auto mb-2" />
+              <p className="font-bold text-sm">{prize}</p>
             </div>
           )}
         </div>
