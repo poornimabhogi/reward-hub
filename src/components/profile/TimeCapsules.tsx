@@ -40,13 +40,7 @@ export const TimeCapsules = ({ timeCapsules: propTimeCapsules }: TimeCapsuleProp
     };
   }, []);
 
-  const handleDelete = (capsuleId: number, capsuleUsername: string) => {
-    // Check if the capsule belongs to the current user
-    if (capsuleUsername !== user?.name) {
-      toast.error("You can only delete your own time capsules!");
-      return;
-    }
-
+  const handleDelete = (capsuleId: number) => {
     const now = Date.now();
     const lastClick = clickTimestamps.current[capsuleId] || 0;
     
@@ -104,7 +98,7 @@ export const TimeCapsules = ({ timeCapsules: propTimeCapsules }: TimeCapsuleProp
             <div 
               key={capsule.id} 
               className="flex-none cursor-pointer"
-              onClick={() => handleDelete(capsule.id, capsule.username)}
+              onClick={() => handleDelete(capsule.id)}
             >
               <div className="w-16 h-16 rounded-full overflow-hidden ring-2 ring-primary p-0.5 bg-neutral">
                 {capsule.type === 'photo' ? (
