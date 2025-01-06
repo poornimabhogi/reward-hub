@@ -14,18 +14,23 @@ export const TimeCapsules = ({ timeCapsules: propTimeCapsules }: TimeCapsuleProp
   const fileInputRef = useRef<HTMLInputElement>(null);
 
   useEffect(() => {
-    // Load initial time capsules from localStorage
+    // Load initial time capsules from localStorage and filter out any invalid ones
     const loadTimeCapsules = () => {
-      const capsules = getTimeCapsules();
-      console.log('Loaded time capsules in profile:', capsules);
+      const capsules = getTimeCapsules().filter(capsule => {
+        // Verify the URL is valid and the capsule has all required properties
+        return capsule.url && 
+               capsule.username && 
+               capsule.postType === 'timeCapsule' &&
+               (capsule.type === 'photo' || capsule.type === 'video');
+      });
+      console.log('Loaded valid time capsules in profile:', capsules);
       setLocalTimeCapsules(capsules);
     };
 
     loadTimeCapsules();
 
-    // Handle new time capsule events
     const handleNewTimeCapsule = () => {
-      loadTimeCapsules(); // Reload from localStorage when new capsule is added
+      loadTimeCapsules();
     };
 
     window.addEventListener('newTimeCapsule', handleNewTimeCapsule);
@@ -47,18 +52,16 @@ export const TimeCapsules = ({ timeCapsules: propTimeCapsules }: TimeCapsuleProp
     if (file) {
       const newCapsule: TimeCapsule = {
         id: Date.now(),
-        type: file.type.startsWith('image/') ? 'photo' as const : 'video' as const,
+        type: file.type.startsWith('image/') ? 'photo' : 'video',
         url: URL.createObjectURL(file),
         timestamp: new Date().toISOString(),
-        postType: 'timeCapsule' as const,
-        username: "John Doe" // Using hardcoded username for now
+        postType: 'timeCapsule',
+        username: "John Doe"
       };
 
-      // Add the new capsule using the utility function
       addTimeCapsule(newCapsule);
       toast.success("Time capsule added!");
       
-      // Reset the input value so the same file can be selected again
       event.target.value = '';
     }
   };
@@ -83,6 +86,12 @@ export const TimeCapsules = ({ timeCapsules: propTimeCapsules }: TimeCapsuleProp
                     src={capsule.url}
                     alt="Time Capsule"
                     className="w-full h-full object-cover rounded-full"
+                    onError={(e) => {
+                      // Remove the capsule if the image fails to load
+                      setLocalTimeCapsules(prev => 
+                        prev.filter(tc => tc.id !== capsule.id)
+                      );
+                    }}
                   />
                 ) : (
                   <video
@@ -92,13 +101,18 @@ export const TimeCapsules = ({ timeCapsules: propTimeCapsules }: TimeCapsuleProp
                     muted
                     loop
                     playsInline
+                    onError={(e) => {
+                      // Remove the capsule if the video fails to load
+                      setLocalTimeCapsules(prev => 
+                        prev.filter(tc => tc.id !== capsule.id)
+                      );
+                    }}
                   />
                 )}
               </div>
             </div>
           ))}
 
-          {/* Add button circle */}
           <div className="flex-none">
             <Button
               variant="outline"
