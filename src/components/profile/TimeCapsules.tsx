@@ -1,8 +1,9 @@
 import { useState, useRef, useEffect } from "react";
 import { Plus } from "lucide-react";
-import { getTimeCapsules, TimeCapsule } from "@/utils/timeCapsuleUtils";
+import { getTimeCapsules, TimeCapsule, addTimeCapsule } from "@/utils/timeCapsuleUtils";
 import { ScrollArea, ScrollBar } from "@/components/ui/scroll-area";
 import { Button } from "@/components/ui/button";
+import { toast } from "sonner";
 
 interface TimeCapsuleProps {
   timeCapsules: TimeCapsule[];
@@ -44,7 +45,7 @@ export const TimeCapsules = ({ timeCapsules: propTimeCapsules }: TimeCapsuleProp
   const handleFileSelect = (event: React.ChangeEvent<HTMLInputElement>) => {
     const file = event.target.files?.[0];
     if (file) {
-      const newStatus = {
+      const newCapsule: TimeCapsule = {
         id: Date.now(),
         type: file.type.startsWith('image/') ? 'photo' as const : 'video' as const,
         url: URL.createObjectURL(file),
@@ -53,11 +54,9 @@ export const TimeCapsules = ({ timeCapsules: propTimeCapsules }: TimeCapsuleProp
         username: "John Doe" // Using hardcoded username for now
       };
 
-      // Dispatch a custom event to notify the parent component
-      const customEvent = new CustomEvent('newTimeCapsule', { 
-        detail: newStatus 
-      });
-      window.dispatchEvent(customEvent);
+      // Add the new capsule using the utility function
+      addTimeCapsule(newCapsule);
+      toast.success("Time capsule added!");
       
       // Reset the input value so the same file can be selected again
       event.target.value = '';

@@ -7,6 +7,7 @@ import { CreatePostForm } from "@/components/profile/CreatePostForm";
 import { PostsGrid } from "@/components/profile/PostsGrid";
 import { TimeCapsules } from "@/components/profile/TimeCapsules";
 import { Status, FollowedUser, UserProfile } from "@/types/profile";
+import { TimeCapsule } from "@/utils/timeCapsuleUtils";
 
 const Profile = () => {
   const [userProfile, setUserProfile] = useState<UserProfile>({
@@ -18,7 +19,7 @@ const Profile = () => {
   });
 
   const [posts, setPosts] = useState<Status[]>([]);
-  const [timeCapsules, setTimeCapsules] = useState<Status[]>([]);
+  const [timeCapsules, setTimeCapsules] = useState<TimeCapsule[]>([]);
   const [isCreatePostOpen, setIsCreatePostOpen] = useState(false);
   const [selectedPostType, setSelectedPostType] = useState<'timeCapsule' | 'feature' | 'reel'>('feature');
   
@@ -31,7 +32,7 @@ const Profile = () => {
     const handleNewTimeCapsule = (event: CustomEvent<Status>) => {
       const newStatus = event.detail;
       if (newStatus.postType === 'timeCapsule') {
-        setTimeCapsules(prev => [newStatus, ...prev]);
+        setTimeCapsules(prev => [newStatus as TimeCapsule, ...prev]);
       } else {
         setPosts(prev => [newStatus, ...prev]);
       }
@@ -51,7 +52,7 @@ const Profile = () => {
 
   const handleNewPost = (newStatus: Status, postType: 'timeCapsule' | 'feature' | 'reel') => {
     if (postType === 'timeCapsule') {
-      setTimeCapsules([newStatus, ...timeCapsules]);
+      setTimeCapsules([newStatus as TimeCapsule, ...timeCapsules]);
     } else {
       setPosts([newStatus, ...posts]);
     }
