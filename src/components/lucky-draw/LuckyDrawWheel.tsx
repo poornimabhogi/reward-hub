@@ -30,12 +30,18 @@ export const LuckyDrawWheel = ({ prizes }: LuckyDrawWheelProps) => {
 
   return (
     <div className="text-center space-y-6">
-      <div className="relative w-80 h-80 mx-auto mb-8">
-        <div 
-          className={`absolute inset-0 rounded-full border-4 border-primary flex items-center justify-center ${
-            isSpinning ? 'animate-spin' : ''
-          }`}
-        >
+      <div className="flex justify-center mb-6">
+        <Gift className="w-16 h-16 text-primary" />
+      </div>
+
+      <h1 className="text-2xl font-bold mb-4">Lucky Draw</h1>
+
+      <p className="text-muted-foreground mb-8">
+        Spin the wheel to win exciting prizes! Each spin costs 10 coins.
+      </p>
+
+      <div className="relative w-64 h-64 mx-auto mb-8">
+        <div className={`absolute inset-0 rounded-full border-4 border-primary flex items-center justify-center ${isSpinning ? 'animate-spin' : ''}`}>
           {prize && !isSpinning && (
             <div className="text-center p-4">
               <Trophy className="w-8 h-8 text-yellow-500 mx-auto mb-2" />
@@ -48,7 +54,7 @@ export const LuckyDrawWheel = ({ prizes }: LuckyDrawWheelProps) => {
       <Button 
         onClick={spinWheel} 
         disabled={isSpinning}
-        className="w-full bg-primary hover:bg-primary/90 text-white py-6 text-lg rounded-xl"
+        className="w-full max-w-xs mx-auto"
       >
         {isSpinning ? "Spinning..." : "Spin (10 coins)"}
       </Button>

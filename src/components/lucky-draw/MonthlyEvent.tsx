@@ -47,19 +47,19 @@ export const MonthlyEvent = ({ totalAccumulation }: MonthlyEventProps) => {
   return (
     <Dialog>
       <DialogTrigger asChild>
-        <div className="bg-neutral rounded-xl cursor-pointer hover:bg-neutral/80 transition-colors p-6">
-          <div className="flex flex-col items-center text-center space-y-4">
+        <div className="bg-neutral rounded-lg cursor-pointer hover:bg-neutral/80 transition-colors p-4 mb-4">
+          <div className="flex flex-col items-center text-center space-y-3">
             <div className="flex items-center gap-2">
-              <h3 className="text-2xl font-semibold">Monthly Lucky Draw</h3>
-              <Calendar className="w-6 h-6 text-primary" />
+              <h3 className="text-xl font-semibold">Monthly Lucky Draw</h3>
+              <Calendar className="w-5 h-5 text-primary" />
             </div>
-            <div className="text-primary text-xl font-medium">
+            <div className="text-primary font-medium">
               4/20/2024
             </div>
-            <p className="text-muted-foreground text-lg">
+            <p className="text-muted-foreground">
               Monthly prize pool from accumulated earnings!
             </p>
-            <p className="text-primary text-lg font-medium">
+            <p className="text-primary font-medium">
               Time Remaining: {countdown}
             </p>
           </div>
@@ -69,18 +69,18 @@ export const MonthlyEvent = ({ totalAccumulation }: MonthlyEventProps) => {
         <DialogHeader>
           <DialogTitle>Monthly Lucky Draw</DialogTitle>
         </DialogHeader>
-        <div className="space-y-6 py-4">
-          <p className="text-center text-lg">Monthly prize pool from accumulated earnings!</p>
-          <div className="bg-neutral p-6 rounded-lg">
-            <p className="font-semibold text-lg mb-2">Grand Prize</p>
-            <p className="text-primary text-xl">{totalAccumulation} Coins Prize Pool</p>
+        <div className="space-y-4 py-4">
+          <p className="text-center">Monthly prize pool from accumulated earnings!</p>
+          <div className="bg-neutral p-4 rounded-lg">
+            <p className="font-semibold">Grand Prize</p>
+            <p className="text-primary">{totalAccumulation} Coins Prize Pool</p>
           </div>
-          <div className="bg-neutral p-6 rounded-lg">
-            <p className="font-semibold text-lg mb-2">Time Remaining</p>
-            <p className="text-primary text-xl">{countdown}</p>
+          <div className="bg-neutral p-4 rounded-lg">
+            <p className="font-semibold">Time Remaining</p>
+            <p className="text-primary">{countdown}</p>
           </div>
           <Button 
-            className="w-full py-6 text-lg" 
+            className="w-full" 
             onClick={() => toast({
               title: "Reminder Set!",
               description: "We'll notify you when this event starts.",
