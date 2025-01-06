@@ -17,8 +17,10 @@ interface MonthlyEventProps {
 export const MonthlyEvent = ({ totalAccumulation }: MonthlyEventProps) => {
   const { toast } = useToast();
   const [countdown, setCountdown] = useState("");
+  const [isEnrolled, setIsEnrolled] = useState(false);
   
   const eventDate = "2024-04-20T00:00:00";
+  const luckyAmount = Math.floor(totalAccumulation * 0.1); // 10% of total accumulation
   
   useEffect(() => {
     const updateCountdown = () => {
@@ -43,6 +45,24 @@ export const MonthlyEvent = ({ totalAccumulation }: MonthlyEventProps) => {
 
     return () => clearInterval(interval);
   }, []);
+
+  const handleEnroll = async () => {
+    try {
+      // Here we'll make an API call to store the user's enrollment
+      // For now, we'll simulate the enrollment
+      setIsEnrolled(true);
+      toast({
+        title: "Successfully Enrolled!",
+        description: "You're now registered for the monthly lucky draw.",
+      });
+    } catch (error) {
+      toast({
+        title: "Enrollment Failed",
+        description: "Please try again later.",
+        variant: "destructive",
+      });
+    }
+  };
 
   return (
     <Dialog>
@@ -76,17 +96,19 @@ export const MonthlyEvent = ({ totalAccumulation }: MonthlyEventProps) => {
             <p className="text-primary">{totalAccumulation} Coins Prize Pool</p>
           </div>
           <div className="bg-neutral p-4 rounded-lg">
+            <p className="font-semibold">Lucky Amount</p>
+            <p className="text-primary">{luckyAmount} Coins per Winner</p>
+          </div>
+          <div className="bg-neutral p-4 rounded-lg">
             <p className="font-semibold">Time Remaining</p>
             <p className="text-primary">{countdown}</p>
           </div>
           <Button 
             className="w-full" 
-            onClick={() => toast({
-              title: "Reminder Set!",
-              description: "We'll notify you when this event starts.",
-            })}
+            onClick={handleEnroll}
+            disabled={isEnrolled}
           >
-            Set Reminder
+            {isEnrolled ? "Enrolled" : "Enroll Now"}
           </Button>
         </div>
       </DialogContent>
