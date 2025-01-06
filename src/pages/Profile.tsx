@@ -77,10 +77,6 @@ const Profile = () => {
                   <div className="font-semibold">{followedUsers.length}</div>
                   <div className="text-muted-foreground">Following</div>
                 </div>
-                <div className="text-center">
-                  <div className="font-semibold">{userProfile.coins}</div>
-                  <div className="text-muted-foreground">Coins</div>
-                </div>
               </div>
             </div>
           </div>
