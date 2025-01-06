@@ -23,6 +23,10 @@ export const MonthlyEvent = ({ totalAccumulation }: MonthlyEventProps) => {
   const eventDate = "2024-04-20T00:00:00";
   const luckyAmount = Math.floor(totalAccumulation * 0.1); // 10% of total accumulation
   
+  const formatNumber = (num: number) => {
+    return new Intl.NumberFormat('en-US').format(num);
+  };
+
   useEffect(() => {
     const updateCountdown = () => {
       const targetDate = new Date(eventDate);
@@ -79,7 +83,7 @@ export const MonthlyEvent = ({ totalAccumulation }: MonthlyEventProps) => {
               4/20/2024
             </div>
             <p className="text-muted-foreground">
-              Monthly prize pool from accumulated earnings!
+              Monthly prize pool: {formatNumber(totalAccumulation)} Coins
             </p>
             <p className="text-primary font-medium">
               Time Remaining: {countdown}
@@ -101,11 +105,11 @@ export const MonthlyEvent = ({ totalAccumulation }: MonthlyEventProps) => {
             <p className="text-center">Monthly prize pool from accumulated earnings!</p>
             <div className="bg-neutral p-4 rounded-lg">
               <p className="font-semibold">Grand Prize</p>
-              <p className="text-primary">{totalAccumulation} Coins Prize Pool</p>
+              <p className="text-primary">{formatNumber(totalAccumulation)} Coins Prize Pool</p>
             </div>
             <div className="bg-neutral p-4 rounded-lg">
               <p className="font-semibold">Lucky Amount</p>
-              <p className="text-primary">{luckyAmount} Coins per Winner</p>
+              <p className="text-primary">{formatNumber(luckyAmount)} Coins per Winner</p>
             </div>
             <div className="bg-neutral p-4 rounded-lg">
               <p className="font-semibold">Time Remaining</p>
