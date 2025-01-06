@@ -1,4 +1,4 @@
-import { useState, useRef } from "react";
+import { useState, useRef, useEffect } from "react";
 import { Plus } from "lucide-react";
 import { Status } from "@/types/profile";
 import { ScrollArea, ScrollBar } from "@/components/ui/scroll-area";
@@ -12,6 +12,24 @@ export const TimeCapsules = ({ timeCapsules }: TimeCapsuleProps) => {
   const todaysCapsules = timeCapsules.filter(capsule => capsule.postType === 'timeCapsule');
   const fileInputRef = useRef<HTMLInputElement>(null);
 
+  useEffect(() => {
+    // Load time capsules from localStorage on component mount
+    const storedCapsules = localStorage.getItem('timeCapsules');
+    if (storedCapsules) {
+      const parsedCapsules = JSON.parse(storedCapsules);
+      // Only show capsules from today
+      const today = new Date().toDateString();
+      const todaysCapsules = parsedCapsules.filter((capsule: Status) => 
+        new Date(capsule.timestamp).toDateString() === today
+      );
+      // Dispatch event to update Social screen
+      todaysCapsules.forEach((capsule: Status) => {
+        const event = new CustomEvent('newTimeCapsule', { detail: capsule });
+        window.dispatchEvent(event);
+      });
+    }
+  }, []);
+
   const handleAddClick = () => {
     if (fileInputRef.current) {
       fileInputRef.current.click();
@@ -21,7 +39,7 @@ export const TimeCapsules = ({ timeCapsules }: TimeCapsuleProps) => {
   const handleFileSelect = (event: React.ChangeEvent<HTMLInputElement>) => {
     const file = event.target.files?.[0];
     if (file) {
-      const newStatus = {
+      const newStatus: Status = {
         id: Date.now(),
         type: file.type.startsWith('image/') ? 'photo' : 'video',
         url: URL.createObjectURL(file),
@@ -29,7 +47,13 @@ export const TimeCapsules = ({ timeCapsules }: TimeCapsuleProps) => {
         postType: 'timeCapsule'
       };
 
-      // Dispatch a custom event to notify the parent component
+      // Save to localStorage
+      const storedCapsules = localStorage.getItem('timeCapsules');
+      const capsules = storedCapsules ? JSON.parse(storedCapsules) : [];
+      capsules.unshift(newStatus);
+      localStorage.setItem('timeCapsules', JSON.stringify(capsules));
+
+      // Dispatch event to notify both Profile and Social components
       const customEvent = new CustomEvent('newTimeCapsule', { 
         detail: newStatus 
       });
@@ -75,7 +99,6 @@ export const TimeCapsules = ({ timeCapsules }: TimeCapsuleProps) => {
             </div>
           ))}
 
-          {/* Add button circle */}
           <div className="flex-none">
             <Button
               variant="outline"
