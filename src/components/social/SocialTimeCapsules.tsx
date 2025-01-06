@@ -22,16 +22,18 @@ export const SocialTimeCapsules = ({ followedUsers }: SocialTimeCapsuleProps) =>
       console.log('New time capsule event received:', event.detail); // Debug log
       const newCapsule = event.detail;
       
-      setTimeCapsules(prev => {
-        console.log('Previous capsules:', prev); // Debug log
-        return [{
-          id: newCapsule.id,
-          username: newCapsule.username || currentUser,
-          type: newCapsule.type,
-          url: newCapsule.url,
-          timestamp: new Date(newCapsule.timestamp)
-        }, ...prev];
-      });
+      if (newCapsule.postType === 'timeCapsule') {
+        setTimeCapsules(prev => {
+          console.log('Previous capsules:', prev); // Debug log
+          return [{
+            id: newCapsule.id,
+            username: newCapsule.username || currentUser,
+            type: newCapsule.type,
+            url: newCapsule.url,
+            timestamp: new Date(newCapsule.timestamp)
+          }, ...prev];
+        });
+      }
     };
 
     window.addEventListener('newTimeCapsule', handleNewTimeCapsule as EventListener);

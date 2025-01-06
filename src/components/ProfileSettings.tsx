@@ -64,13 +64,15 @@ export const ProfileSettings = ({ userProfile }: { userProfile: UserProfile }) =
 
   const handleConfirmPost = () => {
     if (selectedFile) {
+      console.log('Creating new time capsule with username:', userProfile.name); // Debug log
+      
       const newStatus = {
         id: Date.now(),
         type: selectedFile.type.startsWith('image/') ? 'photo' : 'video',
         url: URL.createObjectURL(selectedFile),
         timestamp: new Date(),
         postType: selectedPostType,
-        username: userProfile.name // Add username to the event data
+        username: userProfile.name
       };
 
       // Dispatch a custom event to notify other components
@@ -78,6 +80,8 @@ export const ProfileSettings = ({ userProfile }: { userProfile: UserProfile }) =
         detail: newStatus 
       });
       window.dispatchEvent(customEvent);
+      
+      console.log('Dispatched new time capsule event:', newStatus); // Debug log
       
       toast.success(`${selectedPostType === 'timeCapsule' ? "Time capsule" : "Post"} added!`);
       
