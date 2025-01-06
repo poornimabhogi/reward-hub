@@ -3,8 +3,6 @@ import { Search, Volume2, VolumeX, User } from "lucide-react";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { useToast } from "@/components/ui/use-toast";
-import { ScrollArea, ScrollBar } from "@/components/ui/scroll-area";
-import { Status, FollowedUser } from "@/types/profile";
 
 interface Post {
   id: number;
@@ -13,6 +11,11 @@ interface Post {
   content: string;
   isFollowing: boolean;
   isMuted?: boolean;
+}
+
+interface FollowedUser {
+  username: string;
+  isFollowing: boolean;
 }
 
 const Social = () => {
@@ -35,43 +38,46 @@ const Social = () => {
       isMuted: true
     },
   ]);
-  const [timeCapsules, setTimeCapsules] = useState<Status[]>([]);
-  const [followedUsers, setFollowedUsers] = useState<FollowedUser[]>(() => {
-    const storedUsers = localStorage.getItem('followedUsers');
-    return storedUsers ? JSON.parse(storedUsers) : [];
-  });
 
   useEffect(() => {
-    // Listen for new time capsules from the current user
-    const handleNewTimeCapsule = (event: CustomEvent<Status>) => {
-      const newStatus = event.detail;
-      if (newStatus.postType === 'timeCapsule') {
-        setTimeCapsules(prev => [newStatus, ...prev].sort((a, b) => 
-          new Date(b.timestamp).getTime() - new Date(a.timestamp).getTime()
-        ));
-      }
-    };
-
-    window.addEventListener('newTimeCapsule', handleNewTimeCapsule as EventListener);
-    return () => {
-      window.removeEventListener('newTimeCapsule', handleNewTimeCapsule as EventListener);
-    };
+    const followedUsers = JSON.parse(localStorage.getItem('followedUsers') || '[]');
+    setPosts(posts.map(post => ({
+      ...post,
+      isFollowing: followedUsers.some((user: FollowedUser) => user.username === post.username)
+    })));
   }, []);
 
-  const handleUnfollow = (username: string) => {
-    const updatedUsers = followedUsers.filter(user => user.username !== username);
-    setFollowedUsers(updatedUsers);
-    localStorage.setItem('followedUsers', JSON.stringify(updatedUsers));
+  const handleFollow = (postId: number) => {
+    setPosts(posts.map(post => {
+      if (post.id === postId) {
+        const newState = !post.isFollowing;
+        
+        const followedUsers = JSON.parse(localStorage.getItem('followedUsers') || '[]');
+        if (newState) {
+          followedUsers.push({ username: post.username, isFollowing: true });
+        } else {
+          const index = followedUsers.findIndex((user: FollowedUser) => user.username === post.username);
+          if (index > -1) followedUsers.splice(index, 1);
+        }
+        localStorage.setItem('followedUsers', JSON.stringify(followedUsers));
+
+        toast({
+          title: newState ? "Following" : "Unfollowed",
+          description: `You ${newState ? 'are now following' : 'have unfollowed'} ${post.username}`,
+        });
+        return { ...post, isFollowing: newState };
+      }
+      return post;
+    }));
   };
 
   const toggleMute = (postId: number) => {
-    setPosts(prevPosts => 
-      prevPosts.map(post => 
-        post.id === postId 
-          ? { ...post, isMuted: !post.isMuted }
-          : post
-      )
-    );
+    setPosts(posts.map(post => {
+      if (post.id === postId && post.type === 'video') {
+        return { ...post, isMuted: !post.isMuted };
+      }
+      return post;
+    }));
   };
 
   const filteredPosts = posts.filter(post =>
@@ -82,39 +88,6 @@ const Social = () => {
     <div className="pb-20">
       <div className="sticky top-0 z-10 bg-background pb-4 pt-4">
         <div className="container mx-auto px-4">
-          {/* Time Capsules Section */}
-          <div className="mb-8 bg-white rounded-lg shadow-sm p-4">
-            <h3 className="text-sm font-medium mb-3">Today's Time Capsules</h3>
-            <ScrollArea className="w-full whitespace-nowrap">
-              <div className="flex gap-4">
-                {timeCapsules.map((capsule) => (
-                  <div key={capsule.id} className="flex-none">
-                    <div className="w-16 h-16 rounded-full overflow-hidden ring-2 ring-primary p-0.5 bg-neutral">
-                      {capsule.type === 'photo' ? (
-                        <img
-                          src={capsule.url}
-                          alt="Time Capsule"
-                          className="w-full h-full object-cover rounded-full"
-                        />
-                      ) : (
-                        <video
-                          src={capsule.url}
-                          className="w-full h-full object-cover rounded-full"
-                          autoPlay
-                          muted
-                          loop
-                          playsInline
-                        />
-                      )}
-                    </div>
-                  </div>
-                ))}
-              </div>
-              <ScrollBar orientation="horizontal" />
-            </ScrollArea>
-          </div>
-
-          {/* Search Section */}
           <div className="relative">
             <Search className="absolute left-3 top-3 h-4 w-4 text-muted-foreground" />
             <Input
@@ -139,7 +112,7 @@ const Social = () => {
                 <Button
                   variant={post.isFollowing ? "secondary" : "default"}
                   size="sm"
-                  onClick={() => handleUnfollow(post.username)}
+                  onClick={() => handleFollow(post.id)}
                 >
                   {post.isFollowing ? "Following" : "Follow"}
                 </Button>
