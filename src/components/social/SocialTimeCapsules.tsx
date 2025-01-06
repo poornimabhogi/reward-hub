@@ -2,6 +2,7 @@ import { useState, useEffect, useRef } from "react";
 import { ScrollArea, ScrollBar } from "@/components/ui/scroll-area";
 import { getTimeCapsules, TimeCapsule } from "@/utils/timeCapsuleUtils";
 import { toast } from "sonner";
+import { useAuth } from "@/contexts/AuthContext";
 
 interface SocialTimeCapsuleProps {
   followedUsers: { username: string; isFollowing: boolean; }[];
@@ -9,8 +10,8 @@ interface SocialTimeCapsuleProps {
 
 export const SocialTimeCapsules = ({ followedUsers }: SocialTimeCapsuleProps) => {
   const [timeCapsules, setTimeCapsules] = useState<TimeCapsule[]>([]);
-  const currentUser = "John Doe";
   const clickTimestamps = useRef<{ [key: number]: number }>({});
+  const { user } = useAuth();
 
   useEffect(() => {
     const loadTimeCapsules = () => {
@@ -41,16 +42,9 @@ export const SocialTimeCapsules = ({ followedUsers }: SocialTimeCapsuleProps) =>
     };
   }, []);
 
-  const filteredCapsules = timeCapsules
-    .filter(capsule => 
-      capsule.postType === 'timeCapsule' &&
-      (capsule.username === currentUser || 
-       followedUsers.some(user => user.username === capsule.username && user.isFollowing))
-    )
-    .sort((a, b) => new Date(b.timestamp).getTime() - new Date(a.timestamp).getTime());
-
-  const handleDelete = (capsuleId: number, username: string) => {
-    if (username !== currentUser) {
+  const handleDelete = (capsuleId: number, capsuleUsername: string) => {
+    // Check if the capsule belongs to the current user
+    if (!user || capsuleUsername !== user.name) {
       toast.error("You can only delete your own time capsules!");
       return;
     }
@@ -68,6 +62,14 @@ export const SocialTimeCapsules = ({ followedUsers }: SocialTimeCapsuleProps) =>
       clickTimestamps.current[capsuleId] = now;
     }
   };
+
+  const filteredCapsules = timeCapsules
+    .filter(capsule => 
+      capsule.postType === 'timeCapsule' &&
+      (capsule.username === user?.name || 
+       followedUsers.some(u => u.username === capsule.username && u.isFollowing))
+    )
+    .sort((a, b) => new Date(b.timestamp).getTime() - new Date(a.timestamp).getTime());
 
   const handleMediaError = (capsuleId: number) => {
     setTimeCapsules(prev => prev.filter(tc => tc.id !== capsuleId));
@@ -111,7 +113,7 @@ export const SocialTimeCapsules = ({ followedUsers }: SocialTimeCapsuleProps) =>
                 </div>
                 <div className="absolute -bottom-6 left-1/2 transform -translate-x-1/2 w-full text-center">
                   <span className="text-xs font-medium text-gray-600 truncate block">
-                    {capsule.username === currentUser ? "You" : capsule.username}
+                    {capsule.username === user?.name ? "You" : capsule.username}
                   </span>
                 </div>
               </div>

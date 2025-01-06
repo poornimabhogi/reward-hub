@@ -4,6 +4,7 @@ import { getTimeCapsules, TimeCapsule, addTimeCapsule } from "@/utils/timeCapsul
 import { ScrollArea, ScrollBar } from "@/components/ui/scroll-area";
 import { Button } from "@/components/ui/button";
 import { toast } from "sonner";
+import { useAuth } from "@/contexts/AuthContext";
 
 interface TimeCapsuleProps {
   timeCapsules: TimeCapsule[];
@@ -13,6 +14,7 @@ export const TimeCapsules = ({ timeCapsules: propTimeCapsules }: TimeCapsuleProp
   const [localTimeCapsules, setLocalTimeCapsules] = useState<TimeCapsule[]>([]);
   const fileInputRef = useRef<HTMLInputElement>(null);
   const clickTimestamps = useRef<{ [key: number]: number }>({});
+  const { user } = useAuth();
 
   useEffect(() => {
     const loadTimeCapsules = () => {
@@ -38,7 +40,13 @@ export const TimeCapsules = ({ timeCapsules: propTimeCapsules }: TimeCapsuleProp
     };
   }, []);
 
-  const handleDelete = (capsuleId: number) => {
+  const handleDelete = (capsuleId: number, capsuleUsername: string) => {
+    // Check if the capsule belongs to the current user
+    if (capsuleUsername !== user?.name) {
+      toast.error("You can only delete your own time capsules!");
+      return;
+    }
+
     const now = Date.now();
     const lastClick = clickTimestamps.current[capsuleId] || 0;
     
@@ -63,14 +71,14 @@ export const TimeCapsules = ({ timeCapsules: propTimeCapsules }: TimeCapsuleProp
 
   const handleFileSelect = (event: React.ChangeEvent<HTMLInputElement>) => {
     const file = event.target.files?.[0];
-    if (file) {
+    if (file && user) {
       const newCapsule: TimeCapsule = {
         id: Date.now(),
         type: file.type.startsWith('image/') ? 'photo' : 'video',
         url: URL.createObjectURL(file),
         timestamp: new Date().toISOString(),
         postType: 'timeCapsule',
-        username: "John Doe"
+        username: user.name
       };
 
       addTimeCapsule(newCapsule);
@@ -96,7 +104,7 @@ export const TimeCapsules = ({ timeCapsules: propTimeCapsules }: TimeCapsuleProp
             <div 
               key={capsule.id} 
               className="flex-none cursor-pointer"
-              onClick={() => handleDelete(capsule.id)}
+              onClick={() => handleDelete(capsule.id, capsule.username)}
             >
               <div className="w-16 h-16 rounded-full overflow-hidden ring-2 ring-primary p-0.5 bg-neutral">
                 {capsule.type === 'photo' ? (
