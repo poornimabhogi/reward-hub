@@ -18,6 +18,7 @@ export const MonthlyEvent = ({ totalAccumulation }: MonthlyEventProps) => {
   const { toast } = useToast();
   const [countdown, setCountdown] = useState("");
   const [isEnrolled, setIsEnrolled] = useState(false);
+  const [isDialogOpen, setIsDialogOpen] = useState(false);
   
   const eventDate = "2024-04-20T00:00:00";
   const luckyAmount = Math.floor(totalAccumulation * 0.1); // 10% of total accumulation
@@ -51,6 +52,7 @@ export const MonthlyEvent = ({ totalAccumulation }: MonthlyEventProps) => {
       // Here we'll make an API call to store the user's enrollment
       // For now, we'll simulate the enrollment
       setIsEnrolled(true);
+      setIsDialogOpen(false);
       toast({
         title: "Successfully Enrolled!",
         description: "You're now registered for the monthly lucky draw.",
@@ -65,7 +67,7 @@ export const MonthlyEvent = ({ totalAccumulation }: MonthlyEventProps) => {
   };
 
   return (
-    <Dialog>
+    <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
       <DialogTrigger asChild>
         <div className="bg-neutral rounded-lg cursor-pointer hover:bg-neutral/80 transition-colors p-4 mb-4">
           <div className="flex flex-col items-center text-center space-y-3">
@@ -82,36 +84,42 @@ export const MonthlyEvent = ({ totalAccumulation }: MonthlyEventProps) => {
             <p className="text-primary font-medium">
               Time Remaining: {countdown}
             </p>
+            {isEnrolled && (
+              <div className="bg-success/10 text-success px-3 py-1 rounded-full text-sm">
+                Enrolled
+              </div>
+            )}
           </div>
         </div>
       </DialogTrigger>
-      <DialogContent className="max-w-md">
-        <DialogHeader>
-          <DialogTitle>Monthly Lucky Draw</DialogTitle>
-        </DialogHeader>
-        <div className="space-y-4 py-4">
-          <p className="text-center">Monthly prize pool from accumulated earnings!</p>
-          <div className="bg-neutral p-4 rounded-lg">
-            <p className="font-semibold">Grand Prize</p>
-            <p className="text-primary">{totalAccumulation} Coins Prize Pool</p>
+      {!isEnrolled && (
+        <DialogContent className="max-w-md">
+          <DialogHeader>
+            <DialogTitle>Monthly Lucky Draw</DialogTitle>
+          </DialogHeader>
+          <div className="space-y-4 py-4">
+            <p className="text-center">Monthly prize pool from accumulated earnings!</p>
+            <div className="bg-neutral p-4 rounded-lg">
+              <p className="font-semibold">Grand Prize</p>
+              <p className="text-primary">{totalAccumulation} Coins Prize Pool</p>
+            </div>
+            <div className="bg-neutral p-4 rounded-lg">
+              <p className="font-semibold">Lucky Amount</p>
+              <p className="text-primary">{luckyAmount} Coins per Winner</p>
+            </div>
+            <div className="bg-neutral p-4 rounded-lg">
+              <p className="font-semibold">Time Remaining</p>
+              <p className="text-primary">{countdown}</p>
+            </div>
+            <Button 
+              className="w-full" 
+              onClick={handleEnroll}
+            >
+              Enroll Now
+            </Button>
           </div>
-          <div className="bg-neutral p-4 rounded-lg">
-            <p className="font-semibold">Lucky Amount</p>
-            <p className="text-primary">{luckyAmount} Coins per Winner</p>
-          </div>
-          <div className="bg-neutral p-4 rounded-lg">
-            <p className="font-semibold">Time Remaining</p>
-            <p className="text-primary">{countdown}</p>
-          </div>
-          <Button 
-            className="w-full" 
-            onClick={handleEnroll}
-            disabled={isEnrolled}
-          >
-            {isEnrolled ? "Enrolled" : "Enroll Now"}
-          </Button>
-        </div>
-      </DialogContent>
+        </DialogContent>
+      )}
     </Dialog>
   );
 };
