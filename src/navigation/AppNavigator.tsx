@@ -8,6 +8,7 @@ import Sell from "@/pages/Sell";
 import Payment from "@/pages/Payment";
 import PaymentSuccess from "@/pages/PaymentSuccess";
 import ProductDetail from "@/pages/ProductDetail";
+import Profile from "@/pages/Profile";
 
 export const AppNavigator = () => {
   return (
@@ -21,6 +22,7 @@ export const AppNavigator = () => {
       <Route path="/sell" element={<Sell />} />
       <Route path="/payment" element={<Payment />} />
       <Route path="/payment-success" element={<PaymentSuccess />} />
+      <Route path="/profile" element={<Profile />} />
     </Routes>
   );
 };
