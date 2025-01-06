@@ -42,7 +42,6 @@ const Social = () => {
   });
 
   useEffect(() => {
-    // Listen for new time capsules from the current user
     const handleNewTimeCapsule = (event: CustomEvent<Status>) => {
       const newStatus = event.detail;
       if (newStatus.postType === 'timeCapsule') {
@@ -82,8 +81,19 @@ const Social = () => {
     <div className="pb-20">
       <div className="sticky top-0 z-10 bg-background pb-4 pt-4">
         <div className="container mx-auto px-4">
+          {/* Search Section */}
+          <div className="relative mb-6">
+            <Search className="absolute left-3 top-3 h-4 w-4 text-muted-foreground" />
+            <Input
+              placeholder="Search users..."
+              value={searchQuery}
+              onChange={(e) => setSearchQuery(e.target.value)}
+              className="pl-9"
+            />
+          </div>
+
           {/* Time Capsules Section */}
-          <div className="mb-8 bg-white rounded-lg shadow-sm p-4">
+          <div className="bg-white rounded-lg shadow-sm p-4">
             <h3 className="text-sm font-medium mb-3">Today's Time Capsules</h3>
             <ScrollArea className="w-full whitespace-nowrap">
               <div className="flex gap-4">
@@ -112,17 +122,6 @@ const Social = () => {
               </div>
               <ScrollBar orientation="horizontal" />
             </ScrollArea>
-          </div>
-
-          {/* Search Section */}
-          <div className="relative">
-            <Search className="absolute left-3 top-3 h-4 w-4 text-muted-foreground" />
-            <Input
-              placeholder="Search users..."
-              value={searchQuery}
-              onChange={(e) => setSearchQuery(e.target.value)}
-              className="pl-9"
-            />
           </div>
         </div>
       </div>
