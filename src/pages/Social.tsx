@@ -92,22 +92,22 @@ const Social = () => {
   );
 
   return (
-    <div className="pb-20">
-      <div className="sticky top-0 z-10 bg-background pb-4 pt-4">
-        <div className="container mx-auto px-4">
+    <div className="min-h-screen pb-20">
+      <div className="sticky top-0 z-50 bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
+        <div className="container mx-auto px-4 py-4">
           <div className="relative">
             <Search className="absolute left-3 top-3 h-4 w-4 text-muted-foreground" />
             <Input
               placeholder="Search users..."
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
-              className="pl-9"
+              className="pl-9 w-full"
             />
           </div>
         </div>
       </div>
 
-      <div className="container mx-auto px-4">
+      <div className="container mx-auto px-4 space-y-6">
         <SocialTimeCapsules followedUsers={followedUsers} />
         
         <div className="grid gap-6">
