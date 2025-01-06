@@ -5,6 +5,7 @@ import { Button } from "@/components/ui/button";
 import { ViewDetailsDropdown } from "./profile/ViewDetailsDropdown";
 import { EditProfileForm } from "./profile/EditProfileForm";
 import { toast } from "sonner";
+import { addTimeCapsule } from "@/utils/timeCapsuleUtils";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -27,48 +28,20 @@ export const ProfileSettings = ({ userProfile }: { userProfile: UserProfile }) =
   const [selectedFile, setSelectedFile] = useState<File | null>(null);
   const [isConfirmDialogOpen, setIsConfirmDialogOpen] = useState(false);
 
-  useEffect(() => {
-    const handleOpenPhotoGallery = (event: CustomEvent<{ postType: 'timeCapsule' | 'feature' | 'reel' }>) => {
-      setSelectedPostType(event.detail.postType);
-      if (fileInputRef.current) {
-        fileInputRef.current.click();
-      }
-    };
-
-    window.addEventListener('openPhotoGallery', handleOpenPhotoGallery as EventListener);
-    return () => {
-      window.removeEventListener('openPhotoGallery', handleOpenPhotoGallery as EventListener);
-    };
-  }, []);
-
-  const handleSave = () => {
-    setIsEditing(false);
-  };
-
-  const handleDropdownItemClick = (postType: 'timeCapsule' | 'feature' | 'reel') => {
-    setSelectedPostType(postType);
-    if (fileInputRef.current) {
-      fileInputRef.current.click();
-    }
-  };
-
   const handleFileSelect = (event: React.ChangeEvent<HTMLInputElement>) => {
     const file = event.target.files?.[0];
     if (file) {
       setSelectedFile(file);
       setIsConfirmDialogOpen(true);
-      // Reset the input value so the same file can be selected again
       event.target.value = '';
     }
   };
 
   const handleConfirmPost = () => {
     if (selectedFile) {
-      // Create blob URL for the file
       const fileUrl = URL.createObjectURL(selectedFile);
       
-      // Create new status object
-      const newStatus = {
+      const newCapsule = {
         id: Date.now(),
         type: selectedFile.type.startsWith('image/') ? 'photo' : 'video',
         url: fileUrl,
@@ -77,24 +50,18 @@ export const ProfileSettings = ({ userProfile }: { userProfile: UserProfile }) =
         username: userProfile.name
       };
 
-      // Store in localStorage
-      const existingCapsules = JSON.parse(localStorage.getItem('socialTimeCapsules') || '[]');
-      const updatedCapsules = [newStatus, ...existingCapsules];
-      localStorage.setItem('socialTimeCapsules', JSON.stringify(updatedCapsules));
-
-      // Dispatch custom event
-      const customEvent = new CustomEvent('newTimeCapsule', { 
-        detail: newStatus 
-      });
-      window.dispatchEvent(customEvent);
-      
-      console.log('New time capsule created:', newStatus);
-      
+      addTimeCapsule(newCapsule);
       toast.success(`${selectedPostType === 'timeCapsule' ? "Time capsule" : "Post"} added!`);
       
-      // Reset states
       setSelectedFile(null);
       setIsConfirmDialogOpen(false);
+    }
+  };
+
+  const handleDropdownItemClick = (postType: 'timeCapsule' | 'feature' | 'reel') => {
+    setSelectedPostType(postType);
+    if (fileInputRef.current) {
+      fileInputRef.current.click();
     }
   };
 
@@ -106,7 +73,6 @@ export const ProfileSettings = ({ userProfile }: { userProfile: UserProfile }) =
         accept="image/*,video/*"
         className="hidden"
         onChange={handleFileSelect}
-        capture={undefined}
       />
       
       <DropdownMenu>
@@ -140,22 +106,20 @@ export const ProfileSettings = ({ userProfile }: { userProfile: UserProfile }) =
           </DialogHeader>
           
           <div className="space-y-6">
-            <div className="space-y-2">
-              <ViewDetailsDropdown userProfile={userProfile} />
-              <Button 
-                variant="outline" 
-                className="w-full justify-start gap-2"
-                onClick={() => setIsEditing(!isEditing)}
-              >
-                <Settings2 className="h-4 w-4" /> Edit Profile
-              </Button>
-            </div>
+            <ViewDetailsDropdown userProfile={userProfile} />
+            <Button 
+              variant="outline" 
+              className="w-full justify-start gap-2"
+              onClick={() => setIsEditing(!isEditing)}
+            >
+              <Settings2 className="h-4 w-4" /> Edit Profile
+            </Button>
 
             {isEditing && (
               <EditProfileForm
                 editableProfile={editableProfile}
                 setEditableProfile={setEditableProfile}
-                onSave={handleSave}
+                onSave={() => setIsEditing(false)}
               />
             )}
           </div>
@@ -190,11 +154,6 @@ export const ProfileSettings = ({ userProfile }: { userProfile: UserProfile }) =
                 )}
               </div>
             )}
-            <div className="flex justify-end gap-2">
-              <Button variant="outline" onClick={() => setIsConfirmDialogOpen(false)}>
-                Cancel
-              </Button>
-            </div>
           </div>
         </DialogContent>
       </Dialog>

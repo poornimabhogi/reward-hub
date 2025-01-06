@@ -1,14 +1,7 @@
 import { useState, useEffect } from "react";
 import { ScrollArea, ScrollBar } from "@/components/ui/scroll-area";
-
-interface TimeCapsule {
-  id: number;
-  username: string;
-  type: 'photo' | 'video';
-  url: string;
-  timestamp: string;
-  postType?: 'timeCapsule' | 'feature' | 'reel';
-}
+import { getTimeCapsules, TimeCapsule } from "@/utils/timeCapsuleUtils";
+import { Button } from "@/components/ui/button";
 
 interface SocialTimeCapsuleProps {
   followedUsers: { username: string; isFollowing: boolean; }[];
@@ -19,36 +12,16 @@ export const SocialTimeCapsules = ({ followedUsers }: SocialTimeCapsuleProps) =>
   const currentUser = "John Doe";
 
   useEffect(() => {
-    // Load initial time capsules from localStorage
-    const loadTimeCapsules = () => {
-      const stored = localStorage.getItem('socialTimeCapsules');
-      if (stored) {
-        const parsedCapsules = JSON.parse(stored);
-        console.log('Loaded time capsules:', parsedCapsules);
-        setTimeCapsules(parsedCapsules);
-      }
-    };
+    // Load initial time capsules
+    setTimeCapsules(getTimeCapsules());
 
     // Handle new time capsule events
     const handleNewTimeCapsule = (event: CustomEvent<TimeCapsule>) => {
-      const newCapsule = event.detail;
-      console.log('New time capsule received:', newCapsule);
-      
-      if (newCapsule.postType === 'timeCapsule') {
-        setTimeCapsules(prev => {
-          const updated = [newCapsule, ...prev];
-          console.log('Updated time capsules:', updated);
-          return updated;
-        });
-      }
+      console.log('New time capsule received in Social:', event.detail);
+      setTimeCapsules(prev => [event.detail, ...prev]);
     };
 
-    // Initial load
-    loadTimeCapsules();
-
-    // Event listener setup
     window.addEventListener('newTimeCapsule', handleNewTimeCapsule as EventListener);
-    
     return () => {
       window.removeEventListener('newTimeCapsule', handleNewTimeCapsule as EventListener);
     };
@@ -61,13 +34,7 @@ export const SocialTimeCapsules = ({ followedUsers }: SocialTimeCapsuleProps) =>
       (capsule.username === currentUser || 
        followedUsers.some(user => user.username === capsule.username && user.isFollowing))
     )
-    .sort((a, b) => {
-      // Current user's capsules first
-      if (a.username === currentUser && b.username !== currentUser) return -1;
-      if (b.username === currentUser && a.username !== currentUser) return 1;
-      // Then sort by timestamp (newest first)
-      return new Date(b.timestamp).getTime() - new Date(a.timestamp).getTime();
-    });
+    .sort((a, b) => new Date(b.timestamp).getTime() - new Date(a.timestamp).getTime());
 
   return (
     <div className="mb-8 bg-white rounded-lg shadow-sm p-4">
