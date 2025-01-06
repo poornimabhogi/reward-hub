@@ -32,11 +32,13 @@ const Profile = () => {
     const handleNewTimeCapsule = (event: CustomEvent<Status>) => {
       const newStatus = event.detail;
       if (newStatus.postType === 'timeCapsule') {
-        // Convert Status to TimeCapsule with the required username
         const newTimeCapsule: TimeCapsule = {
-          ...newStatus,
-          username: userProfile.name,
+          id: newStatus.id,
+          type: newStatus.type,
+          url: newStatus.url,
           timestamp: new Date().toISOString(),
+          username: userProfile.name,
+          postType: 'timeCapsule'
         };
         setTimeCapsules(prev => [newTimeCapsule, ...prev]);
       } else {
@@ -58,11 +60,13 @@ const Profile = () => {
 
   const handleNewPost = (newStatus: Status, postType: 'timeCapsule' | 'feature' | 'reel') => {
     if (postType === 'timeCapsule') {
-      // Convert Status to TimeCapsule with the required username
       const newTimeCapsule: TimeCapsule = {
-        ...newStatus,
-        username: userProfile.name,
+        id: newStatus.id,
+        type: newStatus.type,
+        url: newStatus.url,
         timestamp: new Date().toISOString(),
+        username: userProfile.name,
+        postType: 'timeCapsule'
       };
       setTimeCapsules([newTimeCapsule, ...timeCapsules]);
     } else {

@@ -12,18 +12,27 @@ export const SocialTimeCapsules = ({ followedUsers }: SocialTimeCapsuleProps) =>
   const currentUser = "John Doe";
 
   useEffect(() => {
-    // Load initial time capsules from localStorage
     const loadTimeCapsules = () => {
-      const capsules = getTimeCapsules();
-      console.log('Loaded time capsules:', capsules);
+      const capsules = getTimeCapsules().filter(capsule => {
+        // Verify the URL is valid and accessible
+        try {
+          new URL(capsule.url);
+          return capsule.url && 
+                 capsule.username && 
+                 capsule.postType === 'timeCapsule' &&
+                 (capsule.type === 'photo' || capsule.type === 'video');
+        } catch {
+          return false;
+        }
+      });
+      console.log('Loaded valid time capsules in social:', capsules);
       setTimeCapsules(capsules);
     };
 
     loadTimeCapsules();
 
-    // Handle new time capsule events
     const handleNewTimeCapsule = () => {
-      loadTimeCapsules(); // Reload from localStorage when new capsule is added
+      loadTimeCapsules();
     };
 
     window.addEventListener('newTimeCapsule', handleNewTimeCapsule);
@@ -41,6 +50,15 @@ export const SocialTimeCapsules = ({ followedUsers }: SocialTimeCapsuleProps) =>
     )
     .sort((a, b) => new Date(b.timestamp).getTime() - new Date(a.timestamp).getTime());
 
+  const handleMediaError = (capsuleId: number) => {
+    setTimeCapsules(prev => prev.filter(tc => tc.id !== capsuleId));
+    // Also remove from localStorage
+    const storedCapsules = getTimeCapsules();
+    localStorage.setItem('timeCapsules', JSON.stringify(
+      storedCapsules.filter(tc => tc.id !== capsuleId)
+    ));
+  };
+
   return (
     <div className="mb-8 bg-white rounded-lg shadow-sm p-4">
       <h3 className="text-sm font-medium mb-3">Today's Time Capsules</h3>
@@ -55,6 +73,7 @@ export const SocialTimeCapsules = ({ followedUsers }: SocialTimeCapsuleProps) =>
                       src={capsule.url}
                       alt={`Time Capsule by ${capsule.username}`}
                       className="w-full h-full object-cover rounded-full"
+                      onError={() => handleMediaError(capsule.id)}
                     />
                   ) : (
                     <video
@@ -64,6 +83,7 @@ export const SocialTimeCapsules = ({ followedUsers }: SocialTimeCapsuleProps) =>
                       muted
                       loop
                       playsInline
+                      onError={() => handleMediaError(capsule.id)}
                     />
                   )}
                 </div>
