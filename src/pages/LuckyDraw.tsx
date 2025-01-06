@@ -1,8 +1,9 @@
 import { useState, useEffect } from "react";
-import { Gift, Trophy, Calendar, ArrowLeft } from "lucide-react";
+import { Gift, Trophy, Calendar, ArrowLeft, Coins } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useToast } from "@/hooks/use-toast";
 import { useNavigate } from "react-router-dom";
+import { calculateLuckyDrawAmount } from "@/utils/luckyDrawCalculations";
 import {
   Dialog,
   DialogContent,
@@ -18,6 +19,10 @@ const LuckyDraw = () => {
   const [prize, setPrize] = useState<string | null>(null);
   const [countdowns, setCountdowns] = useState<{ [key: number]: string }>({});
 
+  // Simulated monthly earnings (replace with actual data in production)
+  const monthlyEarnings = 5000;
+  const { totalAccumulation } = calculateLuckyDrawAmount(monthlyEarnings);
+
   const prizes = [
     "50% Off Coupon",
     "Free Shipping",
@@ -30,10 +35,10 @@ const LuckyDraw = () => {
   const upcomingEvents = [
     {
       id: 1,
-      title: "Weekend Bonanza",
+      title: "Monthly Lucky Draw",
       date: "2024-04-20T00:00:00",
-      description: "Double your chances to win premium prizes!",
-      prize: "iPhone 15"
+      description: "Monthly prize pool from accumulated earnings!",
+      prize: `${totalAccumulation} Coins Prize Pool`
     },
     {
       id: 2,
@@ -75,7 +80,6 @@ const LuckyDraw = () => {
       setCountdowns(newCountdowns);
     };
 
-    // Update countdowns immediately and then every second
     updateCountdowns();
     const interval = setInterval(updateCountdowns, 1000);
 
@@ -86,7 +90,6 @@ const LuckyDraw = () => {
     setIsSpinning(true);
     setPrize(null);
     
-    // Simulate wheel spinning
     setTimeout(() => {
       const randomPrize = prizes[Math.floor(Math.random() * prizes.length)];
       setPrize(randomPrize);
@@ -119,6 +122,14 @@ const LuckyDraw = () => {
           </div>
 
           <h1 className="text-2xl font-bold mb-4">Lucky Draw</h1>
+          
+          <div className="bg-neutral/10 rounded-lg p-4 mb-6">
+            <div className="flex items-center justify-center gap-2">
+              <Coins className="h-5 w-5 text-yellow-500" />
+              <span className="font-medium">Monthly Prize Pool: {totalAccumulation} Coins</span>
+            </div>
+          </div>
+
           <p className="text-muted-foreground mb-8">
             Spin the wheel to win exciting prizes! Each spin costs 10 coins.
           </p>
