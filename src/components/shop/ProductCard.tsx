@@ -2,6 +2,7 @@ import { Heart, ShoppingCart } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
+import { useToast } from "@/components/ui/use-toast";
 import {
   Select,
   SelectContent,
@@ -9,6 +10,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
+import { createCheckoutSession } from "@/utils/stripe";
 
 interface ProductCardProps {
   product: {
@@ -27,6 +29,7 @@ interface ProductCardProps {
 const ProductCard = ({ product, onToggleWishlist, onToggleCart }: ProductCardProps) => {
   const [quantity, setQuantity] = useState("1");
   const navigate = useNavigate();
+  const { toast } = useToast();
 
   const handleCardClick = () => {
     navigate(`/shop/product/${product.id}`, {
@@ -47,6 +50,23 @@ const ProductCard = ({ product, onToggleWishlist, onToggleCart }: ProductCardPro
   const handleActionClick = (e: React.MouseEvent, action: () => void) => {
     e.stopPropagation();
     action();
+  };
+
+  const handleBuyNow = async (e: React.MouseEvent) => {
+    e.stopPropagation();
+    try {
+      await createCheckoutSession({
+        name: product.name,
+        price: product.price,
+        quantity: parseInt(quantity),
+      });
+    } catch (error) {
+      toast({
+        title: "Error",
+        description: "Failed to initiate checkout. Please try again.",
+        variant: "destructive",
+      });
+    }
   };
 
   return (
@@ -94,7 +114,7 @@ const ProductCard = ({ product, onToggleWishlist, onToggleCart }: ProductCardPro
         <p className="text-sm text-gray-500 mb-3">Size: {product.size}</p>
       )}
       
-      <div onClick={(e) => e.stopPropagation()}>
+      <div onClick={(e) => e.stopPropagation()} className="space-y-3">
         <Select value={quantity} onValueChange={setQuantity}>
           <SelectTrigger className="w-full">
             <SelectValue>Quantity: {quantity}</SelectValue>
@@ -107,6 +127,13 @@ const ProductCard = ({ product, onToggleWishlist, onToggleCart }: ProductCardPro
             ))}
           </SelectContent>
         </Select>
+
+        <Button 
+          className="w-full"
+          onClick={handleBuyNow}
+        >
+          Buy Now
+        </Button>
       </div>
     </div>
   );
