@@ -32,7 +32,13 @@ const Profile = () => {
     const handleNewTimeCapsule = (event: CustomEvent<Status>) => {
       const newStatus = event.detail;
       if (newStatus.postType === 'timeCapsule') {
-        setTimeCapsules(prev => [newStatus as TimeCapsule, ...prev]);
+        // Convert Status to TimeCapsule with the required username
+        const newTimeCapsule: TimeCapsule = {
+          ...newStatus,
+          username: userProfile.name,
+          timestamp: new Date().toISOString(),
+        };
+        setTimeCapsules(prev => [newTimeCapsule, ...prev]);
       } else {
         setPosts(prev => [newStatus, ...prev]);
       }
@@ -42,7 +48,7 @@ const Profile = () => {
     return () => {
       window.removeEventListener('newTimeCapsule', handleNewTimeCapsule as EventListener);
     };
-  }, []);
+  }, [userProfile.name]);
 
   const handleUnfollow = (username: string) => {
     const updatedUsers = followedUsers.filter(user => user.username !== username);
@@ -52,7 +58,13 @@ const Profile = () => {
 
   const handleNewPost = (newStatus: Status, postType: 'timeCapsule' | 'feature' | 'reel') => {
     if (postType === 'timeCapsule') {
-      setTimeCapsules([newStatus as TimeCapsule, ...timeCapsules]);
+      // Convert Status to TimeCapsule with the required username
+      const newTimeCapsule: TimeCapsule = {
+        ...newStatus,
+        username: userProfile.name,
+        timestamp: new Date().toISOString(),
+      };
+      setTimeCapsules([newTimeCapsule, ...timeCapsules]);
     } else {
       setPosts([newStatus, ...posts]);
     }
