@@ -22,6 +22,49 @@ export const CreatePostForm = ({ onPost, initialPostType = 'feature' }: CreatePo
   const [thoughtMedia, setThoughtMedia] = useState<File | null>(null);
   const [postType, setPostType] = useState<'timeCapsule' | 'feature' | 'reel'>(initialPostType);
 
+  const validateVideoDuration = (file: File): Promise<boolean> => {
+    return new Promise((resolve) => {
+      const video = document.createElement('video');
+      video.preload = 'metadata';
+
+      video.onloadedmetadata = () => {
+        window.URL.revokeObjectURL(video.src);
+        const duration = video.duration;
+        
+        if (postType === 'reel') {
+          if (duration < 30) {
+            toast.error("Reels must be at least 30 seconds long");
+            resolve(false);
+          } else if (duration > 900) { // 15 minutes = 900 seconds
+            toast.error("Reels cannot be longer than 15 minutes");
+            resolve(false);
+          } else {
+            resolve(true);
+          }
+        } else {
+          resolve(true); // No duration restrictions for other post types
+        }
+      };
+
+      video.src = URL.createObjectURL(file);
+    });
+  };
+
+  const handleMediaChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+
+    if (file.type.startsWith('video/')) {
+      const isValidDuration = await validateVideoDuration(file);
+      if (!isValidDuration) {
+        e.target.value = ''; // Reset input
+        return;
+      }
+    }
+
+    setThoughtMedia(file);
+  };
+
   const handleSubmit = () => {
     if (thoughtText.trim() || thoughtMedia) {
       const newStatus: Status = {
@@ -66,7 +109,7 @@ export const CreatePostForm = ({ onPost, initialPostType = 'feature' }: CreatePo
         type="file"
         accept="image/*,video/*"
         className="hidden"
-        onChange={(e) => setThoughtMedia(e.target.files?.[0] || null)}
+        onChange={handleMediaChange}
       />
 
       <Textarea
