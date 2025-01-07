@@ -1,5 +1,6 @@
 import React, { useEffect, useRef } from 'react';
-import { Canvas as FabricCanvas, Image as FabricImage, filters } from 'fabric';
+import { Canvas as FabricCanvas, Image as FabricImage } from 'fabric';
+import { filters } from 'fabric';
 import { useCanvas } from '@/contexts/CanvasContext';
 import { ScrollArea, ScrollBar } from "@/components/ui/scroll-area";
 
@@ -14,6 +15,7 @@ export const FilterControls: React.FC<FilterControlsProps> = ({
 }) => {
   const { canvas } = useCanvas();
   const previewRefs = useRef<{ [key: string]: HTMLCanvasElement | null }>({});
+  const previewCanvasInstances = useRef<{ [key: string]: FabricCanvas }>({});
 
   const filtersList = [
     { name: 'Original', value: 'none' },
@@ -23,25 +25,56 @@ export const FilterControls: React.FC<FilterControlsProps> = ({
     { name: 'Contrast', value: 'contrast' },
   ];
 
+  // Create a filter instance based on the filter type
+  const createFilter = (filterType: string) => {
+    switch (filterType) {
+      case 'grayscale':
+        return new filters.Grayscale();
+      case 'sepia':
+        return new filters.Sepia();
+      case 'brightness':
+        return new filters.Brightness({ brightness: 0.1 });
+      case 'contrast':
+        return new filters.Contrast({ contrast: 0.1 });
+      default:
+        return null;
+    }
+  };
+
   useEffect(() => {
     if (!canvas) return;
 
     const mainImage = canvas.getObjects()[0] as FabricImage;
     if (!mainImage) return;
 
-    const cleanupFunctions = filtersList.map(filter => {
+    // Cleanup function to dispose of all preview canvases
+    const cleanup = () => {
+      Object.values(previewCanvasInstances.current).forEach(canvas => {
+        canvas.dispose();
+      });
+      previewCanvasInstances.current = {};
+    };
+
+    // Create preview for each filter
+    filtersList.forEach(filter => {
       const previewCanvas = previewRefs.current[filter.value];
       if (!previewCanvas) return;
 
-      const previewFabricCanvas = new FabricCanvas(previewCanvas, {
+      // Dispose of existing canvas instance if it exists
+      if (previewCanvasInstances.current[filter.value]) {
+        previewCanvasInstances.current[filter.value].dispose();
+      }
+
+      const fabricPreviewCanvas = new FabricCanvas(previewCanvas, {
         width: 64,
         height: 64,
         backgroundColor: '#000000',
         selection: false,
         renderOnAddRemove: true,
-        isDrawingMode: false,
         skipTargetFind: true,
       });
+
+      previewCanvasInstances.current[filter.value] = fabricPreviewCanvas;
 
       const img = new Image();
       img.crossOrigin = "anonymous";
@@ -52,11 +85,8 @@ export const FilterControls: React.FC<FilterControlsProps> = ({
           evented: false,
         });
         
-        const scale = Math.min(
-          64 / img.width,
-          64 / img.height
-        );
-
+        const scale = Math.min(64 / img.width, 64 / img.height);
+        
         fabricImage.set({
           scaleX: scale,
           scaleY: scale,
@@ -64,50 +94,23 @@ export const FilterControls: React.FC<FilterControlsProps> = ({
           top: (64 - (img.height * scale)) / 2,
         });
 
-        // Initialize filters with default parameters
         if (filter.value !== 'none') {
-          try {
-            let filterInstance;
-            switch (filter.value) {
-              case 'grayscale':
-                filterInstance = new filters.Grayscale();
-                break;
-              case 'sepia':
-                filterInstance = new filters.Sepia();
-                break;
-              case 'brightness':
-                filterInstance = new filters.Brightness({ brightness: 0.1 });
-                break;
-              case 'contrast':
-                filterInstance = new filters.Contrast({ contrast: 0.1 });
-                break;
-            }
-            
-            if (filterInstance) {
-              fabricImage.filters = [filterInstance];
-              fabricImage.applyFilters();
-            }
-          } catch (error) {
-            console.error(`Error applying filter ${filter.value}:`, error);
+          const filterInstance = createFilter(filter.value);
+          if (filterInstance) {
+            fabricImage.filters = [filterInstance];
+            fabricImage.applyFilters();
           }
         }
 
-        previewFabricCanvas.add(fabricImage);
-        previewFabricCanvas.centerObject(fabricImage);
-        previewFabricCanvas.renderAll();
+        fabricPreviewCanvas.add(fabricImage);
+        fabricPreviewCanvas.renderAll();
       };
 
       const dataUrl = mainImage.toDataURL();
       img.src = dataUrl;
-
-      return () => {
-        previewFabricCanvas.dispose();
-      };
     });
 
-    return () => {
-      cleanupFunctions.forEach(cleanup => cleanup && cleanup());
-    };
+    return cleanup;
   }, [canvas, filtersList]);
 
   const handleFilterClick = (filterValue: string) => {
@@ -119,29 +122,9 @@ export const FilterControls: React.FC<FilterControlsProps> = ({
     mainImage.filters = [];
 
     if (filterValue !== 'none') {
-      try {
-        let filterInstance;
-        switch (filterValue) {
-          case 'grayscale':
-            filterInstance = new filters.Grayscale();
-            break;
-          case 'sepia':
-            filterInstance = new filters.Sepia();
-            break;
-          case 'brightness':
-            filterInstance = new filters.Brightness({ brightness: 0.1 });
-            break;
-          case 'contrast':
-            filterInstance = new filters.Contrast({ contrast: 0.1 });
-            break;
-        }
-        
-        if (filterInstance) {
-          mainImage.filters = [filterInstance];
-        }
-      } catch (error) {
-        console.error(`Error applying filter ${filterValue}:`, error);
-        return;
+      const filterInstance = createFilter(filterValue);
+      if (filterInstance) {
+        mainImage.filters = [filterInstance];
       }
     }
 
