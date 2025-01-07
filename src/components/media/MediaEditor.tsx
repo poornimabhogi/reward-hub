@@ -21,10 +21,25 @@ const MediaEditorContent = ({ file, onSave, onCancel }: MediaEditorProps) => {
   useEffect(() => {
     if (!canvasRef.current) return;
 
+    // Set canvas dimensions to match mobile viewport ratio (9:16)
+    const viewportWidth = window.innerWidth;
+    const viewportHeight = window.innerHeight - 120; // Account for header and controls
+    const targetAspectRatio = 9 / 16;
+    
+    let canvasWidth = viewportWidth;
+    let canvasHeight = canvasWidth * targetAspectRatio;
+
+    // If calculated height is too tall, calculate based on height instead
+    if (canvasHeight > viewportHeight) {
+      canvasHeight = viewportHeight;
+      canvasWidth = canvasHeight / targetAspectRatio;
+    }
+
     const fabricCanvas = new FabricCanvas(canvasRef.current, {
-      width: window.innerWidth,
-      height: window.innerHeight - 120, // Adjusted for header and controls
-      backgroundColor: '#000000'
+      width: canvasWidth,
+      height: canvasHeight,
+      backgroundColor: '#000000',
+      centeredScaling: true,
     });
     setCanvas(fabricCanvas);
 
@@ -33,16 +48,15 @@ const MediaEditorContent = ({ file, onSave, onCancel }: MediaEditorProps) => {
       const fabricImage = new FabricImage(img);
       
       // Calculate scale to fit the image while maintaining aspect ratio
-      const canvasAspect = fabricCanvas.width! / fabricCanvas.height!;
-      const imageAspect = img.width / img.height;
+      const imageAspectRatio = img.width / img.height;
       let scale;
 
-      if (canvasAspect > imageAspect) {
-        // Canvas is wider than image
-        scale = (fabricCanvas.height! - 40) / img.height;
+      if (imageAspectRatio > targetAspectRatio) {
+        // Image is wider than canvas ratio
+        scale = canvasWidth / img.width;
       } else {
-        // Canvas is taller than image
-        scale = (fabricCanvas.width! - 40) / img.width;
+        // Image is taller than canvas ratio
+        scale = canvasHeight / img.height;
       }
       
       fabricImage.set({
@@ -60,9 +74,20 @@ const MediaEditorContent = ({ file, onSave, onCancel }: MediaEditorProps) => {
     img.src = URL.createObjectURL(file);
 
     const handleResize = () => {
+      const newWidth = window.innerWidth;
+      const newHeight = window.innerHeight - 120;
+      
+      let width = newWidth;
+      let height = width * targetAspectRatio;
+      
+      if (height > newHeight) {
+        height = newHeight;
+        width = height / targetAspectRatio;
+      }
+
       fabricCanvas.setDimensions({
-        width: window.innerWidth,
-        height: window.innerHeight - 120
+        width: width,
+        height: height
       });
       fabricCanvas.renderAll();
     };
@@ -111,8 +136,8 @@ const MediaEditorContent = ({ file, onSave, onCancel }: MediaEditorProps) => {
       </div>
 
       {/* Main Content Area */}
-      <div className="flex-1 relative bg-black">
-        <canvas ref={canvasRef} className="absolute inset-0" />
+      <div className="flex-1 relative bg-black flex items-center justify-center">
+        <canvas ref={canvasRef} className="max-w-full max-h-full" />
       </div>
 
       {/* Bottom Controls */}
@@ -162,7 +187,7 @@ const MediaEditorContent = ({ file, onSave, onCancel }: MediaEditorProps) => {
   );
 };
 
-// Export the wrapped component as a named export
+// Export the wrapped component
 export const MediaEditor = (props: MediaEditorProps) => (
   <CanvasProvider>
     <MediaEditorContent {...props} />
