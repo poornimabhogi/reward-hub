@@ -1,4 +1,4 @@
-import React, { useEffect, useRef, useState } from "react";
+import React, { useEffect, useRef } from "react";
 import { Canvas as FabricCanvas, Image as FabricImage } from 'fabric';
 import { Button } from "@/components/ui/button";
 import { X, Send, Filter, Sliders, Crop } from "lucide-react";
@@ -15,10 +15,8 @@ interface MediaEditorProps {
 const MediaEditorContent = ({ file, onSave, onCancel }: MediaEditorProps) => {
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const { setCanvas, canvas } = useCanvas();
-  const [selectedFilter, setSelectedFilter] = useState("none");
-  const [activeControl, setActiveControl] = useState<"filters" | "adjust" | "crop" | null>(null);
-  const [brightness, setBrightness] = useState(100);
-  const [contrast, setContrast] = useState(100);
+  const [selectedFilter, setSelectedFilter] = React.useState("none");
+  const [activeControl, setActiveControl] = React.useState<"filters" | "adjust" | "crop" | null>(null);
 
   useEffect(() => {
     if (!canvasRef.current) return;
@@ -79,44 +77,6 @@ const MediaEditorContent = ({ file, onSave, onCancel }: MediaEditorProps) => {
         onSave(editedFile);
       }
     }, file.type);
-  };
-
-  const applyFilter = (filterName: string) => {
-    if (!canvas) return;
-    const objects = canvas.getObjects();
-    if (objects.length === 0) return;
-
-    const image = objects[0] as FabricImage;
-    image.filters = [];
-
-    switch (filterName) {
-      case "mono":
-        image.filters.push(new fabric.Image.filters.Grayscale());
-        break;
-      case "fade":
-        image.filters.push(
-          new fabric.Image.filters.Brightness({ brightness: 0.25 }),
-          new fabric.Image.filters.Contrast({ contrast: -0.25 })
-        );
-        break;
-      case "chrome":
-        image.filters.push(
-          new fabric.Image.filters.Contrast({ contrast: 0.25 }),
-          new fabric.Image.filters.Saturation({ saturation: 0.5 })
-        );
-        break;
-      case "noir":
-        image.filters.push(
-          new fabric.Image.filters.Grayscale(),
-          new fabric.Image.filters.Contrast({ contrast: 0.5 }),
-          new fabric.Image.filters.Brightness({ brightness: -0.25 })
-        );
-        break;
-    }
-
-    image.applyFilters();
-    canvas.renderAll();
-    setSelectedFilter(filterName);
   };
 
   return (
@@ -182,7 +142,7 @@ const MediaEditorContent = ({ file, onSave, onCancel }: MediaEditorProps) => {
           <div className="absolute bottom-24 left-0 right-0 bg-black/80 border-t border-white/10 p-4">
             <FilterControls
               selectedFilter={selectedFilter}
-              onFilterChange={applyFilter}
+              onFilterChange={setSelectedFilter}
             />
           </div>
         )}
