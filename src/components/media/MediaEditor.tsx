@@ -1,4 +1,4 @@
-import React, { useEffect, useRef } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import { Canvas as FabricCanvas, Image as FabricImage } from 'fabric';
 import { Button } from "@/components/ui/button";
 import { X, Send, Filter, Sliders, Crop } from "lucide-react";
@@ -15,8 +15,8 @@ interface MediaEditorProps {
 const MediaEditorContent = ({ file, onSave, onCancel }: MediaEditorProps) => {
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const { setCanvas, canvas } = useCanvas();
-  const [selectedFilter, setSelectedFilter] = React.useState("none");
-  const [activeControl, setActiveControl] = React.useState<"filters" | "adjust" | "crop" | null>(null);
+  const [selectedFilter, setSelectedFilter] = useState("none");
+  const [activeControl, setActiveControl] = useState<"filters" | "adjust" | "crop" | null>(null);
 
   useEffect(() => {
     if (!canvasRef.current) return;
@@ -79,6 +79,37 @@ const MediaEditorContent = ({ file, onSave, onCancel }: MediaEditorProps) => {
     }, file.type);
   };
 
+  const handleFilterChange = (filter: string) => {
+    setSelectedFilter(filter);
+    if (!canvas) return;
+
+    const objects = canvas.getObjects();
+    if (objects.length === 0) return;
+
+    const image = objects[0];
+    if (!image) return;
+
+    switch (filter) {
+      case 'grayscale':
+        image.filters = [new FabricImage.filters.Grayscale()];
+        break;
+      case 'sepia':
+        image.filters = [new FabricImage.filters.Sepia()];
+        break;
+      case 'brightness':
+        image.filters = [new FabricImage.filters.Brightness({ brightness: 0.2 })];
+        break;
+      case 'contrast':
+        image.filters = [new FabricImage.filters.Contrast({ contrast: 0.2 })];
+        break;
+      default:
+        image.filters = [];
+    }
+    
+    image.applyFilters();
+    canvas.renderAll();
+  };
+
   return (
     <div className="fixed inset-0 z-50 bg-black">
       {/* Top Controls */}
@@ -108,7 +139,7 @@ const MediaEditorContent = ({ file, onSave, onCancel }: MediaEditorProps) => {
       <div className="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black/80 to-transparent p-6">
         <div className="flex justify-center gap-16">
           <button 
-            className="flex flex-col items-center gap-2"
+            className="flex flex-col items-center gap-2 cursor-pointer"
             onClick={() => setActiveControl(activeControl === "filters" ? null : "filters")}
           >
             <div className={`h-14 w-14 rounded-full ${activeControl === "filters" ? "bg-white/20" : "bg-black/50"} flex items-center justify-center`}>
@@ -118,7 +149,7 @@ const MediaEditorContent = ({ file, onSave, onCancel }: MediaEditorProps) => {
           </button>
           
           <button 
-            className="flex flex-col items-center gap-2"
+            className="flex flex-col items-center gap-2 cursor-pointer"
             onClick={() => setActiveControl(activeControl === "adjust" ? null : "adjust")}
           >
             <div className={`h-14 w-14 rounded-full ${activeControl === "adjust" ? "bg-white/20" : "bg-black/50"} flex items-center justify-center`}>
@@ -128,7 +159,7 @@ const MediaEditorContent = ({ file, onSave, onCancel }: MediaEditorProps) => {
           </button>
           
           <button 
-            className="flex flex-col items-center gap-2"
+            className="flex flex-col items-center gap-2 cursor-pointer"
             onClick={() => setActiveControl(activeControl === "crop" ? null : "crop")}
           >
             <div className={`h-14 w-14 rounded-full ${activeControl === "crop" ? "bg-white/20" : "bg-black/50"} flex items-center justify-center`}>
@@ -142,7 +173,7 @@ const MediaEditorContent = ({ file, onSave, onCancel }: MediaEditorProps) => {
           <div className="absolute bottom-24 left-0 right-0 bg-black/80 border-t border-white/10 p-4">
             <FilterControls
               selectedFilter={selectedFilter}
-              onFilterChange={setSelectedFilter}
+              onFilterChange={handleFilterChange}
             />
           </div>
         )}
