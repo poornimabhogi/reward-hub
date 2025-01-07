@@ -1,6 +1,7 @@
 import React, { useEffect, useRef } from 'react';
 import { Canvas as FabricCanvas, Image as FabricImage } from 'fabric';
 import { useCanvas } from '@/contexts/CanvasContext';
+import { ScrollArea } from "@/components/ui/scroll-area";
 
 interface FilterControlsProps {
   selectedFilter: string;
@@ -60,13 +61,13 @@ export const FilterControls: React.FC<FilterControlsProps> = ({
 
         // Apply filter based on type
         if (filter.value === 'grayscale') {
-          fabricImage.filters?.push(new FabricImage.filters.Grayscale());
+          fabricImage.filters = [new (FabricImage as any).filters.Grayscale()];
         } else if (filter.value === 'sepia') {
-          fabricImage.filters?.push(new FabricImage.filters.Sepia());
+          fabricImage.filters = [new (FabricImage as any).filters.Sepia()];
         } else if (filter.value === 'brightness') {
-          fabricImage.filters?.push(new FabricImage.filters.Brightness({ brightness: 0.2 }));
+          fabricImage.filters = [new (FabricImage as any).filters.Brightness({ brightness: 0.2 })];
         } else if (filter.value === 'contrast') {
-          fabricImage.filters?.push(new FabricImage.filters.Contrast({ contrast: 0.2 }));
+          fabricImage.filters = [new (FabricImage as any).filters.Contrast({ contrast: 0.2 })];
         }
 
         if (fabricImage.filters && fabricImage.filters.length > 0) {
@@ -95,30 +96,32 @@ export const FilterControls: React.FC<FilterControlsProps> = ({
   }, [canvas]);
 
   return (
-    <div className="flex items-center gap-6 overflow-x-auto py-2 px-4">
-      {filters.map((filter) => (
-        <button
-          key={filter.value}
-          onClick={() => onFilterChange(filter.value)}
-          className="flex flex-col items-center gap-2 cursor-pointer"
-        >
-          <div
-            className={`w-16 h-16 rounded-lg overflow-hidden ${
-              selectedFilter === filter.value ? 'ring-2 ring-white' : ''
-            }`}
+    <ScrollArea className="w-full">
+      <div className="flex items-center gap-6 p-4">
+        {filters.map((filter) => (
+          <button
+            key={filter.value}
+            onClick={() => onFilterChange(filter.value)}
+            className="flex flex-col items-center gap-2 cursor-pointer flex-shrink-0"
           >
-            <canvas
-              ref={(el) => (previewRefs.current[filter.value] = el)}
-              width="64"
-              height="64"
-              className="w-full h-full"
-            />
-          </div>
-          <span className="text-xs text-white">
-            {filter.name}
-          </span>
-        </button>
-      ))}
-    </div>
+            <div
+              className={`w-16 h-16 rounded-lg overflow-hidden ${
+                selectedFilter === filter.value ? 'ring-2 ring-white' : ''
+              }`}
+            >
+              <canvas
+                ref={(el) => (previewRefs.current[filter.value] = el)}
+                width="64"
+                height="64"
+                className="w-full h-full"
+              />
+            </div>
+            <span className="text-xs text-white">
+              {filter.name}
+            </span>
+          </button>
+        ))}
+      </div>
+    </ScrollArea>
   );
 };
