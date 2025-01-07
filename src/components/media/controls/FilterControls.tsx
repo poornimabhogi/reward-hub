@@ -1,7 +1,7 @@
 import React, { useEffect, useRef } from 'react';
 import { Canvas as FabricCanvas, Image as FabricImage, filters } from 'fabric';
 import { useCanvas } from '@/contexts/CanvasContext';
-import { ScrollArea } from "@/components/ui/scroll-area";
+import { ScrollArea, ScrollBar } from "@/components/ui/scroll-area";
 
 interface FilterControlsProps {
   selectedFilter: string;
@@ -29,7 +29,6 @@ export const FilterControls: React.FC<FilterControlsProps> = ({
     const mainImage = canvas.getObjects()[0] as FabricImage;
     if (!mainImage) return;
 
-    // Create preview for each filter
     filtersList.forEach(filter => {
       const previewCanvas = previewRefs.current[filter.value];
       if (!previewCanvas) return;
@@ -40,12 +39,10 @@ export const FilterControls: React.FC<FilterControlsProps> = ({
         backgroundColor: '#000000',
       });
 
-      // Create a new image for preview
       const img = new Image();
       img.onload = () => {
         const fabricImage = new FabricImage(img);
         
-        // Scale to fit preview
         const scale = Math.min(
           64 / img.width,
           64 / img.height
@@ -59,7 +56,6 @@ export const FilterControls: React.FC<FilterControlsProps> = ({
           selectable: false,
         });
 
-        // Apply filter based on type
         if (filter.value === 'grayscale') {
           fabricImage.filters = [new filters.Grayscale()];
         } else if (filter.value === 'sepia') {
@@ -78,12 +74,10 @@ export const FilterControls: React.FC<FilterControlsProps> = ({
         previewFabricCanvas.renderAll();
       };
 
-      // Get the current state of the main canvas as a data URL
       const dataUrl = mainImage.toDataURL();
       img.src = dataUrl;
     });
 
-    // Cleanup
     return () => {
       filtersList.forEach(filter => {
         const previewCanvas = previewRefs.current[filter.value];
@@ -96,7 +90,7 @@ export const FilterControls: React.FC<FilterControlsProps> = ({
   }, [canvas]);
 
   return (
-    <ScrollArea className="w-full">
+    <ScrollArea className="w-full h-32">
       <div className="flex items-center gap-6 p-4">
         {filtersList.map((filter) => (
           <button
@@ -122,6 +116,7 @@ export const FilterControls: React.FC<FilterControlsProps> = ({
           </button>
         ))}
       </div>
+      <ScrollBar orientation="horizontal" />
     </ScrollArea>
   );
 };
