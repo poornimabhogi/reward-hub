@@ -1,6 +1,6 @@
 import { useCallback } from 'react';
 import { useCanvas } from '@/contexts/CanvasContext';
-import { filters } from 'fabric';
+import { filters, Image as FabricImage } from 'fabric';
 
 export const useImageEffects = () => {
   const { canvas } = useCanvas();
@@ -11,7 +11,7 @@ export const useImageEffects = () => {
     const objects = canvas.getObjects();
     if (objects.length === 0) return;
 
-    const image = objects[0];
+    const image = objects[0] as FabricImage;
     if (!image) return;
 
     const brightnessFilter = new filters.Brightness({
@@ -32,7 +32,7 @@ export const useImageEffects = () => {
     const objects = canvas.getObjects();
     if (objects.length === 0) return;
 
-    const image = objects[0];
+    const image = objects[0] as FabricImage;
     if (!image) return;
 
     const contrastFilter = new filters.Contrast({
