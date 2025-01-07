@@ -2,8 +2,6 @@ import React, { useEffect, useRef } from "react";
 import { Canvas as FabricCanvas, Image as FabricImage } from 'fabric';
 import { Button } from "@/components/ui/button";
 import { Filter, Sliders, Crop, Send } from "lucide-react";
-import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
-import { CanvasProvider } from "@/contexts/CanvasContext";
 import { useCanvas } from "@/contexts/CanvasContext";
 import { FilterControls } from "./controls/FilterControls";
 
@@ -24,7 +22,7 @@ const MediaEditorContent = ({ file, onSave, onCancel }: MediaEditorProps) => {
 
     const fabricCanvas = new FabricCanvas(canvasRef.current, {
       width: window.innerWidth,
-      height: window.innerHeight - 160,
+      height: window.innerHeight - 160, // Account for header and controls
       backgroundColor: '#000000'
     });
     setCanvas(fabricCanvas);
@@ -33,6 +31,7 @@ const MediaEditorContent = ({ file, onSave, onCancel }: MediaEditorProps) => {
     img.onload = () => {
       const fabricImage = new FabricImage(img);
       
+      // Calculate scale to fit the image while maintaining aspect ratio
       const scale = Math.min(
         (window.innerWidth) / img.width,
         (window.innerHeight - 160) / img.height
@@ -80,9 +79,9 @@ const MediaEditorContent = ({ file, onSave, onCancel }: MediaEditorProps) => {
   };
 
   return (
-    <div className="fixed inset-0 z-50 bg-black flex flex-col">
+    <div className="fixed inset-0 z-50 bg-black flex flex-col h-screen">
       {/* Header */}
-      <div className="h-[60px] flex justify-between items-center px-6 bg-black/90 border-b border-white/10">
+      <div className="h-14 flex justify-between items-center px-4 bg-black/90 border-b border-white/10">
         <Button
           variant="ghost"
           size="sm"
@@ -104,12 +103,12 @@ const MediaEditorContent = ({ file, onSave, onCancel }: MediaEditorProps) => {
       </div>
 
       {/* Main Content Area */}
-      <div className="flex-1 relative">
-        <canvas ref={canvasRef} className="absolute inset-0 w-full h-full" />
+      <div className="flex-1 relative bg-black">
+        <canvas ref={canvasRef} className="absolute inset-0" />
       </div>
 
       {/* Bottom Controls */}
-      <div className="h-[100px] bg-black/90 border-t border-white/10">
+      <div className="h-24 bg-black/90 border-t border-white/10">
         <div className="flex justify-center gap-16 h-full items-center">
           <button 
             className="flex flex-col items-center gap-2"
@@ -144,7 +143,7 @@ const MediaEditorContent = ({ file, onSave, onCancel }: MediaEditorProps) => {
 
         {/* Filter Controls Panel */}
         {activeControl === "filters" && (
-          <div className="absolute bottom-[100px] left-0 right-0 bg-black/90 border-t border-white/10 p-4">
+          <div className="absolute bottom-24 left-0 right-0 bg-black/90 border-t border-white/10 p-4">
             <FilterControls
               selectedFilter={selectedFilter}
               onFilterChange={setSelectedFilter}
