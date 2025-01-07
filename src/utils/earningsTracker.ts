@@ -4,7 +4,7 @@ interface MonthlyEarnings {
 }
 
 // Store monthly earnings in localStorage
-const storeEarnings = (amount: number) => {
+export const storeEarnings = (amount: number) => {
   const currentMonth = new Date().toISOString().slice(0, 7); // Gets YYYY-MM
   const storedEarnings = localStorage.getItem('monthlyEarnings');
   let earnings: MonthlyEarnings[] = storedEarnings ? JSON.parse(storedEarnings) : [];
@@ -29,4 +29,8 @@ export const getCurrentMonthEarnings = (): number => {
   return currentMonthEarnings?.amount || 0;
 };
 
-export { storeEarnings };
+// Add a method to get historical earnings
+export const getHistoricalEarnings = (): MonthlyEarnings[] => {
+  const storedEarnings = localStorage.getItem('monthlyEarnings');
+  return storedEarnings ? JSON.parse(storedEarnings) : [];
+};
