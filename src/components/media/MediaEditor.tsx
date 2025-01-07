@@ -23,21 +23,52 @@ const MediaEditorContent = ({ file, onSave, onCancel }: MediaEditorProps) => {
 
   const toggleFullscreen = () => {
     if (!document.fullscreenElement) {
-      containerRef.current?.requestFullscreen();
-      setIsFullscreen(true);
+      const element = containerRef.current;
+      if (element) {
+        const requestFullscreen = element.requestFullscreen || 
+                               (element as any).mozRequestFullScreen || 
+                               (element as any).webkitRequestFullscreen || 
+                               (element as any).msRequestFullscreen;
+        
+        if (requestFullscreen) {
+          requestFullscreen.call(element);
+          setIsFullscreen(true);
+        }
+      }
     } else {
-      document.exitFullscreen();
-      setIsFullscreen(false);
+      const exitFullscreen = document.exitFullscreen || 
+                          (document as any).mozCancelFullScreen || 
+                          (document as any).webkitExitFullscreen || 
+                          (document as any).msExitFullscreen;
+      
+      if (exitFullscreen) {
+        exitFullscreen.call(document);
+        setIsFullscreen(false);
+      }
     }
   };
 
   useEffect(() => {
     const handleFullscreenChange = () => {
-      setIsFullscreen(!!document.fullscreenElement);
+      setIsFullscreen(Boolean(
+        document.fullscreenElement ||
+        (document as any).mozFullScreenElement ||
+        (document as any).webkitFullscreenElement ||
+        (document as any).msFullscreenElement
+      ));
     };
 
     document.addEventListener('fullscreenchange', handleFullscreenChange);
-    return () => document.removeEventListener('fullscreenchange', handleFullscreenChange);
+    document.addEventListener('webkitfullscreenchange', handleFullscreenChange);
+    document.addEventListener('mozfullscreenchange', handleFullscreenChange);
+    document.addEventListener('MSFullscreenChange', handleFullscreenChange);
+
+    return () => {
+      document.removeEventListener('fullscreenchange', handleFullscreenChange);
+      document.removeEventListener('webkitfullscreenchange', handleFullscreenChange);
+      document.removeEventListener('mozfullscreenchange', handleFullscreenChange);
+      document.removeEventListener('MSFullscreenChange', handleFullscreenChange);
+    };
   }, []);
 
   useEffect(() => {
@@ -49,8 +80,8 @@ const MediaEditorContent = ({ file, onSave, onCancel }: MediaEditorProps) => {
     // Create a new Fabric canvas with container dimensions
     const fabricCanvas = new FabricCanvas(canvasRef.current, {
       width: containerWidth,
-      height: containerHeight * 0.6, // Adjust height to prevent cropping
-      backgroundColor: '#1a1a1a' // Dark background
+      height: containerHeight * 0.7, // Increased height ratio to prevent cropping
+      backgroundColor: '#1a1a1a'
     });
     setCanvas(fabricCanvas);
 
@@ -63,7 +94,7 @@ const MediaEditorContent = ({ file, onSave, onCancel }: MediaEditorProps) => {
       const scale = Math.min(
         (fabricCanvas.width || 800) / img.width,
         (fabricCanvas.height || 600) / img.height
-      );
+      ) * 0.9; // Add some padding
       
       fabricImage.scale(scale);
       fabricCanvas.add(fabricImage);
@@ -92,7 +123,7 @@ const MediaEditorContent = ({ file, onSave, onCancel }: MediaEditorProps) => {
     <div 
       ref={containerRef}
       className={cn(
-        "flex flex-col space-y-6 bg-zinc-900 text-white transition-all duration-300",
+        "flex flex-col space-y-6 bg-zinc-950 text-white transition-all duration-300",
         isFullscreen ? "fixed inset-0 z-50 p-6" : "p-4"
       )}
     >
@@ -113,16 +144,16 @@ const MediaEditorContent = ({ file, onSave, onCancel }: MediaEditorProps) => {
       </div>
 
       <Tabs defaultValue="adjust" className="w-full">
-        <TabsList className="grid w-full grid-cols-2 bg-zinc-800">
-          <TabsTrigger value="adjust" className="data-[state=active]:bg-zinc-700">Adjust</TabsTrigger>
-          <TabsTrigger value="effects" className="data-[state=active]:bg-zinc-700">Effects</TabsTrigger>
+        <TabsList className="grid w-full grid-cols-2 bg-zinc-900">
+          <TabsTrigger value="adjust" className="data-[state=active]:bg-zinc-800">Adjust</TabsTrigger>
+          <TabsTrigger value="effects" className="data-[state=active]:bg-zinc-800">Effects</TabsTrigger>
         </TabsList>
 
-        <TabsContent value="adjust" className="bg-zinc-800 rounded-b-lg p-4">
+        <TabsContent value="adjust" className="bg-zinc-900 rounded-b-lg p-4">
           <AdjustmentPanel />
         </TabsContent>
 
-        <TabsContent value="effects" className="bg-zinc-800 rounded-b-lg p-4">
+        <TabsContent value="effects" className="bg-zinc-900 rounded-b-lg p-4">
           <FilterControls
             selectedFilter="none"
             onFilterChange={(filter) => {
@@ -136,7 +167,7 @@ const MediaEditorContent = ({ file, onSave, onCancel }: MediaEditorProps) => {
         <Button 
           variant="outline" 
           onClick={onCancel}
-          className="bg-zinc-800 hover:bg-zinc-700 text-white border-zinc-700"
+          className="bg-zinc-900 hover:bg-zinc-800 text-white border-zinc-800"
         >
           <RotateCcw className="h-4 w-4 mr-2" /> Reset
         </Button>
