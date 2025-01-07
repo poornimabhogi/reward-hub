@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { Chess } from "chess.js";
+import { Chess, Square } from "chess.js";
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Rotate3D, RotateCcw } from "lucide-react";
@@ -7,7 +7,7 @@ import { useToast } from "@/hooks/use-toast";
 
 const ChessGame = () => {
   const [game, setGame] = useState(new Chess());
-  const [selectedSquare, setSelectedSquare] = useState<string | null>(null);
+  const [selectedSquare, setSelectedSquare] = useState<Square | null>(null);
   const [boardOrientation, setBoardOrientation] = useState<"white" | "black">("white");
   const { toast } = useToast();
 
@@ -22,15 +22,15 @@ const ChessGame = () => {
 
   const handleSquareClick = (square: string) => {
     if (selectedSquare === null) {
-      const piece = game.get(square);
+      const piece = game.get(square as Square);
       if (piece && piece.color === game.turn()) {
-        setSelectedSquare(square);
+        setSelectedSquare(square as Square);
       }
     } else {
       try {
         game.move({
           from: selectedSquare,
-          to: square,
+          to: square as Square,
           promotion: 'q'
         });
         setGame(new Chess(game.fen()));
@@ -65,7 +65,7 @@ const ChessGame = () => {
     for (let i = 0; i < 8; i++) {
       const row = [];
       for (let j = 0; j < 8; j++) {
-        const square = `${cols[j]}${rows[i]}`;
+        const square = `${cols[j]}${rows[i]}` as Square;
         const piece = game.get(square);
         const isSelected = square === selectedSquare;
         const isDark = (i + j) % 2 === 1;
