@@ -24,25 +24,13 @@ const MediaEditorContent = ({ file, onSave, onCancel }: MediaEditorProps) => {
   const toggleFullscreen = () => {
     if (!document.fullscreenElement) {
       const element = containerRef.current;
-      if (element) {
-        const requestFullscreen = element.requestFullscreen || 
-                               (element as any).mozRequestFullScreen || 
-                               (element as any).webkitRequestFullscreen || 
-                               (element as any).msRequestFullscreen;
-        
-        if (requestFullscreen) {
-          requestFullscreen.call(element);
-          setIsFullscreen(true);
-        }
+      if (element?.requestFullscreen) {
+        element.requestFullscreen();
+        setIsFullscreen(true);
       }
     } else {
-      const exitFullscreen = document.exitFullscreen || 
-                          (document as any).mozCancelFullScreen || 
-                          (document as any).webkitExitFullscreen || 
-                          (document as any).msExitFullscreen;
-      
-      if (exitFullscreen) {
-        exitFullscreen.call(document);
+      if (document.exitFullscreen) {
+        document.exitFullscreen();
         setIsFullscreen(false);
       }
     }
@@ -50,24 +38,12 @@ const MediaEditorContent = ({ file, onSave, onCancel }: MediaEditorProps) => {
 
   useEffect(() => {
     const handleFullscreenChange = () => {
-      setIsFullscreen(Boolean(
-        document.fullscreenElement ||
-        (document as any).mozFullScreenElement ||
-        (document as any).webkitFullscreenElement ||
-        (document as any).msFullscreenElement
-      ));
+      setIsFullscreen(!!document.fullscreenElement);
     };
 
     document.addEventListener('fullscreenchange', handleFullscreenChange);
-    document.addEventListener('webkitfullscreenchange', handleFullscreenChange);
-    document.addEventListener('mozfullscreenchange', handleFullscreenChange);
-    document.addEventListener('MSFullscreenChange', handleFullscreenChange);
-
     return () => {
       document.removeEventListener('fullscreenchange', handleFullscreenChange);
-      document.removeEventListener('webkitfullscreenchange', handleFullscreenChange);
-      document.removeEventListener('mozfullscreenchange', handleFullscreenChange);
-      document.removeEventListener('MSFullscreenChange', handleFullscreenChange);
     };
   }, []);
 
@@ -88,13 +64,11 @@ const MediaEditorContent = ({ file, onSave, onCancel }: MediaEditorProps) => {
     img.onload = () => {
       const fabricImage = new FabricImage(img);
       
-      // Calculate scaling to fit the image properly
       const scale = Math.min(
         (fabricCanvas.width || 800) / img.width,
         (fabricCanvas.height || 600) / img.height
       ) * 0.9;
       
-      // Fix image orientation
       fabricImage.set({
         originX: 'center',
         originY: 'center',
@@ -128,64 +102,74 @@ const MediaEditorContent = ({ file, onSave, onCancel }: MediaEditorProps) => {
     <div 
       ref={containerRef}
       className={cn(
-        "flex flex-col space-y-6 bg-black text-white transition-all duration-300",
-        isFullscreen ? "fixed inset-0 z-50 p-6" : "p-4"
+        "flex flex-col space-y-4 bg-black text-white min-h-screen",
+        isFullscreen ? "fixed inset-0 z-50" : ""
       )}
     >
-      <div className="flex justify-between items-center">
+      <div className="flex justify-between items-center p-4 border-b border-white/10">
         <h2 className="text-xl font-semibold">Edit Media</h2>
         <Button
           variant="ghost"
           size="icon"
           onClick={toggleFullscreen}
-          className="text-white hover:text-white/80"
+          className="text-white hover:bg-white/10"
         >
           {isFullscreen ? <Minimize2 className="h-5 w-5" /> : <Maximize2 className="h-5 w-5" />}
         </Button>
       </div>
 
-      <div className="relative flex-grow rounded-lg overflow-hidden bg-black min-h-[400px]">
-        <canvas ref={canvasRef} className="w-full h-full" />
+      <div className="flex-grow px-4">
+        <div className="relative h-full rounded-lg overflow-hidden bg-black">
+          <canvas ref={canvasRef} className="w-full h-full" />
+        </div>
       </div>
 
-      <Tabs defaultValue="adjust" className="w-full">
-        <TabsList className="grid w-full grid-cols-2 bg-neutral-900">
-          <TabsTrigger value="adjust" className="text-white data-[state=active]:bg-neutral-800">
-            Adjust
-          </TabsTrigger>
-          <TabsTrigger value="effects" className="text-white data-[state=active]:bg-neutral-800">
-            Effects
-          </TabsTrigger>
-        </TabsList>
+      <div className="border-t border-white/10">
+        <Tabs defaultValue="adjust" className="w-full">
+          <TabsList className="w-full border-b border-white/10">
+            <TabsTrigger 
+              value="adjust" 
+              className="flex-1 text-white data-[state=active]:bg-white/10 rounded-none border-r border-white/10"
+            >
+              Adjust
+            </TabsTrigger>
+            <TabsTrigger 
+              value="effects" 
+              className="flex-1 text-white data-[state=active]:bg-white/10 rounded-none"
+            >
+              Effects
+            </TabsTrigger>
+          </TabsList>
 
-        <TabsContent value="adjust" className="bg-neutral-900 rounded-b-lg p-4">
-          <AdjustmentPanel />
-        </TabsContent>
+          <TabsContent value="adjust" className="p-4">
+            <AdjustmentPanel />
+          </TabsContent>
 
-        <TabsContent value="effects" className="bg-neutral-900 rounded-b-lg p-4">
-          <FilterControls
-            selectedFilter="none"
-            onFilterChange={(filter) => {
-              // Filter logic handled by useImageEffects hook
-            }}
-          />
-        </TabsContent>
-      </Tabs>
+          <TabsContent value="effects" className="p-4">
+            <FilterControls
+              selectedFilter="none"
+              onFilterChange={(filter) => {
+                // Filter logic handled by useImageEffects hook
+              }}
+            />
+          </TabsContent>
+        </Tabs>
 
-      <div className="flex justify-end gap-2 p-4 bg-neutral-900 rounded-lg">
-        <Button 
-          variant="outline" 
-          onClick={onCancel}
-          className="bg-neutral-800 hover:bg-neutral-700 text-white border-neutral-700"
-        >
-          <RotateCcw className="h-4 w-4 mr-2" /> Reset
-        </Button>
-        <Button 
-          onClick={handleSave}
-          className="bg-white hover:bg-gray-200 text-black"
-        >
-          <Check className="h-4 w-4 mr-2" /> Save
-        </Button>
+        <div className="flex justify-end gap-2 p-4 border-t border-white/10">
+          <Button 
+            variant="outline" 
+            onClick={onCancel}
+            className="bg-transparent hover:bg-white/10 text-white border-white/20"
+          >
+            <RotateCcw className="h-4 w-4 mr-2" /> Reset
+          </Button>
+          <Button 
+            onClick={handleSave}
+            className="bg-white hover:bg-gray-200 text-black"
+          >
+            <Check className="h-4 w-4 mr-2" /> Save
+          </Button>
+        </div>
       </div>
     </div>
   );

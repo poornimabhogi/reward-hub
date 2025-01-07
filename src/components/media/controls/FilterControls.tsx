@@ -1,4 +1,4 @@
-import React from "react";
+import React from 'react';
 import { Button } from "@/components/ui/button";
 import { Palette, Brush } from "lucide-react";
 
@@ -7,9 +7,12 @@ interface FilterControlsProps {
   onFilterChange: (filter: string) => void;
 }
 
-export const FilterControls = ({ selectedFilter, onFilterChange }: FilterControlsProps) => {
+export const FilterControls: React.FC<FilterControlsProps> = ({
+  selectedFilter,
+  onFilterChange,
+}) => {
   return (
-    <div className="flex gap-2">
+    <div className="flex flex-wrap gap-2">
       <Button
         variant={selectedFilter === 'none' ? "default" : "outline"}
         size="sm"
@@ -22,7 +25,7 @@ export const FilterControls = ({ selectedFilter, onFilterChange }: FilterControl
         variant={selectedFilter === 'grayscale' ? "default" : "outline"}
         size="sm"
         onClick={() => onFilterChange('grayscale')}
-        className="bg-neutral-800 text-white hover:bg-neutral-700"
+        className="bg-transparent hover:bg-white/10 text-white border-white/20"
       >
         <Brush className="h-4 w-4 mr-2" /> Grayscale
       </Button>
@@ -30,7 +33,7 @@ export const FilterControls = ({ selectedFilter, onFilterChange }: FilterControl
         variant={selectedFilter === 'sepia' ? "default" : "outline"}
         size="sm"
         onClick={() => onFilterChange('sepia')}
-        className="bg-neutral-800 text-white hover:bg-neutral-700"
+        className="bg-transparent hover:bg-white/10 text-white border-white/20"
       >
         <Brush className="h-4 w-4 mr-2" /> Sepia
       </Button>
