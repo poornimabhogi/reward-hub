@@ -21,22 +21,13 @@ const MediaEditorContent = ({ file, onSave, onCancel }: MediaEditorProps) => {
   useEffect(() => {
     if (!canvasRef.current) return;
 
-    // Set canvas dimensions to match mobile viewport ratio (9:16)
-    const viewportWidth = window.innerWidth;
-    const viewportHeight = window.innerHeight - 120; // Account for header and controls
-    const targetAspectRatio = 9 / 16;
-    
-    let canvasWidth = viewportWidth;
-    let canvasHeight = canvasWidth * targetAspectRatio;
-
-    // If calculated height is too tall, calculate based on height instead
-    if (canvasHeight > viewportHeight) {
-      canvasHeight = viewportHeight;
-      canvasWidth = canvasHeight / targetAspectRatio;
-    }
+    // Calculate dimensions for a larger canvas size while maintaining 9:16 ratio
+    const baseWidth = Math.min(window.innerWidth, 500); // Max width of 500px
+    const targetAspectRatio = 16 / 9; // Using 16:9 for a taller display
+    const canvasHeight = baseWidth * targetAspectRatio;
 
     const fabricCanvas = new FabricCanvas(canvasRef.current, {
-      width: canvasWidth,
+      width: baseWidth,
       height: canvasHeight,
       backgroundColor: '#000000',
       centeredScaling: true,
@@ -51,13 +42,16 @@ const MediaEditorContent = ({ file, onSave, onCancel }: MediaEditorProps) => {
       const imageAspectRatio = img.width / img.height;
       let scale;
 
-      if (imageAspectRatio > targetAspectRatio) {
-        // Image is wider than canvas ratio
-        scale = canvasWidth / img.width;
+      if (imageAspectRatio > (9/16)) {
+        // Image is wider than target ratio
+        scale = baseWidth / img.width;
       } else {
-        // Image is taller than canvas ratio
+        // Image is taller than target ratio
         scale = canvasHeight / img.height;
       }
+      
+      // Apply a larger scale factor to make the image bigger
+      scale = scale * 1.5; // Increase the scale by 50%
       
       fabricImage.set({
         originX: 'center',
@@ -74,20 +68,12 @@ const MediaEditorContent = ({ file, onSave, onCancel }: MediaEditorProps) => {
     img.src = URL.createObjectURL(file);
 
     const handleResize = () => {
-      const newWidth = window.innerWidth;
-      const newHeight = window.innerHeight - 120;
+      const newBaseWidth = Math.min(window.innerWidth, 500);
+      const newHeight = newBaseWidth * targetAspectRatio;
       
-      let width = newWidth;
-      let height = width * targetAspectRatio;
-      
-      if (height > newHeight) {
-        height = newHeight;
-        width = height / targetAspectRatio;
-      }
-
       fabricCanvas.setDimensions({
-        width: width,
-        height: height
+        width: newBaseWidth,
+        height: newHeight
       });
       fabricCanvas.renderAll();
     };
@@ -136,8 +122,8 @@ const MediaEditorContent = ({ file, onSave, onCancel }: MediaEditorProps) => {
       </div>
 
       {/* Main Content Area */}
-      <div className="flex-1 relative bg-black flex items-center justify-center">
-        <canvas ref={canvasRef} className="max-w-full max-h-full" />
+      <div className="flex-1 relative bg-black flex items-center justify-center overflow-hidden">
+        <canvas ref={canvasRef} className="max-w-full h-full object-contain" />
       </div>
 
       {/* Bottom Controls */}
