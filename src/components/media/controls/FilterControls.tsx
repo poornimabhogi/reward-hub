@@ -113,17 +113,37 @@ export const FilterControls: React.FC<FilterControlsProps> = ({
     return cleanup;
   }, [canvas, filtersList]);
 
+  const handleFilterClick = (filterValue: string) => {
+    if (!canvas) return;
+    
+    const mainImage = canvas.getObjects()[0] as FabricImage;
+    if (!mainImage) return;
+
+    mainImage.filters = [];
+
+    if (filterValue !== 'none') {
+      const filterInstance = createFilter(filterValue);
+      if (filterInstance) {
+        mainImage.filters = [filterInstance];
+      }
+    }
+
+    mainImage.applyFilters();
+    canvas.renderAll();
+    onFilterChange(filterValue);
+  };
+
   return (
     <ScrollArea className="w-full h-32">
       <div className="flex items-center gap-6 p-4">
         {filtersList.map((filter) => (
           <button
             key={filter.value}
-            onClick={() => onFilterChange(filter.value)}
+            onClick={() => handleFilterClick(filter.value)}
             className="flex flex-col items-center gap-2 cursor-pointer flex-shrink-0 focus:outline-none group"
           >
             <div
-              className={`w-16 h-16 rounded-lg overflow-hidden transition-all duration-200 ${
+              className={`w-16 h-16 rounded-lg overflow-hidden ${
                 selectedFilter === filter.value 
                 ? 'ring-2 ring-white' 
                 : 'ring-1 ring-white/10 group-hover:ring-white/30'
