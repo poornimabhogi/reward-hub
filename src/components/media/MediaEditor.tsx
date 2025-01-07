@@ -23,7 +23,7 @@ const MediaEditorContent = ({ file, onSave, onCancel }: MediaEditorProps) => {
 
     const fabricCanvas = new FabricCanvas(canvasRef.current, {
       width: window.innerWidth,
-      height: window.innerHeight - 160,
+      height: window.innerHeight - 120, // Adjusted for header and controls
       backgroundColor: '#000000'
     });
     setCanvas(fabricCanvas);
@@ -33,10 +33,17 @@ const MediaEditorContent = ({ file, onSave, onCancel }: MediaEditorProps) => {
       const fabricImage = new FabricImage(img);
       
       // Calculate scale to fit the image while maintaining aspect ratio
-      const scale = Math.min(
-        (window.innerWidth) / img.width,
-        (window.innerHeight - 160) / img.height
-      );
+      const canvasAspect = fabricCanvas.width! / fabricCanvas.height!;
+      const imageAspect = img.width / img.height;
+      let scale;
+
+      if (canvasAspect > imageAspect) {
+        // Canvas is wider than image
+        scale = (fabricCanvas.height! - 40) / img.height;
+      } else {
+        // Canvas is taller than image
+        scale = (fabricCanvas.width! - 40) / img.width;
+      }
       
       fabricImage.set({
         originX: 'center',
@@ -55,7 +62,7 @@ const MediaEditorContent = ({ file, onSave, onCancel }: MediaEditorProps) => {
     const handleResize = () => {
       fabricCanvas.setDimensions({
         width: window.innerWidth,
-        height: window.innerHeight - 160
+        height: window.innerHeight - 120
       });
       fabricCanvas.renderAll();
     };
@@ -82,7 +89,7 @@ const MediaEditorContent = ({ file, onSave, onCancel }: MediaEditorProps) => {
   return (
     <div className="fixed inset-0 z-50 bg-black flex flex-col h-screen">
       {/* Header */}
-      <div className="h-14 flex justify-between items-center px-4 bg-black/90 border-b border-white/10">
+      <div className="h-14 flex justify-between items-center px-4 bg-black/90">
         <Button
           variant="ghost"
           size="sm"
@@ -109,7 +116,7 @@ const MediaEditorContent = ({ file, onSave, onCancel }: MediaEditorProps) => {
       </div>
 
       {/* Bottom Controls */}
-      <div className="h-24 bg-black/90 border-t border-white/10">
+      <div className="h-24 bg-black/90">
         <div className="flex justify-center gap-16 h-full items-center">
           <button 
             className="flex flex-col items-center gap-2"
@@ -142,7 +149,6 @@ const MediaEditorContent = ({ file, onSave, onCancel }: MediaEditorProps) => {
           </button>
         </div>
 
-        {/* Filter Controls Panel */}
         {activeControl === "filters" && (
           <div className="absolute bottom-24 left-0 right-0 bg-black/90 border-t border-white/10 p-4">
             <FilterControls
