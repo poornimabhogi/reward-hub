@@ -15,6 +15,7 @@ export class StripeService {
     name: string;
     price: number;
     quantity: number;
+    userId: string;
   }) {
     return this.stripe.checkout.sessions.create({
       payment_method_types: ['card'],
@@ -33,6 +34,9 @@ export class StripeService {
       mode: 'payment',
       success_url: `${process.env.FRONTEND_URL}/shop?success=true`,
       cancel_url: `${process.env.FRONTEND_URL}/shop?canceled=true`,
+      metadata: {
+        userId: product.userId, // Store userId in metadata
+      },
     });
   }
 
@@ -50,8 +54,9 @@ export class StripeService {
         case 'payment_intent.succeeded':
           const paymentIntent = event.data.object as Stripe.PaymentIntent;
           const amount = paymentIntent.amount / 100; // Convert from cents to dollars
-          console.log('Payment succeeded:', paymentIntent.id, 'Amount:', amount);
-          this.updateFrontendEarnings(amount);
+          const userId = (paymentIntent.metadata as any).userId || 'anonymous';
+          console.log('Payment succeeded:', paymentIntent.id, 'Amount:', amount, 'User:', userId);
+          this.updateFrontendEarnings(amount, userId);
           break;
         
         case 'charge.succeeded':
@@ -70,9 +75,9 @@ export class StripeService {
     }
   }
 
-  private async updateFrontendEarnings(amount: number) {
-    console.log('Updating earnings:', amount);
-    // The frontend will handle storing this in localStorage
+  private async updateFrontendEarnings(amount: number, userId: string) {
+    console.log('Updating earnings for user:', userId, 'Amount:', amount);
+    // The frontend will handle storing this in localStorage per user
     // In a production environment, this should be stored in a database
   }
 }
