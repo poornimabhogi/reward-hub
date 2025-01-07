@@ -71,7 +71,9 @@ export const FilterControls: React.FC<FilterControlsProps> = ({
         selection: false,
         renderOnAddRemove: true,
         skipTargetFind: true,
-        interactive: false
+        interactive: false,
+        enableRetinaScaling: false,
+        preserveObjectStacking: true
       });
 
       previewCanvasInstances.current[filter.value] = fabricPreviewCanvas;
@@ -83,6 +85,11 @@ export const FilterControls: React.FC<FilterControlsProps> = ({
         const fabricImage = new FabricImage(img, {
           selectable: false,
           evented: false,
+          lockMovementX: true,
+          lockMovementY: true,
+          lockRotation: true,
+          lockScalingX: true,
+          lockScalingY: true,
         });
         
         const scale = Math.min(64 / img.width, 64 / img.height);
@@ -140,10 +147,14 @@ export const FilterControls: React.FC<FilterControlsProps> = ({
           <button
             key={filter.value}
             onClick={() => handleFilterClick(filter.value)}
-            className="flex flex-col items-center gap-2 cursor-pointer flex-shrink-0 focus:outline-none group"
+            onTouchStart={(e) => {
+              e.preventDefault();
+              handleFilterClick(filter.value);
+            }}
+            className="flex flex-col items-center gap-2 cursor-pointer flex-shrink-0 focus:outline-none group touch-manipulation"
           >
             <div
-              className={`w-16 h-16 rounded-lg overflow-hidden ${
+              className={`w-16 h-16 rounded-lg overflow-hidden bg-black ${
                 selectedFilter === filter.value 
                 ? 'ring-2 ring-white' 
                 : 'ring-1 ring-white/10 group-hover:ring-white/30'
@@ -153,7 +164,7 @@ export const FilterControls: React.FC<FilterControlsProps> = ({
                 ref={(el) => (previewRefs.current[filter.value] = el)}
                 width="64"
                 height="64"
-                className="w-full h-full"
+                className="w-full h-full pointer-events-none"
               />
             </div>
             <span className="text-xs text-white">
