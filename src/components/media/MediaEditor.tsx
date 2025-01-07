@@ -21,10 +21,10 @@ const MediaEditorContent = ({ file, onSave, onCancel }: MediaEditorProps) => {
   useEffect(() => {
     if (!canvasRef.current) return;
 
-    // Calculate dimensions for a larger canvas size while maintaining 9:16 ratio
-    const baseWidth = Math.min(window.innerWidth, 500); // Max width of 500px
+    // Calculate dimensions for a taller canvas size while maintaining 9:16 ratio
+    const baseWidth = Math.min(window.innerWidth * 0.9, 500); // 90% of window width, max 500px
     const targetAspectRatio = 16 / 9; // Using 16:9 for a taller display
-    const canvasHeight = baseWidth * targetAspectRatio;
+    const canvasHeight = baseWidth * 2; // Make it twice as tall as it is wide
 
     const fabricCanvas = new FabricCanvas(canvasRef.current, {
       width: baseWidth,
@@ -42,16 +42,16 @@ const MediaEditorContent = ({ file, onSave, onCancel }: MediaEditorProps) => {
       const imageAspectRatio = img.width / img.height;
       let scale;
 
-      if (imageAspectRatio > (9/16)) {
-        // Image is wider than target ratio
+      if (imageAspectRatio > 0.5) { // If image is wider than 1:2 ratio
+        // Scale based on width
         scale = baseWidth / img.width;
       } else {
-        // Image is taller than target ratio
+        // Scale based on height
         scale = canvasHeight / img.height;
       }
       
       // Apply a larger scale factor to make the image bigger
-      scale = scale * 1.5; // Increase the scale by 50%
+      scale = scale * 1.8; // Increase the scale by 80%
       
       fabricImage.set({
         originX: 'center',
@@ -68,8 +68,8 @@ const MediaEditorContent = ({ file, onSave, onCancel }: MediaEditorProps) => {
     img.src = URL.createObjectURL(file);
 
     const handleResize = () => {
-      const newBaseWidth = Math.min(window.innerWidth, 500);
-      const newHeight = newBaseWidth * targetAspectRatio;
+      const newBaseWidth = Math.min(window.innerWidth * 0.9, 500);
+      const newHeight = newBaseWidth * 2;
       
       fabricCanvas.setDimensions({
         width: newBaseWidth,
@@ -123,7 +123,7 @@ const MediaEditorContent = ({ file, onSave, onCancel }: MediaEditorProps) => {
 
       {/* Main Content Area */}
       <div className="flex-1 relative bg-black flex items-center justify-center overflow-hidden">
-        <canvas ref={canvasRef} className="max-w-full h-full object-contain" />
+        <canvas ref={canvasRef} className="h-full object-contain" />
       </div>
 
       {/* Bottom Controls */}
