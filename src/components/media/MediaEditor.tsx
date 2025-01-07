@@ -18,13 +18,12 @@ const MediaEditorContent = ({ file, onSave, onCancel }: MediaEditorProps) => {
   useEffect(() => {
     if (!canvasRef.current) return;
 
-    // Get window dimensions
     const windowWidth = window.innerWidth;
     const windowHeight = window.innerHeight;
 
     const fabricCanvas = new FabricCanvas(canvasRef.current, {
       width: windowWidth,
-      height: windowHeight - 200, // Leave space for controls
+      height: windowHeight,
       backgroundColor: '#000000'
     });
     setCanvas(fabricCanvas);
@@ -34,17 +33,19 @@ const MediaEditorContent = ({ file, onSave, onCancel }: MediaEditorProps) => {
       const fabricImage = new FabricImage(img);
       
       // Calculate scale to fit the image while maintaining aspect ratio
+      // Use full height minus header and controls
+      const availableHeight = windowHeight - 160; // Account for header (60px) and controls (100px)
       const scale = Math.min(
-        (fabricCanvas.width || windowWidth) / img.width,
-        (fabricCanvas.height || (windowHeight - 200)) / img.height
-      ) * 0.9;
+        windowWidth / img.width,
+        availableHeight / img.height
+      );
       
       fabricImage.set({
         originX: 'center',
         originY: 'center',
         scaleX: scale,
         scaleY: scale,
-        selectable: false, // Prevent image manipulation until post
+        selectable: false,
       });
 
       fabricCanvas.add(fabricImage);
@@ -53,11 +54,10 @@ const MediaEditorContent = ({ file, onSave, onCancel }: MediaEditorProps) => {
     };
     img.src = URL.createObjectURL(file);
 
-    // Handle window resize
     const handleResize = () => {
       fabricCanvas.setDimensions({
         width: window.innerWidth,
-        height: window.innerHeight - 200
+        height: window.innerHeight
       });
       fabricCanvas.renderAll();
     };
@@ -84,7 +84,7 @@ const MediaEditorContent = ({ file, onSave, onCancel }: MediaEditorProps) => {
   return (
     <div className="fixed inset-0 z-50 bg-black flex flex-col">
       {/* Header */}
-      <div className="flex justify-between items-center p-4 bg-black/90">
+      <div className="h-[60px] flex justify-between items-center px-6 bg-black/90 border-b border-white/10">
         <Button
           variant="ghost"
           size="icon"
@@ -104,49 +104,52 @@ const MediaEditorContent = ({ file, onSave, onCancel }: MediaEditorProps) => {
         </Button>
       </div>
 
-      {/* Canvas Container */}
-      <div className="flex-grow relative flex items-center justify-center bg-black">
-        <canvas ref={canvasRef} className="max-w-full" />
+      {/* Main Content Area */}
+      <div className="flex-1 relative">
+        {/* Canvas Container - Takes full available space */}
+        <div className="absolute inset-0 flex items-center justify-center">
+          <canvas ref={canvasRef} />
+        </div>
         
-        {/* Navigation Controls */}
-        <div className="absolute inset-x-0 top-1/2 flex justify-between px-4 -translate-y-1/2">
+        {/* Navigation Controls - Overlaid on image */}
+        <div className="absolute inset-x-0 top-1/2 flex justify-between px-4 -translate-y-1/2 pointer-events-none">
           <Button 
             variant="ghost" 
             size="icon"
-            className="h-12 w-12 rounded-full bg-black/50 text-white hover:bg-black/70"
+            className="h-12 w-12 rounded-full bg-black/50 text-white hover:bg-black/70 pointer-events-auto"
           >
             <ArrowLeft className="h-6 w-6" />
           </Button>
           <Button 
             variant="ghost" 
             size="icon"
-            className="h-12 w-12 rounded-full bg-black/50 text-white hover:bg-black/70"
+            className="h-12 w-12 rounded-full bg-black/50 text-white hover:bg-black/70 pointer-events-auto"
           >
             <ArrowRight className="h-6 w-6" />
           </Button>
         </div>
       </div>
 
-      {/* Bottom Controls */}
-      <div className="bg-black pt-6 pb-12">
-        <div className="flex justify-center gap-16">
+      {/* Bottom Controls - Fixed height */}
+      <div className="h-[100px] bg-black/90 border-t border-white/10">
+        <div className="flex justify-center gap-16 h-full items-center">
           <button className="flex flex-col items-center gap-2">
-            <div className="h-16 w-16 rounded-full bg-zinc-900 flex items-center justify-center hover:bg-zinc-800 transition-colors">
-              <Sun className="h-8 w-8 text-white" />
+            <div className="h-14 w-14 rounded-full bg-zinc-900 flex items-center justify-center hover:bg-zinc-800 transition-colors">
+              <Sun className="h-6 w-6 text-white" />
             </div>
-            <span className="text-sm text-white">Adjust</span>
+            <span className="text-xs text-white">Adjust</span>
           </button>
           <button className="flex flex-col items-center gap-2">
-            <div className="h-16 w-16 rounded-full bg-zinc-900 flex items-center justify-center hover:bg-zinc-800 transition-colors">
-              <ImageIcon className="h-8 w-8 text-white" />
+            <div className="h-14 w-14 rounded-full bg-zinc-900 flex items-center justify-center hover:bg-zinc-800 transition-colors">
+              <ImageIcon className="h-6 w-6 text-white" />
             </div>
-            <span className="text-sm text-white">Filters</span>
+            <span className="text-xs text-white">Filters</span>
           </button>
           <button className="flex flex-col items-center gap-2">
-            <div className="h-16 w-16 rounded-full bg-zinc-900 flex items-center justify-center hover:bg-zinc-800 transition-colors">
-              <Crop className="h-8 w-8 text-white" />
+            <div className="h-14 w-14 rounded-full bg-zinc-900 flex items-center justify-center hover:bg-zinc-800 transition-colors">
+              <Crop className="h-6 w-6 text-white" />
             </div>
-            <span className="text-sm text-white">Crop</span>
+            <span className="text-xs text-white">Crop</span>
           </button>
         </div>
       </div>
