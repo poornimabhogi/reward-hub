@@ -1,4 +1,6 @@
-interface Ticket {
+import { saveAs } from 'file-saver';
+
+export interface Ticket {
   id: string;
   userId: string;
   purchaseDate: Date;
@@ -30,8 +32,6 @@ export const selectWinner = (tickets: Ticket[]): Ticket | null => {
   return tickets[randomIndex];
 };
 
-// Store tickets in localStorage for demo purposes
-// In production, this should be in a database
 export const storeTicket = (ticket: Ticket) => {
   const tickets = getStoredTickets(ticket.eventId);
   tickets.push(ticket);
@@ -41,4 +41,22 @@ export const storeTicket = (ticket: Ticket) => {
 export const getStoredTickets = (eventId: string): Ticket[] => {
   const storedTickets = localStorage.getItem(`tickets_${eventId}`);
   return storedTickets ? JSON.parse(storedTickets) : [];
+};
+
+export const getUserTickets = (userId: string, eventId: string): Ticket[] => {
+  return getStoredTickets(eventId).filter(ticket => ticket.userId === userId);
+};
+
+export const downloadTicket = (ticket: Ticket) => {
+  const ticketData = {
+    ...ticket,
+    purchaseDate: new Date(ticket.purchaseDate).toLocaleString(),
+  };
+  
+  const blob = new Blob(
+    [JSON.stringify(ticketData, null, 2)], 
+    { type: 'application/json' }
+  );
+  
+  saveAs(blob, `ticket-${ticket.id}.json`);
 };

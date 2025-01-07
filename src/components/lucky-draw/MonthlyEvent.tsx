@@ -6,7 +6,8 @@ import {
   DialogTrigger,
 } from "@/components/ui/dialog";
 import { TicketPurchaseDialog } from "./TicketPurchaseDialog";
-import { getStoredTickets } from "@/utils/ticketManagement";
+import { getStoredTickets, getUserTickets } from "@/utils/ticketManagement";
+import { TicketsList } from "./TicketsList";
 
 interface MonthlyEventProps {
   totalAccumulation: number;
@@ -16,6 +17,7 @@ export const MonthlyEvent = ({ totalAccumulation: baseAmount }: MonthlyEventProp
   const [countdown, setCountdown] = useState("");
   const [isEnrolled, setIsEnrolled] = useState(false);
   const [isDialogOpen, setIsDialogOpen] = useState(false);
+  const [userTickets, setUserTickets] = useState([]);
   
   const eventDate = "2024-04-20T00:00:00";
   const { totalAccumulation, monthlyEarnings } = calculateLuckyDrawAmount(baseAmount);
@@ -24,11 +26,11 @@ export const MonthlyEvent = ({ totalAccumulation: baseAmount }: MonthlyEventProp
   };
 
   useEffect(() => {
-    // Check if user has tickets for this event
     const userId = localStorage.getItem('userId') || 'anonymous';
     const eventId = 'monthly_2024_04';
-    const userTickets = getStoredTickets(eventId).filter(ticket => ticket.userId === userId);
-    setIsEnrolled(userTickets.length > 0);
+    const tickets = getUserTickets(userId, eventId);
+    setUserTickets(tickets);
+    setIsEnrolled(tickets.length > 0);
   }, []);
 
   useEffect(() => {
@@ -86,7 +88,10 @@ export const MonthlyEvent = ({ totalAccumulation: baseAmount }: MonthlyEventProp
           </div>
         </div>
       </DialogTrigger>
-      {!isEnrolled && (
+      
+      {isEnrolled ? (
+        <TicketsList tickets={userTickets} />
+      ) : (
         <TicketPurchaseDialog 
           onPurchaseComplete={() => setIsEnrolled(true)}
           setIsDialogOpen={setIsDialogOpen}
