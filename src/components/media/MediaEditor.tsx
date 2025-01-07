@@ -21,10 +21,11 @@ const MediaEditorContent = ({ file, onSave, onCancel }: MediaEditorProps) => {
   useEffect(() => {
     if (!canvasRef.current) return;
 
-    // Calculate dimensions for a taller canvas size while maintaining 9:16 ratio
-    const baseWidth = Math.min(window.innerWidth * 0.9, 500); // 90% of window width, max 500px
-    const targetAspectRatio = 16 / 9; // Using 16:9 for a taller display
-    const canvasHeight = baseWidth * 2; // Make it twice as tall as it is wide
+    // Calculate dimensions to match mobile viewport ratio (9:16)
+    const viewportWidth = window.innerWidth;
+    const viewportHeight = window.innerHeight;
+    const baseWidth = Math.min(viewportWidth, 430); // Max width for mobile view
+    const canvasHeight = (baseWidth * 16) / 9; // Maintain 9:16 ratio
 
     const fabricCanvas = new FabricCanvas(canvasRef.current, {
       width: baseWidth,
@@ -40,18 +41,16 @@ const MediaEditorContent = ({ file, onSave, onCancel }: MediaEditorProps) => {
       
       // Calculate scale to fit the image while maintaining aspect ratio
       const imageAspectRatio = img.width / img.height;
+      const canvasAspectRatio = baseWidth / canvasHeight;
       let scale;
 
-      if (imageAspectRatio > 0.5) { // If image is wider than 1:2 ratio
-        // Scale based on width
+      if (imageAspectRatio > canvasAspectRatio) {
+        // Image is wider than canvas ratio
         scale = baseWidth / img.width;
       } else {
-        // Scale based on height
+        // Image is taller than canvas ratio
         scale = canvasHeight / img.height;
       }
-      
-      // Apply a larger scale factor to make the image bigger
-      scale = scale * 1.8; // Increase the scale by 80%
       
       fabricImage.set({
         originX: 'center',
@@ -68,11 +67,11 @@ const MediaEditorContent = ({ file, onSave, onCancel }: MediaEditorProps) => {
     img.src = URL.createObjectURL(file);
 
     const handleResize = () => {
-      const newBaseWidth = Math.min(window.innerWidth * 0.9, 500);
-      const newHeight = newBaseWidth * 2;
+      const newWidth = Math.min(window.innerWidth, 430);
+      const newHeight = (newWidth * 16) / 9;
       
       fabricCanvas.setDimensions({
-        width: newBaseWidth,
+        width: newWidth,
         height: newHeight
       });
       fabricCanvas.renderAll();
@@ -98,9 +97,9 @@ const MediaEditorContent = ({ file, onSave, onCancel }: MediaEditorProps) => {
   };
 
   return (
-    <div className="fixed inset-0 z-50 bg-black flex flex-col h-screen">
-      {/* Header */}
-      <div className="h-14 flex justify-between items-center px-4 bg-black/90">
+    <div className="fixed inset-0 z-50 bg-black flex flex-col min-h-screen">
+      {/* Mobile-style header */}
+      <div className="h-14 flex justify-between items-center px-4 bg-transparent text-white">
         <Button
           variant="ghost"
           size="sm"
@@ -109,21 +108,20 @@ const MediaEditorContent = ({ file, onSave, onCancel }: MediaEditorProps) => {
         >
           Cancel
         </Button>
-        <span className="text-xl font-medium text-white">Edit</span>
+        <span className="text-base font-medium">1 Photo Selected</span>
         <Button
           variant="ghost"
           size="sm"
           onClick={handleSave}
           className="text-white hover:bg-white/10"
         >
-          <Send className="h-4 w-4 mr-2" />
-          Post
+          Done
         </Button>
       </div>
 
-      {/* Main Content Area */}
-      <div className="flex-1 relative bg-black flex items-center justify-center overflow-hidden">
-        <canvas ref={canvasRef} className="h-full object-contain" />
+      {/* Main Content Area - Full height with black background */}
+      <div className="flex-1 relative bg-black flex items-center justify-center">
+        <canvas ref={canvasRef} className="max-h-full w-auto object-contain" />
       </div>
 
       {/* Bottom Controls */}
