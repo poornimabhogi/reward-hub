@@ -38,9 +38,9 @@ export const FilterControls: React.FC<FilterControlsProps> = ({
         height: 64,
         backgroundColor: '#000000',
         selection: false,
-        skipTargetFind: true,
         renderOnAddRemove: true,
         isDrawingMode: false,
+        skipTargetFind: true,
       });
 
       const img = new Image();
@@ -64,6 +64,7 @@ export const FilterControls: React.FC<FilterControlsProps> = ({
           top: (64 - (img.height * scale)) / 2,
         });
 
+        // Initialize filters with default parameters
         if (filter.value !== 'none') {
           try {
             let filterInstance;
@@ -92,6 +93,7 @@ export const FilterControls: React.FC<FilterControlsProps> = ({
         }
 
         previewFabricCanvas.add(fabricImage);
+        previewFabricCanvas.centerObject(fabricImage);
         previewFabricCanvas.renderAll();
       };
 
@@ -149,7 +151,7 @@ export const FilterControls: React.FC<FilterControlsProps> = ({
   };
 
   return (
-    <ScrollArea className="w-full">
+    <ScrollArea className="w-full h-32">
       <div className="flex items-center gap-6 p-4">
         {filtersList.map((filter) => (
           <button
@@ -158,10 +160,8 @@ export const FilterControls: React.FC<FilterControlsProps> = ({
             className="flex flex-col items-center gap-2 cursor-pointer flex-shrink-0 focus:outline-none"
           >
             <div
-              className={`w-16 h-16 rounded-lg overflow-hidden ${
-                selectedFilter === filter.value 
-                  ? 'ring-2 ring-white' 
-                  : 'ring-1 ring-white/20'
+              className={`w-16 h-16 rounded-lg overflow-hidden border-2 ${
+                selectedFilter === filter.value ? 'border-white' : 'border-transparent'
               }`}
             >
               <canvas
