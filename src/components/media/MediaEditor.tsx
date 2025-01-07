@@ -73,89 +73,78 @@ const MediaEditorContent = ({ file, onSave, onCancel }: MediaEditorProps) => {
   return (
     <div 
       ref={containerRef}
-      className="fixed inset-0 z-50 flex flex-col bg-black text-white"
+      className="fixed inset-0 z-50 flex flex-col bg-black/95"
     >
       {/* Header */}
-      <div className="flex justify-between items-center p-4 border-b border-white/10">
+      <div className="flex justify-between items-center p-4">
         <Button
           variant="ghost"
           size="icon"
           onClick={onCancel}
-          className="text-white hover:bg-white/10"
+          className="text-white hover:bg-transparent"
         >
           <X className="h-6 w-6" />
         </Button>
-        <span className="text-lg font-medium">Edit</span>
+        <span className="text-xl font-medium text-white">Edit</span>
         <Button
           variant="ghost"
           size="icon"
           onClick={handleSave}
-          className="text-white hover:bg-white/10"
+          className="text-white hover:bg-transparent"
         >
           <Check className="h-6 w-6" />
         </Button>
       </div>
 
       {/* Canvas */}
-      <div className="flex-grow relative">
-        <canvas ref={canvasRef} className="w-full h-full" />
+      <div className="flex-grow relative flex items-center justify-center">
+        <canvas ref={canvasRef} className="max-h-[70vh] object-contain" />
         
         {/* Navigation Controls */}
-        <div className="absolute top-1/2 left-0 right-0 flex justify-between px-4 -translate-y-1/2 pointer-events-none">
+        <div className="absolute inset-x-0 top-1/2 flex justify-between px-4 -translate-y-1/2">
           <Button 
             variant="ghost" 
-            size="icon" 
-            className="rounded-full bg-black/50 text-white hover:bg-black/70 pointer-events-auto"
+            size="icon"
+            className="h-12 w-12 rounded-full bg-black/50 text-white hover:bg-black/70"
           >
-            <ArrowLeft className="h-8 w-8" />
+            <ArrowLeft className="h-6 w-6" />
           </Button>
           <Button 
             variant="ghost" 
-            size="icon" 
-            className="rounded-full bg-black/50 text-white hover:bg-black/70 pointer-events-auto"
+            size="icon"
+            className="h-12 w-12 rounded-full bg-black/50 text-white hover:bg-black/70"
           >
-            <ArrowRight className="h-8 w-8" />
+            <ArrowRight className="h-6 w-6" />
           </Button>
         </div>
       </div>
 
       {/* Bottom Controls */}
-      <div className="p-6 border-t border-white/10 bg-black/95">
-        <Tabs defaultValue="adjust" className="w-full">
-          <div className="flex justify-center mb-6">
-            <div className="flex gap-12">
-              <button className="flex flex-col items-center gap-2 text-white group">
-                <div className="p-4 rounded-full bg-white/10 group-hover:bg-white/20 transition-colors">
-                  <Sun className="h-8 w-8" />
-                </div>
-                <span className="text-sm font-medium">Adjust</span>
-              </button>
-              <button className="flex flex-col items-center gap-2 text-white group">
-                <div className="p-4 rounded-full bg-white/10 group-hover:bg-white/20 transition-colors">
-                  <ImageIcon className="h-8 w-8" />
-                </div>
-                <span className="text-sm font-medium">Filters</span>
-              </button>
-              <button className="flex flex-col items-center gap-2 text-white group">
-                <div className="p-4 rounded-full bg-white/10 group-hover:bg-white/20 transition-colors">
-                  <Crop className="h-8 w-8" />
-                </div>
-                <span className="text-sm font-medium">Crop</span>
-              </button>
+      <div className="bg-black/95 pt-6 pb-12">
+        <div className="flex justify-center gap-16 mb-8">
+          <button className="flex flex-col items-center gap-2">
+            <div className="h-16 w-16 rounded-full bg-zinc-900 flex items-center justify-center">
+              <Sun className="h-8 w-8 text-white" />
             </div>
-          </div>
+            <span className="text-sm text-white">Adjust</span>
+          </button>
+          <button className="flex flex-col items-center gap-2">
+            <div className="h-16 w-16 rounded-full bg-zinc-900 flex items-center justify-center">
+              <ImageIcon className="h-8 w-8 text-white" />
+            </div>
+            <span className="text-sm text-white">Filters</span>
+          </button>
+          <button className="flex flex-col items-center gap-2">
+            <div className="h-16 w-16 rounded-full bg-zinc-900 flex items-center justify-center">
+              <Crop className="h-8 w-8 text-white" />
+            </div>
+            <span className="text-sm text-white">Crop</span>
+          </button>
+        </div>
 
-          <TabsContent value="adjust" className="mt-0">
-            <AdjustmentPanel />
-          </TabsContent>
-
-          <TabsContent value="filters" className="mt-0">
-            <FilterControls
-              selectedFilter="none"
-              onFilterChange={() => {}}
-            />
-          </TabsContent>
-        </Tabs>
+        <div className="px-8">
+          <AdjustmentPanel />
+        </div>
       </div>
     </div>
   );
