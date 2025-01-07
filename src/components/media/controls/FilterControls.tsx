@@ -1,6 +1,5 @@
 import React from 'react';
-import { Button } from "@/components/ui/button";
-import { ImageIcon } from "lucide-react";
+import { Filter } from "lucide-react";
 
 interface FilterControlsProps {
   selectedFilter: string;
@@ -20,17 +19,19 @@ export const FilterControls: React.FC<FilterControlsProps> = ({
           <button
             key={filter}
             onClick={() => onFilterChange(filter.toLowerCase())}
-            className={`w-12 h-12 rounded-full border flex items-center justify-center ${
+            className={`w-14 h-14 rounded-full bg-zinc-900 flex items-center justify-center hover:bg-zinc-800 transition-colors ${
               selectedFilter === filter.toLowerCase()
-                ? 'border-white'
-                : 'border-white/20'
+                ? 'border-2 border-white'
+                : ''
             }`}
           >
-            <ImageIcon className="h-5 w-5 text-white" />
+            <Filter className="h-6 w-6 text-white" />
           </button>
         ))}
       </div>
-      <span className="text-sm text-white/80">{selectedFilter === 'none' ? 'Original' : selectedFilter}</span>
+      <span className="text-sm text-white/80">
+        {selectedFilter === 'none' ? 'Original' : selectedFilter}
+      </span>
     </div>
   );
 };

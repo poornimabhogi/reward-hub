@@ -1,9 +1,10 @@
 import React, { useEffect, useRef } from "react";
 import { Canvas as FabricCanvas, Image as FabricImage } from 'fabric';
 import { Button } from "@/components/ui/button";
-import { X, Check, ArrowLeft, ArrowRight, Sun, ImageIcon, Crop } from "lucide-react";
+import { X, Check, ArrowLeft, ArrowRight, Sun, ImageIcon, Crop, Filter } from "lucide-react";
 import { CanvasProvider } from "@/contexts/CanvasContext";
 import { useCanvas } from "@/contexts/CanvasContext";
+import { FilterControls } from "./controls/FilterControls";
 
 interface MediaEditorProps {
   file: File;
@@ -18,12 +19,9 @@ const MediaEditorContent = ({ file, onSave, onCancel }: MediaEditorProps) => {
   useEffect(() => {
     if (!canvasRef.current) return;
 
-    const windowWidth = window.innerWidth;
-    const windowHeight = window.innerHeight;
-
     const fabricCanvas = new FabricCanvas(canvasRef.current, {
-      width: windowWidth,
-      height: windowHeight,
+      width: window.innerWidth,
+      height: window.innerHeight - 160, // Account for header and controls
       backgroundColor: '#000000'
     });
     setCanvas(fabricCanvas);
@@ -33,11 +31,9 @@ const MediaEditorContent = ({ file, onSave, onCancel }: MediaEditorProps) => {
       const fabricImage = new FabricImage(img);
       
       // Calculate scale to fit the image while maintaining aspect ratio
-      // Use full height minus header and controls
-      const availableHeight = windowHeight - 160; // Account for header (60px) and controls (100px)
       const scale = Math.min(
-        windowWidth / img.width,
-        availableHeight / img.height
+        window.innerWidth / img.width,
+        (window.innerHeight - 160) / img.height
       );
       
       fabricImage.set({
@@ -57,7 +53,7 @@ const MediaEditorContent = ({ file, onSave, onCancel }: MediaEditorProps) => {
     const handleResize = () => {
       fabricCanvas.setDimensions({
         width: window.innerWidth,
-        height: window.innerHeight
+        height: window.innerHeight - 160
       });
       fabricCanvas.renderAll();
     };
@@ -87,31 +83,31 @@ const MediaEditorContent = ({ file, onSave, onCancel }: MediaEditorProps) => {
       <div className="h-[60px] flex justify-between items-center px-6 bg-black/90 border-b border-white/10">
         <Button
           variant="ghost"
-          size="icon"
+          size="sm"
           onClick={onCancel}
           className="text-white hover:bg-transparent"
         >
-          <X className="h-6 w-6" />
+          Cancel
         </Button>
         <span className="text-xl font-medium text-white">Edit</span>
         <Button
           variant="ghost"
-          size="icon"
+          size="sm"
           onClick={handleSave}
           className="text-white hover:bg-transparent"
         >
-          <Check className="h-6 w-6" />
+          Post
         </Button>
       </div>
 
       {/* Main Content Area */}
       <div className="flex-1 relative">
-        {/* Canvas Container - Takes full available space */}
+        {/* Canvas Container */}
         <div className="absolute inset-0 flex items-center justify-center">
-          <canvas ref={canvasRef} />
+          <canvas ref={canvasRef} className="max-w-full max-h-full" />
         </div>
         
-        {/* Navigation Controls - Overlaid on image */}
+        {/* Navigation Controls */}
         <div className="absolute inset-x-0 top-1/2 flex justify-between px-4 -translate-y-1/2 pointer-events-none">
           <Button 
             variant="ghost" 
@@ -130,7 +126,7 @@ const MediaEditorContent = ({ file, onSave, onCancel }: MediaEditorProps) => {
         </div>
       </div>
 
-      {/* Bottom Controls - Fixed height */}
+      {/* Bottom Controls */}
       <div className="h-[100px] bg-black/90 border-t border-white/10">
         <div className="flex justify-center gap-16 h-full items-center">
           <button className="flex flex-col items-center gap-2">
@@ -141,7 +137,7 @@ const MediaEditorContent = ({ file, onSave, onCancel }: MediaEditorProps) => {
           </button>
           <button className="flex flex-col items-center gap-2">
             <div className="h-14 w-14 rounded-full bg-zinc-900 flex items-center justify-center hover:bg-zinc-800 transition-colors">
-              <ImageIcon className="h-6 w-6 text-white" />
+              <Filter className="h-6 w-6 text-white" />
             </div>
             <span className="text-xs text-white">Filters</span>
           </button>
