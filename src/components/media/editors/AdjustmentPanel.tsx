@@ -1,5 +1,6 @@
 import { Slider } from "@/components/ui/slider";
 import { Sun, Contrast } from "lucide-react";
+import { useImageEffects } from "@/hooks/useImageEffects";
 
 export const AdjustmentPanel = () => {
   const { adjustBrightness, adjustContrast } = useImageEffects();
