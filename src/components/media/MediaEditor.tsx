@@ -5,6 +5,7 @@ import { Button } from "@/components/ui/button";
 import { X, Send, Filter, Sliders, Crop } from "lucide-react";
 import { useCanvas } from "@/contexts/CanvasContext";
 import { FilterControls } from "./controls/FilterControls";
+import { AdjustmentControls } from "./controls/AdjustmentControls";
 import { CanvasProvider } from "@/contexts/CanvasContext";
 
 interface MediaEditorProps {
@@ -18,6 +19,7 @@ const MediaEditorContent = ({ file, onSave, onCancel }: MediaEditorProps) => {
   const { setCanvas, canvas } = useCanvas();
   const [selectedFilter, setSelectedFilter] = useState("none");
   const [activeControl, setActiveControl] = useState<"filters" | "adjust" | "crop" | null>(null);
+  const [activeAdjustment, setActiveAdjustment] = useState<string>("brightness");
 
   useEffect(() => {
     if (!canvasRef.current) return;
@@ -155,7 +157,10 @@ const MediaEditorContent = ({ file, onSave, onCancel }: MediaEditorProps) => {
           
           <button 
             className="flex flex-col items-center gap-2 cursor-pointer"
-            onClick={() => setActiveControl(activeControl === "adjust" ? null : "adjust")}
+            onClick={() => {
+              setActiveControl(activeControl === "adjust" ? null : "adjust");
+              setActiveAdjustment("brightness");
+            }}
           >
             <div className={`h-14 w-14 rounded-full ${activeControl === "adjust" ? "bg-white/20" : "bg-black/50"} flex items-center justify-center`}>
               <Sliders className="h-6 w-6 text-white" />
@@ -180,6 +185,12 @@ const MediaEditorContent = ({ file, onSave, onCancel }: MediaEditorProps) => {
               selectedFilter={selectedFilter}
               onFilterChange={handleFilterChange}
             />
+          </div>
+        )}
+
+        {activeControl === "adjust" && (
+          <div className="absolute bottom-24 left-0 right-0 bg-black/80 border-t border-white/10">
+            <AdjustmentControls activeAdjustment={activeAdjustment} />
           </div>
         )}
       </div>
