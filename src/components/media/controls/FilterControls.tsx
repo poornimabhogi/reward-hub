@@ -1,5 +1,5 @@
 import React, { useEffect, useRef } from 'react';
-import { Canvas as FabricCanvas, Image as FabricImage } from 'fabric';
+import { Canvas as FabricCanvas, Image as FabricImage, filters } from 'fabric';
 import { useCanvas } from '@/contexts/CanvasContext';
 import { ScrollArea, ScrollBar } from "@/components/ui/scroll-area";
 
@@ -44,7 +44,7 @@ export const FilterControls: React.FC<FilterControlsProps> = ({
       });
 
       const img = new Image();
-      img.crossOrigin = "anonymous"; // Add this to handle CORS
+      img.crossOrigin = "anonymous";
       
       img.onload = () => {
         const fabricImage = new FabricImage(img, {
@@ -67,19 +67,26 @@ export const FilterControls: React.FC<FilterControlsProps> = ({
         // Initialize filters with default parameters
         if (filter.value !== 'none') {
           try {
-            const filterInstance = new fabric.Image.filters[filter.value === 'brightness' ? 'Brightness' : 
-                                                          filter.value === 'contrast' ? 'Contrast' : 
-                                                          filter.value === 'grayscale' ? 'Grayscale' : 
-                                                          'Sepia']();
-            
-            if (filter.value === 'brightness') {
-              filterInstance.brightness = 0.1;
-            } else if (filter.value === 'contrast') {
-              filterInstance.contrast = 0.1;
+            let filterInstance;
+            switch (filter.value) {
+              case 'grayscale':
+                filterInstance = new filters.Grayscale();
+                break;
+              case 'sepia':
+                filterInstance = new filters.Sepia();
+                break;
+              case 'brightness':
+                filterInstance = new filters.Brightness({ brightness: 0.1 });
+                break;
+              case 'contrast':
+                filterInstance = new filters.Contrast({ contrast: 0.1 });
+                break;
             }
             
-            fabricImage.filters = [filterInstance];
-            fabricImage.applyFilters();
+            if (filterInstance) {
+              fabricImage.filters = [filterInstance];
+              fabricImage.applyFilters();
+            }
           } catch (error) {
             console.error(`Error applying filter ${filter.value}:`, error);
           }
@@ -113,18 +120,25 @@ export const FilterControls: React.FC<FilterControlsProps> = ({
 
     if (filterValue !== 'none') {
       try {
-        const filterInstance = new fabric.Image.filters[filterValue === 'brightness' ? 'Brightness' : 
-                                                      filterValue === 'contrast' ? 'Contrast' : 
-                                                      filterValue === 'grayscale' ? 'Grayscale' : 
-                                                      'Sepia']();
-        
-        if (filterValue === 'brightness') {
-          filterInstance.brightness = 0.1;
-        } else if (filterValue === 'contrast') {
-          filterInstance.contrast = 0.1;
+        let filterInstance;
+        switch (filterValue) {
+          case 'grayscale':
+            filterInstance = new filters.Grayscale();
+            break;
+          case 'sepia':
+            filterInstance = new filters.Sepia();
+            break;
+          case 'brightness':
+            filterInstance = new filters.Brightness({ brightness: 0.1 });
+            break;
+          case 'contrast':
+            filterInstance = new filters.Contrast({ contrast: 0.1 });
+            break;
         }
         
-        mainImage.filters = [filterInstance];
+        if (filterInstance) {
+          mainImage.filters = [filterInstance];
+        }
       } catch (error) {
         console.error(`Error applying filter ${filterValue}:`, error);
         return;
