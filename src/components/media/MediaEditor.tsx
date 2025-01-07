@@ -73,7 +73,7 @@ const MediaEditorContent = ({ file, onSave, onCancel }: MediaEditorProps) => {
   return (
     <div 
       ref={containerRef}
-      className="flex flex-col h-[80vh] bg-black text-white"
+      className="fixed inset-0 z-50 flex flex-col bg-black text-white"
     >
       {/* Header */}
       <div className="flex justify-between items-center p-4 border-b border-white/10">
@@ -83,7 +83,7 @@ const MediaEditorContent = ({ file, onSave, onCancel }: MediaEditorProps) => {
           onClick={onCancel}
           className="text-white hover:bg-white/10"
         >
-          <X className="h-5 w-5" />
+          <X className="h-6 w-6" />
         </Button>
         <span className="text-lg font-medium">Edit</span>
         <Button
@@ -92,7 +92,7 @@ const MediaEditorContent = ({ file, onSave, onCancel }: MediaEditorProps) => {
           onClick={handleSave}
           className="text-white hover:bg-white/10"
         >
-          <Check className="h-5 w-5" />
+          <Check className="h-6 w-6" />
         </Button>
       </div>
 
@@ -100,39 +100,47 @@ const MediaEditorContent = ({ file, onSave, onCancel }: MediaEditorProps) => {
       <div className="flex-grow relative">
         <canvas ref={canvasRef} className="w-full h-full" />
         
-        {/* Top Controls */}
-        <div className="absolute top-4 left-1/2 -translate-x-1/2 flex gap-4">
-          <Button variant="ghost" size="icon" className="rounded-full bg-black/50 text-white">
-            <ArrowLeft className="h-4 w-4" />
+        {/* Navigation Controls */}
+        <div className="absolute top-1/2 left-0 right-0 flex justify-between px-4 -translate-y-1/2 pointer-events-none">
+          <Button 
+            variant="ghost" 
+            size="icon" 
+            className="rounded-full bg-black/50 text-white hover:bg-black/70 pointer-events-auto"
+          >
+            <ArrowLeft className="h-8 w-8" />
           </Button>
-          <Button variant="ghost" size="icon" className="rounded-full bg-black/50 text-white">
-            <ArrowRight className="h-4 w-4" />
+          <Button 
+            variant="ghost" 
+            size="icon" 
+            className="rounded-full bg-black/50 text-white hover:bg-black/70 pointer-events-auto"
+          >
+            <ArrowRight className="h-8 w-8" />
           </Button>
         </div>
       </div>
 
       {/* Bottom Controls */}
-      <div className="p-4 border-t border-white/10">
+      <div className="p-6 border-t border-white/10 bg-black/95">
         <Tabs defaultValue="adjust" className="w-full">
           <div className="flex justify-center mb-6">
             <div className="flex gap-12">
               <button className="flex flex-col items-center gap-2 text-white group">
-                <div className="p-3 rounded-full bg-white/10 group-hover:bg-white/20">
-                  <Sun className="h-6 w-6" />
+                <div className="p-4 rounded-full bg-white/10 group-hover:bg-white/20 transition-colors">
+                  <Sun className="h-8 w-8" />
                 </div>
-                <span className="text-xs">Adjust</span>
+                <span className="text-sm font-medium">Adjust</span>
               </button>
               <button className="flex flex-col items-center gap-2 text-white group">
-                <div className="p-3 rounded-full bg-white/10 group-hover:bg-white/20">
-                  <ImageIcon className="h-6 w-6" />
+                <div className="p-4 rounded-full bg-white/10 group-hover:bg-white/20 transition-colors">
+                  <ImageIcon className="h-8 w-8" />
                 </div>
-                <span className="text-xs">Filters</span>
+                <span className="text-sm font-medium">Filters</span>
               </button>
               <button className="flex flex-col items-center gap-2 text-white group">
-                <div className="p-3 rounded-full bg-white/10 group-hover:bg-white/20">
-                  <Crop className="h-6 w-6" />
+                <div className="p-4 rounded-full bg-white/10 group-hover:bg-white/20 transition-colors">
+                  <Crop className="h-8 w-8" />
                 </div>
-                <span className="text-xs">Crop</span>
+                <span className="text-sm font-medium">Crop</span>
               </button>
             </div>
           </div>
