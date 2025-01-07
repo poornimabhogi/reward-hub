@@ -39,7 +39,8 @@ export const FilterControls: React.FC<FilterControlsProps> = ({
         backgroundColor: '#000000',
         selection: false,
         renderOnAddRemove: true,
-        isDrawingMode: false
+        isDrawingMode: false,
+        skipTargetFind: true,
       });
 
       const img = new Image();
@@ -61,7 +62,6 @@ export const FilterControls: React.FC<FilterControlsProps> = ({
           top: (64 - (img.height * scale)) / 2,
         });
 
-        // Apply filter to preview
         fabricImage.filters = [];
         switch (filter.value) {
           case 'grayscale':
@@ -106,10 +106,8 @@ export const FilterControls: React.FC<FilterControlsProps> = ({
     const mainImage = canvas.getObjects()[0] as FabricImage;
     if (!mainImage) return;
 
-    // Reset any existing filters
     mainImage.filters = [];
 
-    // Apply the selected filter
     switch (filterValue) {
       case 'grayscale':
         mainImage.filters.push(new filters.Grayscale());
@@ -140,11 +138,11 @@ export const FilterControls: React.FC<FilterControlsProps> = ({
           <button
             key={filter.value}
             onClick={() => handleFilterClick(filter.value)}
-            className="flex flex-col items-center gap-2 cursor-pointer flex-shrink-0"
+            className="flex flex-col items-center gap-2 cursor-pointer flex-shrink-0 focus:outline-none"
           >
             <div
-              className={`w-16 h-16 rounded-lg overflow-hidden ${
-                selectedFilter === filter.value ? 'ring-2 ring-white' : ''
+              className={`w-16 h-16 rounded-lg overflow-hidden border-2 ${
+                selectedFilter === filter.value ? 'border-white' : 'border-transparent'
               }`}
             >
               <canvas
