@@ -1,5 +1,5 @@
 import React, { useEffect, useRef } from 'react';
-import { Canvas as FabricCanvas, Image as FabricImage, filters } from 'fabric';
+import { Canvas as FabricCanvas, Image as FabricImage } from 'fabric';
 import { useCanvas } from '@/contexts/CanvasContext';
 import { ScrollArea, ScrollBar } from "@/components/ui/scroll-area";
 
@@ -44,6 +44,8 @@ export const FilterControls: React.FC<FilterControlsProps> = ({
       });
 
       const img = new Image();
+      img.crossOrigin = "anonymous"; // Add this to handle CORS
+      
       img.onload = () => {
         const fabricImage = new FabricImage(img, {
           selectable: false,
@@ -62,24 +64,25 @@ export const FilterControls: React.FC<FilterControlsProps> = ({
           top: (64 - (img.height * scale)) / 2,
         });
 
-        fabricImage.filters = [];
-        switch (filter.value) {
-          case 'grayscale':
-            fabricImage.filters.push(new filters.Grayscale());
-            break;
-          case 'sepia':
-            fabricImage.filters.push(new filters.Sepia());
-            break;
-          case 'brightness':
-            fabricImage.filters.push(new filters.Brightness({ brightness: 0.2 }));
-            break;
-          case 'contrast':
-            fabricImage.filters.push(new filters.Contrast({ contrast: 0.2 }));
-            break;
-        }
-
-        if (fabricImage.filters.length > 0) {
-          fabricImage.applyFilters();
+        // Initialize filters with default parameters
+        if (filter.value !== 'none') {
+          try {
+            const filterInstance = new fabric.Image.filters[filter.value === 'brightness' ? 'Brightness' : 
+                                                          filter.value === 'contrast' ? 'Contrast' : 
+                                                          filter.value === 'grayscale' ? 'Grayscale' : 
+                                                          'Sepia']();
+            
+            if (filter.value === 'brightness') {
+              filterInstance.brightness = 0.1;
+            } else if (filter.value === 'contrast') {
+              filterInstance.contrast = 0.1;
+            }
+            
+            fabricImage.filters = [filterInstance];
+            fabricImage.applyFilters();
+          } catch (error) {
+            console.error(`Error applying filter ${filter.value}:`, error);
+          }
         }
 
         previewFabricCanvas.add(fabricImage);
@@ -98,7 +101,7 @@ export const FilterControls: React.FC<FilterControlsProps> = ({
     return () => {
       cleanupFunctions.forEach(cleanup => cleanup && cleanup());
     };
-  }, [canvas]);
+  }, [canvas, filtersList]);
 
   const handleFilterClick = (filterValue: string) => {
     if (!canvas) return;
@@ -108,25 +111,27 @@ export const FilterControls: React.FC<FilterControlsProps> = ({
 
     mainImage.filters = [];
 
-    switch (filterValue) {
-      case 'grayscale':
-        mainImage.filters.push(new filters.Grayscale());
-        break;
-      case 'sepia':
-        mainImage.filters.push(new filters.Sepia());
-        break;
-      case 'brightness':
-        mainImage.filters.push(new filters.Brightness({ brightness: 0.2 }));
-        break;
-      case 'contrast':
-        mainImage.filters.push(new filters.Contrast({ contrast: 0.2 }));
-        break;
+    if (filterValue !== 'none') {
+      try {
+        const filterInstance = new fabric.Image.filters[filterValue === 'brightness' ? 'Brightness' : 
+                                                      filterValue === 'contrast' ? 'Contrast' : 
+                                                      filterValue === 'grayscale' ? 'Grayscale' : 
+                                                      'Sepia']();
+        
+        if (filterValue === 'brightness') {
+          filterInstance.brightness = 0.1;
+        } else if (filterValue === 'contrast') {
+          filterInstance.contrast = 0.1;
+        }
+        
+        mainImage.filters = [filterInstance];
+      } catch (error) {
+        console.error(`Error applying filter ${filterValue}:`, error);
+        return;
+      }
     }
 
-    if (mainImage.filters.length > 0) {
-      mainImage.applyFilters();
-    }
-    
+    mainImage.applyFilters();
     canvas.renderAll();
     onFilterChange(filterValue);
   };
