@@ -36,7 +36,6 @@ export class StripeService {
     });
   }
 
-  // New method to handle webhook events
   async handleWebhookEvent(signature: string, payload: Buffer) {
     try {
       const event = this.stripe.webhooks.constructEvent(
@@ -47,13 +46,15 @@ export class StripeService {
 
       switch (event.type) {
         case 'payment_intent.succeeded':
-          const paymentIntent = event.data.object;
-          console.log('Payment succeeded:', paymentIntent.id);
-          // Here you can add logic to update your database, send emails, etc.
+          const paymentIntent = event.data.object as Stripe.PaymentIntent;
+          const amount = paymentIntent.amount / 100; // Convert from cents to dollars
+          // Send amount to frontend to update earnings
+          this.updateFrontendEarnings(amount);
+          console.log('Payment succeeded:', paymentIntent.id, 'Amount:', amount);
           break;
         
         case 'charge.succeeded':
-          const charge = event.data.object;
+          const charge = event.data.object as Stripe.Charge;
           console.log('Charge succeeded:', charge.id);
           break;
 
@@ -66,5 +67,14 @@ export class StripeService {
       console.error('Webhook error:', err.message);
       throw new Error(`Webhook Error: ${err.message}`);
     }
+  }
+
+  private async updateFrontendEarnings(amount: number) {
+    // In a real application, you would:
+    // 1. Store this in a database
+    // 2. Use WebSockets to notify the frontend
+    // 3. Update the frontend state
+    // For now, we're using localStorage in the frontend
+    console.log('Updating earnings:', amount);
   }
 }

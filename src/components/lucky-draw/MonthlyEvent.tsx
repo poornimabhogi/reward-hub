@@ -22,7 +22,7 @@ export const MonthlyEvent = ({ totalAccumulation: baseAmount }: MonthlyEventProp
   const [isDialogOpen, setIsDialogOpen] = useState(false);
   
   const eventDate = "2024-04-20T00:00:00";
-  const { totalAccumulation } = calculateLuckyDrawAmount(baseAmount);
+  const { totalAccumulation, monthlyEarnings } = calculateLuckyDrawAmount(baseAmount);
   const luckyAmount = Math.floor(totalAccumulation * 0.1); // 10% of total accumulation
   
   const formatNumber = (num: number) => {
@@ -84,9 +84,14 @@ export const MonthlyEvent = ({ totalAccumulation: baseAmount }: MonthlyEventProp
             <div className="text-primary font-medium">
               4/20/2024
             </div>
-            <p className="text-muted-foreground">
-              Monthly prize pool: {formatNumber(totalAccumulation)} Coins
-            </p>
+            <div className="space-y-1">
+              <p className="text-muted-foreground">
+                Monthly Earnings: {formatNumber(monthlyEarnings)} Coins
+              </p>
+              <p className="text-muted-foreground">
+                Total Prize Pool: {formatNumber(totalAccumulation)} Coins
+              </p>
+            </div>
             <p className="text-primary font-medium">
               Time Remaining: {countdown}
             </p>
