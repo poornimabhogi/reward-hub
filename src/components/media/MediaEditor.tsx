@@ -1,7 +1,17 @@
 import React, { useEffect, useRef } from "react";
 import { Canvas as FabricCanvas, Image as FabricImage } from 'fabric';
 import { Button } from "@/components/ui/button";
-import { X, Check, ArrowLeft, ArrowRight, Filter, Sliders, Crop } from "lucide-react";
+import { 
+  Sun, 
+  SunMedium, 
+  Crop, 
+  Filter, 
+  Contrast, 
+  ImagePlus,
+  Sparkles,
+  Palette,
+  Type
+} from "lucide-react";
 import { CanvasProvider } from "@/contexts/CanvasContext";
 import { useCanvas } from "@/contexts/CanvasContext";
 import { FilterControls } from "./controls/FilterControls";
@@ -16,14 +26,16 @@ const MediaEditorContent = ({ file, onSave, onCancel }: MediaEditorProps) => {
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const { setCanvas, canvas } = useCanvas();
   const [selectedFilter, setSelectedFilter] = React.useState("none");
-  const [activeControl, setActiveControl] = React.useState<"filters" | "adjust" | "crop" | null>(null);
+  const [activeControl, setActiveControl] = React.useState<"filters" | "adjust" | "crop" | "text" | "stickers" | null>(null);
+  const [brightness, setBrightness] = React.useState(100);
+  const [contrast, setContrast] = React.useState(100);
 
   useEffect(() => {
     if (!canvasRef.current) return;
 
     const fabricCanvas = new FabricCanvas(canvasRef.current, {
       width: window.innerWidth,
-      height: window.innerHeight - 160,
+      height: window.innerHeight - 180, // Account for header and footer
       backgroundColor: '#000000'
     });
     setCanvas(fabricCanvas);
@@ -34,7 +46,7 @@ const MediaEditorContent = ({ file, onSave, onCancel }: MediaEditorProps) => {
       
       const scale = Math.min(
         window.innerWidth / img.width,
-        (window.innerHeight - 160) / img.height
+        (window.innerHeight - 180) / img.height
       );
       
       fabricImage.set({
@@ -51,20 +63,9 @@ const MediaEditorContent = ({ file, onSave, onCancel }: MediaEditorProps) => {
     };
     img.src = URL.createObjectURL(file);
 
-    const handleResize = () => {
-      fabricCanvas.setDimensions({
-        width: window.innerWidth,
-        height: window.innerHeight - 160
-      });
-      fabricCanvas.renderAll();
-    };
-
-    window.addEventListener('resize', handleResize);
-
     return () => {
       fabricCanvas.dispose();
       URL.revokeObjectURL(img.src);
-      window.removeEventListener('resize', handleResize);
     };
   }, [file, setCanvas]);
 
@@ -78,10 +79,38 @@ const MediaEditorContent = ({ file, onSave, onCancel }: MediaEditorProps) => {
     }, file.type);
   };
 
+  const editingControls = [
+    { 
+      id: 'filters',
+      icon: <Filter className="h-6 w-6" />,
+      label: 'Filters'
+    },
+    {
+      id: 'adjust',
+      icon: <SunMedium className="h-6 w-6" />,
+      label: 'Adjust'
+    },
+    {
+      id: 'crop',
+      icon: <Crop className="h-6 w-6" />,
+      label: 'Crop'
+    },
+    {
+      id: 'text',
+      icon: <Type className="h-6 w-6" />,
+      label: 'Text'
+    },
+    {
+      id: 'stickers',
+      icon: <Sparkles className="h-6 w-6" />,
+      label: 'Stickers'
+    }
+  ];
+
   return (
     <div className="fixed inset-0 z-50 bg-black flex flex-col">
       {/* Header */}
-      <div className="h-[60px] flex justify-between items-center px-6 bg-black/90 border-b border-white/10">
+      <div className="h-[60px] flex justify-between items-center px-4 bg-black/90 border-b border-white/10">
         <Button
           variant="ghost"
           size="sm"
@@ -97,76 +126,71 @@ const MediaEditorContent = ({ file, onSave, onCancel }: MediaEditorProps) => {
           onClick={handleSave}
           className="text-white hover:bg-transparent"
         >
-          Post
+          Done
         </Button>
       </div>
 
       {/* Main Content Area */}
-      <div className="flex-1 relative">
-        <div className="absolute inset-0 flex items-center justify-center">
-          <canvas ref={canvasRef} className="max-w-full max-h-full" />
-        </div>
-        
-        {/* Navigation Controls */}
-        <div className="absolute inset-x-0 top-1/2 flex justify-between px-4 -translate-y-1/2 pointer-events-none">
-          <Button 
-            variant="ghost" 
-            size="icon"
-            className="h-12 w-12 rounded-full bg-black/50 text-white hover:bg-black/70 pointer-events-auto"
-          >
-            <ArrowLeft className="h-6 w-6" />
-          </Button>
-          <Button 
-            variant="ghost" 
-            size="icon"
-            className="h-12 w-12 rounded-full bg-black/50 text-white hover:bg-black/70 pointer-events-auto"
-          >
-            <ArrowRight className="h-6 w-6" />
-          </Button>
-        </div>
+      <div className="flex-1 relative bg-black">
+        <canvas ref={canvasRef} className="absolute inset-0 w-full h-full object-contain" />
       </div>
 
       {/* Bottom Controls */}
-      <div className="h-[100px] bg-black/90 border-t border-white/10">
-        <div className="flex justify-center gap-16 h-full items-center">
-          <button 
-            className="flex flex-col items-center gap-2"
-            onClick={() => setActiveControl(activeControl === "filters" ? null : "filters")}
-          >
-            <div className={`h-14 w-14 rounded-full ${activeControl === "filters" ? "bg-white/20" : "bg-zinc-900"} flex items-center justify-center hover:bg-zinc-800 transition-colors`}>
-              <Filter className="h-6 w-6 text-white" />
-            </div>
-            <span className="text-xs text-white">Filters</span>
-          </button>
-          
-          <button 
-            className="flex flex-col items-center gap-2"
-            onClick={() => setActiveControl(activeControl === "adjust" ? null : "adjust")}
-          >
-            <div className={`h-14 w-14 rounded-full ${activeControl === "adjust" ? "bg-white/20" : "bg-zinc-900"} flex items-center justify-center hover:bg-zinc-800 transition-colors`}>
-              <Sliders className="h-6 w-6 text-white" />
-            </div>
-            <span className="text-xs text-white">Adjust</span>
-          </button>
-          
-          <button 
-            className="flex flex-col items-center gap-2"
-            onClick={() => setActiveControl(activeControl === "crop" ? null : "crop")}
-          >
-            <div className={`h-14 w-14 rounded-full ${activeControl === "crop" ? "bg-white/20" : "bg-zinc-900"} flex items-center justify-center hover:bg-zinc-800 transition-colors`}>
-              <Crop className="h-6 w-6 text-white" />
-            </div>
-            <span className="text-xs text-white">Crop</span>
-          </button>
+      <div className="h-[120px] bg-black/90 border-t border-white/10">
+        <div className="flex justify-around items-center h-full px-4">
+          {editingControls.map((control) => (
+            <button
+              key={control.id}
+              className="flex flex-col items-center gap-2"
+              onClick={() => setActiveControl(control.id as any)}
+            >
+              <div className={`h-12 w-12 rounded-full ${
+                activeControl === control.id ? 'bg-white/20' : 'bg-black/40'
+              } flex items-center justify-center`}>
+                {control.icon}
+              </div>
+              <span className="text-xs text-white">{control.label}</span>
+            </button>
+          ))}
         </div>
 
         {/* Filter Controls Panel */}
         {activeControl === "filters" && (
-          <div className="absolute bottom-[100px] left-0 right-0 bg-black/90 border-t border-white/10 p-4">
+          <div className="absolute bottom-[120px] left-0 right-0 bg-black/90 border-t border-white/10 p-4">
             <FilterControls
               selectedFilter={selectedFilter}
               onFilterChange={setSelectedFilter}
             />
+          </div>
+        )}
+
+        {/* Adjustment Controls */}
+        {activeControl === "adjust" && (
+          <div className="absolute bottom-[120px] left-0 right-0 bg-black/90 border-t border-white/10 p-4">
+            <div className="space-y-4">
+              <div className="flex items-center justify-between">
+                <span className="text-white text-sm">Brightness</span>
+                <input 
+                  type="range" 
+                  min="0" 
+                  max="200" 
+                  value={brightness}
+                  onChange={(e) => setBrightness(Number(e.target.value))}
+                  className="w-2/3"
+                />
+              </div>
+              <div className="flex items-center justify-between">
+                <span className="text-white text-sm">Contrast</span>
+                <input 
+                  type="range" 
+                  min="0" 
+                  max="200" 
+                  value={contrast}
+                  onChange={(e) => setContrast(Number(e.target.value))}
+                  className="w-2/3"
+                />
+              </div>
+            </div>
           </div>
         )}
       </div>
