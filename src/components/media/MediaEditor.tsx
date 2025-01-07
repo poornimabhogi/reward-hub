@@ -2,7 +2,7 @@ import React, { useEffect, useRef, useState } from "react";
 import { Canvas as FabricCanvas, Image as FabricImage } from 'fabric';
 import { filters } from 'fabric';
 import { Button } from "@/components/ui/button";
-import { X, Send, Filter, Sliders, Crop } from "lucide-react";
+import { X, Send, Filter, Sliders, Crop, Sun, Contrast } from "lucide-react";
 import { useCanvas } from "@/contexts/CanvasContext";
 import { FilterControls } from "./controls/FilterControls";
 import { AdjustmentControls } from "./controls/AdjustmentControls";
@@ -163,7 +163,7 @@ const MediaEditorContent = ({ file, onSave, onCancel }: MediaEditorProps) => {
             }}
           >
             <div className={`h-14 w-14 rounded-full ${activeControl === "adjust" ? "bg-white/20" : "bg-black/50"} flex items-center justify-center`}>
-              <Sliders className="h-6 w-6 text-white" />
+              <Sun className="h-6 w-6 text-white" />
             </div>
             <span className="text-xs text-white">Adjust</span>
           </button>
