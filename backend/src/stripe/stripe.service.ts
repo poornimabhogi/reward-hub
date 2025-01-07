@@ -6,7 +6,7 @@ export class StripeService {
   private stripe: Stripe;
 
   constructor() {
-    this.stripe = new Stripe('sk_test_your_secret_key', {
+    this.stripe = new Stripe(process.env.STRIPE_SECRET_KEY || 'sk_test_your_secret_key', {
       apiVersion: '2023-10-16',
     });
   }
@@ -41,16 +41,17 @@ export class StripeService {
       const event = this.stripe.webhooks.constructEvent(
         payload,
         signature,
-        'whsec_your_webhook_secret'
+        process.env.STRIPE_WEBHOOK_SECRET || 'whsec_your_webhook_secret'
       );
+
+      console.log('Received webhook event:', event.type);
 
       switch (event.type) {
         case 'payment_intent.succeeded':
           const paymentIntent = event.data.object as Stripe.PaymentIntent;
           const amount = paymentIntent.amount / 100; // Convert from cents to dollars
-          // Send amount to frontend to update earnings
-          this.updateFrontendEarnings(amount);
           console.log('Payment succeeded:', paymentIntent.id, 'Amount:', amount);
+          this.updateFrontendEarnings(amount);
           break;
         
         case 'charge.succeeded':
@@ -70,11 +71,8 @@ export class StripeService {
   }
 
   private async updateFrontendEarnings(amount: number) {
-    // In a real application, you would:
-    // 1. Store this in a database
-    // 2. Use WebSockets to notify the frontend
-    // 3. Update the frontend state
-    // For now, we're using localStorage in the frontend
     console.log('Updating earnings:', amount);
+    // The frontend will handle storing this in localStorage
+    // In a production environment, this should be stored in a database
   }
 }
