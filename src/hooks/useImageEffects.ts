@@ -7,39 +7,48 @@ export const useImageEffects = () => {
 
   const adjustBrightness = useCallback((value: number) => {
     if (!canvas) return;
-    const bgImage = canvas.backgroundImage as FabricImage;
-    if (bgImage) {
-      bgImage.filters = [{ type: 'Brightness', brightness: value / 100 }];
-      bgImage.applyFilters();
+    const objects = canvas.getObjects();
+    if (objects.length > 0) {
+      const image = objects[0] as FabricImage;
+      image.filters = [{
+        type: 'Brightness',
+        value: (value - 100) / 100
+      }];
+      image.applyFilters();
       canvas.renderAll();
     }
   }, [canvas]);
 
   const adjustContrast = useCallback((value: number) => {
     if (!canvas) return;
-    const bgImage = canvas.backgroundImage as FabricImage;
-    if (bgImage) {
-      bgImage.filters = [{ type: 'Contrast', contrast: value / 100 }];
-      bgImage.applyFilters();
+    const objects = canvas.getObjects();
+    if (objects.length > 0) {
+      const image = objects[0] as FabricImage;
+      image.filters = [{
+        type: 'Contrast',
+        value: value / 100
+      }];
+      image.applyFilters();
       canvas.renderAll();
     }
   }, [canvas]);
 
   const applyFilter = useCallback((filterName: string) => {
     if (!canvas) return;
-    const bgImage = canvas.backgroundImage as FabricImage;
-    if (bgImage) {
+    const objects = canvas.getObjects();
+    if (objects.length > 0) {
+      const image = objects[0] as FabricImage;
       switch (filterName) {
         case 'grayscale':
-          bgImage.filters = [{ type: 'Grayscale' }];
+          image.filters = [{ type: 'Grayscale' }];
           break;
         case 'sepia':
-          bgImage.filters = [{ type: 'Sepia' }];
+          image.filters = [{ type: 'Sepia' }];
           break;
         default:
-          bgImage.filters = [];
+          image.filters = [];
       }
-      bgImage.applyFilters();
+      image.applyFilters();
       canvas.renderAll();
     }
   }, [canvas]);

@@ -21,14 +21,22 @@ const MediaEditorContent = ({ file, onSave, onCancel }: MediaEditorProps) => {
   useEffect(() => {
     if (!canvasRef.current) return;
 
-    const fabricCanvas = new FabricCanvas(canvasRef.current);
+    // Create a new Fabric canvas with proper dimensions
+    const fabricCanvas = new FabricCanvas(canvasRef.current, {
+      width: canvasRef.current.offsetWidth,
+      height: canvasRef.current.offsetHeight,
+      backgroundColor: '#000000'
+    });
     setCanvas(fabricCanvas);
 
+    // Load and set up the image
     const img = new Image();
     img.onload = () => {
-      FabricImage.fromURL(img.src, (fabricImage) => {
-        fabricCanvas.setBackgroundImage(fabricImage, fabricCanvas.renderAll.bind(fabricCanvas));
-      });
+      const fabricImage = new FabricImage(img);
+      fabricImage.scaleToWidth(fabricCanvas.width || 800);
+      fabricCanvas.add(fabricImage);
+      fabricCanvas.centerObject(fabricImage);
+      fabricCanvas.renderAll();
     };
     img.src = URL.createObjectURL(file);
 
