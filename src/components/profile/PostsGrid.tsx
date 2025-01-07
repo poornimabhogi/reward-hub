@@ -97,27 +97,36 @@ export const PostsGrid = ({ posts, viewMode: externalViewMode }: PostsGridProps)
           featurePosts.map((post) => (
             <div 
               key={post.id} 
-              className={`${
-                currentViewMode === 'grid'
-                  ? "aspect-square w-full"
-                  : "w-full aspect-[16/9]"
-              } relative overflow-hidden rounded-lg shadow-sm hover:shadow-md transition-shadow duration-200`}
+              className="relative group"
             >
-              {post.type === 'photo' ? (
-                <img
-                  src={post.url}
-                  alt="Post"
-                  className="w-full h-full object-cover"
-                />
-              ) : (
-                <video
-                  src={post.url}
-                  className="w-full h-full object-cover"
-                  controls
-                  muted
-                  loop
-                />
-              )}
+              <div 
+                className={`${
+                  currentViewMode === 'grid'
+                    ? "aspect-square w-full"
+                    : "w-full aspect-[16/9]"
+                } relative overflow-hidden rounded-lg shadow-sm hover:shadow-md transition-shadow duration-200`}
+              >
+                {post.type === 'photo' ? (
+                  <img
+                    src={post.url}
+                    alt={post.caption || "Post"}
+                    className="w-full h-full object-cover"
+                  />
+                ) : (
+                  <video
+                    src={post.url}
+                    className="w-full h-full object-cover"
+                    controls
+                    muted
+                    loop
+                  />
+                )}
+                {post.caption && (
+                  <div className="absolute bottom-0 left-0 right-0 bg-black/50 text-white p-2 opacity-0 group-hover:opacity-100 transition-opacity duration-200">
+                    <p className="text-sm line-clamp-2">{post.caption}</p>
+                  </div>
+                )}
+              </div>
             </div>
           ))
         ) : (

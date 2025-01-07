@@ -19,6 +19,7 @@ interface CreatePostFormProps {
 
 export const CreatePostForm = ({ onPost, initialPostType = 'feature' }: CreatePostFormProps) => {
   const [thoughtText, setThoughtText] = useState('');
+  const [caption, setCaption] = useState('');
   const [thoughtMedia, setThoughtMedia] = useState<File | null>(null);
   const [postType, setPostType] = useState<'timeCapsule' | 'feature' | 'reel'>(initialPostType);
 
@@ -35,14 +36,14 @@ export const CreatePostForm = ({ onPost, initialPostType = 'feature' }: CreatePo
           if (duration < 30) {
             toast.error("Reels must be at least 30 seconds long");
             resolve(false);
-          } else if (duration > 900) { // 15 minutes = 900 seconds
+          } else if (duration > 900) {
             toast.error("Reels cannot be longer than 15 minutes");
             resolve(false);
           } else {
             resolve(true);
           }
         } else {
-          resolve(true); // No duration restrictions for other post types
+          resolve(true);
         }
       };
 
@@ -57,7 +58,7 @@ export const CreatePostForm = ({ onPost, initialPostType = 'feature' }: CreatePo
     if (file.type.startsWith('video/')) {
       const isValidDuration = await validateVideoDuration(file);
       if (!isValidDuration) {
-        e.target.value = ''; // Reset input
+        e.target.value = '';
         return;
       }
     }
@@ -66,16 +67,18 @@ export const CreatePostForm = ({ onPost, initialPostType = 'feature' }: CreatePo
   };
 
   const handleSubmit = () => {
-    if (thoughtText.trim() || thoughtMedia) {
+    if (thoughtMedia) {
       const newStatus: Status = {
         id: Date.now(),
-        type: thoughtMedia?.type.startsWith('image/') ? 'photo' : 'video',
-        url: thoughtMedia ? URL.createObjectURL(thoughtMedia) : '',
+        type: thoughtMedia.type.startsWith('image/') ? 'photo' : 'video',
+        url: URL.createObjectURL(thoughtMedia),
         timestamp: new Date(),
-        postType
+        postType,
+        caption: caption.trim() || undefined
       };
       onPost(newStatus, postType);
       setThoughtText('');
+      setCaption('');
       setThoughtMedia(null);
       toast.success(`${postType === 'timeCapsule' ? "Time capsule" : "Post"} created!`);
     }
@@ -112,12 +115,14 @@ export const CreatePostForm = ({ onPost, initialPostType = 'feature' }: CreatePo
         onChange={handleMediaChange}
       />
 
-      <Textarea
-        placeholder="Share your thoughts..."
-        value={thoughtText}
-        onChange={(e) => setThoughtText(e.target.value)}
-        className="min-h-[80px]"
-      />
+      {postType !== 'timeCapsule' && (
+        <Textarea
+          placeholder="Add a caption..."
+          value={caption}
+          onChange={(e) => setCaption(e.target.value)}
+          className="min-h-[80px]"
+        />
+      )}
       
       {thoughtMedia && (
         <span className="text-sm text-muted-foreground">
@@ -129,7 +134,7 @@ export const CreatePostForm = ({ onPost, initialPostType = 'feature' }: CreatePo
         <Button
           size="sm"
           onClick={handleSubmit}
-          disabled={!thoughtText.trim() && !thoughtMedia}
+          disabled={!thoughtMedia}
         >
           <Send className="h-4 w-4 mr-2" />
           Share

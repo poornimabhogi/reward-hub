@@ -4,6 +4,7 @@ export interface Status {
   url: string;
   timestamp: Date;
   postType?: 'timeCapsule' | 'feature' | 'reel';
+  caption?: string;
 }
 
 export interface FollowedUser {
