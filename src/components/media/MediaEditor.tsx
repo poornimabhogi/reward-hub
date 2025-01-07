@@ -1,5 +1,6 @@
 import React, { useEffect, useRef, useState } from "react";
 import { Canvas as FabricCanvas, Image as FabricImage } from 'fabric';
+import { filters } from 'fabric';
 import { Button } from "@/components/ui/button";
 import { X, Send, Filter, Sliders, Crop } from "lucide-react";
 import { useCanvas } from "@/contexts/CanvasContext";
@@ -86,24 +87,28 @@ const MediaEditorContent = ({ file, onSave, onCancel }: MediaEditorProps) => {
     const objects = canvas.getObjects();
     if (objects.length === 0) return;
 
-    const image = objects[0];
+    const image = objects[0] as FabricImage;
     if (!image) return;
+
+    // Reset filters array
+    image.filters = [];
 
     switch (filter) {
       case 'grayscale':
-        image.filters = [new FabricImage.filters.Grayscale()];
+        image.filters.push(new filters.Grayscale());
         break;
       case 'sepia':
-        image.filters = [new FabricImage.filters.Sepia()];
+        image.filters.push(new filters.Sepia());
         break;
       case 'brightness':
-        image.filters = [new FabricImage.filters.Brightness({ brightness: 0.2 })];
+        image.filters.push(new filters.Brightness({ brightness: 0.2 }));
         break;
       case 'contrast':
-        image.filters = [new FabricImage.filters.Contrast({ contrast: 0.2 })];
+        image.filters.push(new filters.Contrast({ contrast: 0.2 }));
         break;
       default:
-        image.filters = [];
+        // No filter
+        break;
     }
     
     image.applyFilters();
