@@ -1,5 +1,5 @@
 import React, { useEffect, useRef } from 'react';
-import { Canvas as FabricCanvas, Image as FabricImage, filters } from 'fabric';
+import { Canvas as FabricCanvas, Image as FabricImage } from 'fabric';
 import { useCanvas } from '@/contexts/CanvasContext';
 
 interface FilterControlsProps {
@@ -39,48 +39,47 @@ export const FilterControls: React.FC<FilterControlsProps> = ({
         backgroundColor: '#000000',
       });
 
-      // Clone the main image for preview
-      mainImage.clone((clonedImg: FabricImage) => {
-        if (!clonedImg) return;
-
-        // Reset filters
-        clonedImg.filters = [];
-
-        // Apply the specific filter
-        switch (filter.value) {
-          case 'grayscale':
-            clonedImg.filters.push(new filters.Grayscale());
-            break;
-          case 'sepia':
-            clonedImg.filters.push(new filters.Sepia());
-            break;
-          case 'brightness':
-            clonedImg.filters.push(new filters.Brightness({ brightness: 0.2 }));
-            break;
-          case 'contrast':
-            clonedImg.filters.push(new filters.Contrast({ contrast: 0.2 }));
-            break;
-        }
-
+      // Create a new image for preview
+      const img = new Image();
+      img.onload = () => {
+        const fabricImage = new FabricImage(img);
+        
         // Scale to fit preview
         const scale = Math.min(
-          64 / clonedImg.width!,
-          64 / clonedImg.height!
+          64 / img.width,
+          64 / img.height
         );
 
-        clonedImg.scale(scale);
-        clonedImg.applyFilters();
-
-        // Center in preview
-        clonedImg.set({
-          left: (64 - clonedImg.width! * scale) / 2,
-          top: (64 - clonedImg.height! * scale) / 2,
+        fabricImage.set({
+          scaleX: scale,
+          scaleY: scale,
+          left: (64 - img.width * scale) / 2,
+          top: (64 - img.height * scale) / 2,
           selectable: false,
         });
 
-        previewFabricCanvas.add(clonedImg);
+        // Apply filter based on type
+        if (filter.value === 'grayscale') {
+          fabricImage.filters?.push(new FabricImage.filters.Grayscale());
+        } else if (filter.value === 'sepia') {
+          fabricImage.filters?.push(new FabricImage.filters.Sepia());
+        } else if (filter.value === 'brightness') {
+          fabricImage.filters?.push(new FabricImage.filters.Brightness({ brightness: 0.2 }));
+        } else if (filter.value === 'contrast') {
+          fabricImage.filters?.push(new FabricImage.filters.Contrast({ contrast: 0.2 }));
+        }
+
+        if (fabricImage.filters && fabricImage.filters.length > 0) {
+          fabricImage.applyFilters();
+        }
+
+        previewFabricCanvas.add(fabricImage);
         previewFabricCanvas.renderAll();
-      });
+      };
+
+      // Get the current state of the main canvas as a data URL
+      const dataUrl = mainImage.toDataURL();
+      img.src = dataUrl;
     });
 
     // Cleanup
