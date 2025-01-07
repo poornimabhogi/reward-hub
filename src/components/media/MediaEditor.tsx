@@ -1,7 +1,7 @@
 import React, { useEffect, useRef } from "react";
 import { Canvas as FabricCanvas, Image as FabricImage } from 'fabric';
 import { Button } from "@/components/ui/button";
-import { Filter, Sliders, Crop, Send } from "lucide-react";
+import { X, Send, Filter, Sliders, Crop } from "lucide-react";
 import { useCanvas } from "@/contexts/CanvasContext";
 import { FilterControls } from "./controls/FilterControls";
 import { CanvasProvider } from "@/contexts/CanvasContext";
@@ -21,17 +21,10 @@ const MediaEditorContent = ({ file, onSave, onCancel }: MediaEditorProps) => {
   useEffect(() => {
     if (!canvasRef.current) return;
 
-    // Calculate dimensions to match mobile viewport ratio (9:16)
-    const viewportWidth = window.innerWidth;
-    const viewportHeight = window.innerHeight;
-    const baseWidth = Math.min(viewportWidth, 430); // Max width for mobile view
-    const canvasHeight = (baseWidth * 16) / 9; // Maintain 9:16 ratio
-
     const fabricCanvas = new FabricCanvas(canvasRef.current, {
-      width: baseWidth,
-      height: canvasHeight,
+      width: window.innerWidth,
+      height: window.innerHeight,
       backgroundColor: '#000000',
-      centeredScaling: true,
     });
     setCanvas(fabricCanvas);
 
@@ -40,17 +33,10 @@ const MediaEditorContent = ({ file, onSave, onCancel }: MediaEditorProps) => {
       const fabricImage = new FabricImage(img);
       
       // Calculate scale to fit the image while maintaining aspect ratio
-      const imageAspectRatio = img.width / img.height;
-      const canvasAspectRatio = baseWidth / canvasHeight;
-      let scale;
-
-      if (imageAspectRatio > canvasAspectRatio) {
-        // Image is wider than canvas ratio
-        scale = baseWidth / img.width;
-      } else {
-        // Image is taller than canvas ratio
-        scale = canvasHeight / img.height;
-      }
+      const scale = Math.min(
+        window.innerWidth / img.width,
+        window.innerHeight / img.height
+      );
       
       fabricImage.set({
         originX: 'center',
@@ -67,12 +53,9 @@ const MediaEditorContent = ({ file, onSave, onCancel }: MediaEditorProps) => {
     img.src = URL.createObjectURL(file);
 
     const handleResize = () => {
-      const newWidth = Math.min(window.innerWidth, 430);
-      const newHeight = (newWidth * 16) / 9;
-      
       fabricCanvas.setDimensions({
-        width: newWidth,
-        height: newHeight
+        width: window.innerWidth,
+        height: window.innerHeight
       });
       fabricCanvas.renderAll();
     };
@@ -97,41 +80,38 @@ const MediaEditorContent = ({ file, onSave, onCancel }: MediaEditorProps) => {
   };
 
   return (
-    <div className="fixed inset-0 z-50 bg-black flex flex-col min-h-screen">
-      {/* Mobile-style header */}
-      <div className="h-14 flex justify-between items-center px-4 bg-transparent text-white">
+    <div className="fixed inset-0 z-50 bg-black">
+      {/* Top Controls */}
+      <div className="absolute top-0 left-0 right-0 z-10 flex justify-between items-center p-4">
         <Button
           variant="ghost"
-          size="sm"
+          size="icon"
           onClick={onCancel}
-          className="text-white hover:bg-white/10"
+          className="text-white hover:bg-black/20 rounded-full"
         >
-          Cancel
+          <X className="h-6 w-6" />
         </Button>
-        <span className="text-base font-medium">1 Photo Selected</span>
         <Button
           variant="ghost"
-          size="sm"
+          size="icon"
           onClick={handleSave}
-          className="text-white hover:bg-white/10"
+          className="text-white hover:bg-black/20 rounded-full"
         >
-          Done
+          <Send className="h-6 w-6" />
         </Button>
       </div>
 
-      {/* Main Content Area - Full height with black background */}
-      <div className="flex-1 relative bg-black flex items-center justify-center">
-        <canvas ref={canvasRef} className="max-h-full w-auto object-contain" />
-      </div>
+      {/* Canvas */}
+      <canvas ref={canvasRef} className="w-full h-full" />
 
       {/* Bottom Controls */}
-      <div className="h-24 bg-black/90">
-        <div className="flex justify-center gap-16 h-full items-center">
+      <div className="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black/80 to-transparent p-6">
+        <div className="flex justify-center gap-16">
           <button 
             className="flex flex-col items-center gap-2"
             onClick={() => setActiveControl(activeControl === "filters" ? null : "filters")}
           >
-            <div className={`h-14 w-14 rounded-full ${activeControl === "filters" ? "bg-white/20" : "bg-zinc-900"} flex items-center justify-center hover:bg-zinc-800 transition-colors`}>
+            <div className={`h-14 w-14 rounded-full ${activeControl === "filters" ? "bg-white/20" : "bg-black/50"} flex items-center justify-center`}>
               <Filter className="h-6 w-6 text-white" />
             </div>
             <span className="text-xs text-white">Filters</span>
@@ -141,7 +121,7 @@ const MediaEditorContent = ({ file, onSave, onCancel }: MediaEditorProps) => {
             className="flex flex-col items-center gap-2"
             onClick={() => setActiveControl(activeControl === "adjust" ? null : "adjust")}
           >
-            <div className={`h-14 w-14 rounded-full ${activeControl === "adjust" ? "bg-white/20" : "bg-zinc-900"} flex items-center justify-center hover:bg-zinc-800 transition-colors`}>
+            <div className={`h-14 w-14 rounded-full ${activeControl === "adjust" ? "bg-white/20" : "bg-black/50"} flex items-center justify-center`}>
               <Sliders className="h-6 w-6 text-white" />
             </div>
             <span className="text-xs text-white">Adjust</span>
@@ -151,7 +131,7 @@ const MediaEditorContent = ({ file, onSave, onCancel }: MediaEditorProps) => {
             className="flex flex-col items-center gap-2"
             onClick={() => setActiveControl(activeControl === "crop" ? null : "crop")}
           >
-            <div className={`h-14 w-14 rounded-full ${activeControl === "crop" ? "bg-white/20" : "bg-zinc-900"} flex items-center justify-center hover:bg-zinc-800 transition-colors`}>
+            <div className={`h-14 w-14 rounded-full ${activeControl === "crop" ? "bg-white/20" : "bg-black/50"} flex items-center justify-center`}>
               <Crop className="h-6 w-6 text-white" />
             </div>
             <span className="text-xs text-white">Crop</span>
@@ -159,7 +139,7 @@ const MediaEditorContent = ({ file, onSave, onCancel }: MediaEditorProps) => {
         </div>
 
         {activeControl === "filters" && (
-          <div className="absolute bottom-24 left-0 right-0 bg-black/90 border-t border-white/10 p-4">
+          <div className="absolute bottom-24 left-0 right-0 bg-black/80 border-t border-white/10 p-4">
             <FilterControls
               selectedFilter={selectedFilter}
               onFilterChange={setSelectedFilter}

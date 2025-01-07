@@ -23,7 +23,6 @@ export const ProfileSettings = ({ userProfile }: { userProfile: UserProfile }) =
   const fileInputRef = useRef<HTMLInputElement>(null);
   const [selectedPostType, setSelectedPostType] = useState<'timeCapsule' | 'feature' | 'reel'>('feature');
   const [selectedFile, setSelectedFile] = useState<File | null>(null);
-  const [isConfirmDialogOpen, setIsConfirmDialogOpen] = useState(false);
   const [isEditingMedia, setIsEditingMedia] = useState(false);
 
   const handleFileSelect = (event: React.ChangeEvent<HTMLInputElement>) => {
@@ -36,15 +35,9 @@ export const ProfileSettings = ({ userProfile }: { userProfile: UserProfile }) =
   };
 
   const handleSaveEdit = (editedFile: File) => {
-    setSelectedFile(editedFile);
-    setIsEditingMedia(false);
-    setIsConfirmDialogOpen(true);
-  };
-
-  const handleConfirmPost = () => {
-    if (selectedFile) {
-      const fileUrl = URL.createObjectURL(selectedFile);
-      const fileType = selectedFile.type.startsWith('image/') ? 'photo' as const : 'video' as const;
+    if (editedFile) {
+      const fileUrl = URL.createObjectURL(editedFile);
+      const fileType = editedFile.type.startsWith('image/') ? 'photo' as const : 'video' as const;
       
       const newCapsule: TimeCapsule = {
         id: Date.now(),
@@ -59,7 +52,7 @@ export const ProfileSettings = ({ userProfile }: { userProfile: UserProfile }) =
       toast.success(`${selectedPostType === 'timeCapsule' ? "Time capsule" : "Post"} added!`);
       
       setSelectedFile(null);
-      setIsConfirmDialogOpen(false);
+      setIsEditingMedia(false);
     }
   };
 
@@ -129,10 +122,7 @@ export const ProfileSettings = ({ userProfile }: { userProfile: UserProfile }) =
       </Dialog>
 
       <Dialog open={isEditingMedia} onOpenChange={(open) => !open && setIsEditingMedia(false)}>
-        <DialogContent className="max-w-2xl">
-          <DialogHeader>
-            <DialogTitle>Edit Media</DialogTitle>
-          </DialogHeader>
+        <DialogContent className="max-w-none p-0 h-screen w-screen bg-transparent border-none">
           {selectedFile && (
             <MediaEditor
               file={selectedFile}
@@ -142,13 +132,6 @@ export const ProfileSettings = ({ userProfile }: { userProfile: UserProfile }) =
           )}
         </DialogContent>
       </Dialog>
-
-      <MediaPreviewDialog
-        isOpen={isConfirmDialogOpen}
-        onOpenChange={setIsConfirmDialogOpen}
-        selectedFile={selectedFile}
-        onConfirm={handleConfirmPost}
-      />
     </div>
   );
 };
