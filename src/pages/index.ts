@@ -8,5 +8,6 @@ export { default as Sell } from "./Sell";
 export { default as Payment } from "./Payment";
 export { default as Games } from "./Games";
 export { default as Game2048 } from "./Game2048";
+export { default as Sudoku } from "./Sudoku";
 export { default as Social } from "./Social";
 export { default as Health } from "./Health";

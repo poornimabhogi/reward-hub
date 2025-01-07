@@ -2,7 +2,6 @@ import { ReactNode } from "react";
 import { Routes, Route, useNavigate } from "react-router-dom";
 import * as Pages from "@/pages";
 
-// Route configuration that can be adapted for React Native later
 export const ROUTES = {
   INDEX: "/",
   SIGNUP: "/signup",
@@ -14,11 +13,11 @@ export const ROUTES = {
   PAYMENT: "/payment",
   GAMES: "/games",
   GAME_2048: "/games/2048",
+  GAME_SUDOKU: "/games/sudoku",
   SOCIAL: "/social",
   HEALTH: "/health",
 } as const;
 
-// Navigation functions that abstract the routing implementation
 export const useAppNavigation = () => {
   const navigate = useNavigate();
 
@@ -33,6 +32,7 @@ export const useAppNavigation = () => {
     goToPayment: () => navigate(ROUTES.PAYMENT),
     goToGames: () => navigate(ROUTES.GAMES),
     goTo2048: () => navigate(ROUTES.GAME_2048),
+    goToSudoku: () => navigate(ROUTES.GAME_SUDOKU),
     goToSocial: () => navigate(ROUTES.SOCIAL),
     goToHealth: () => navigate(ROUTES.HEALTH),
     goBack: () => navigate(-1),
@@ -44,7 +44,6 @@ interface RouteConfig {
   element: ReactNode;
 }
 
-// Routes configuration that can be adapted for different navigation systems
 const routes: RouteConfig[] = [
   { path: ROUTES.INDEX, element: <Pages.Index /> },
   { path: ROUTES.SIGNUP, element: <Pages.Signup /> },
@@ -56,6 +55,7 @@ const routes: RouteConfig[] = [
   { path: ROUTES.PAYMENT, element: <Pages.Payment /> },
   { path: ROUTES.GAMES, element: <Pages.Games /> },
   { path: ROUTES.GAME_2048, element: <Pages.Game2048 /> },
+  { path: ROUTES.GAME_SUDOKU, element: <Pages.Sudoku /> },
   { path: ROUTES.SOCIAL, element: <Pages.Social /> },
   { path: ROUTES.HEALTH, element: <Pages.Health /> },
 ];

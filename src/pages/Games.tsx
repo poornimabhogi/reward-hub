@@ -38,6 +38,30 @@ const Games = () => {
             </div>
           </div>
         </Card>
+
+        <Card 
+          className="group cursor-pointer hover:shadow-lg transition-all duration-300 aspect-square max-w-[240px] justify-self-center w-full"
+          onClick={() => navigate('/games/sudoku')}
+        >
+          <div className="p-4 h-full flex flex-col">
+            <div className="flex-1 rounded-lg bg-primary p-4">
+              <div className="w-full h-full grid grid-cols-3 grid-rows-3 gap-1">
+                {Array(9).fill(null).map((_, index) => (
+                  <div
+                    key={index}
+                    className="flex items-center justify-center rounded-md bg-white/90 font-bold text-lg shadow-sm transition-all group-hover:scale-105"
+                  >
+                    {Math.floor(Math.random() * 9) + 1}
+                  </div>
+                ))}
+              </div>
+            </div>
+            <div className="text-center mt-4">
+              <h3 className="font-bold text-lg group-hover:text-primary transition-colors">Sudoku</h3>
+              <p className="text-sm text-muted-foreground">Classic number puzzle game</p>
+            </div>
+          </div>
+        </Card>
       </div>
     </div>
   );
