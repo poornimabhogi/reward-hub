@@ -36,8 +36,8 @@ export const MonthlyEvent = ({ totalAccumulation: baseAmount }: MonthlyEventProp
   const { totalAccumulation, monthlyEarnings } = calculateLuckyDrawAmount(baseAmount);
   const luckyAmount = Math.floor(totalAccumulation * 0.1); // 10% of total accumulation
   
-  const TICKET_PRICE_CASH = 5; // $5 per ticket
-  const TICKET_PRICE_COINS = 500; // 500 coins per ticket
+  const TICKET_PRICE_CASH = 1; // $1 per ticket (updated from $5)
+  const TICKET_PRICE_COINS = 50; // 50 coins per ticket (updated from 500)
   const userCoins = parseInt(localStorage.getItem('userCoins') || '1000'); // Get user's coins
   
   const formatNumber = (num: number) => {
