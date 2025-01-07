@@ -3,8 +3,6 @@ import { Canvas as FabricCanvas, Image as FabricImage } from 'fabric';
 import { Button } from "@/components/ui/button";
 import { X, Check, ArrowLeft, ArrowRight, Sun, ImageIcon, Crop } from "lucide-react";
 import { CanvasProvider } from "@/contexts/CanvasContext";
-import { AdjustmentPanel } from "./editors/AdjustmentPanel";
-import { FilterControls } from "./controls/FilterControls";
 import { useCanvas } from "@/contexts/CanvasContext";
 
 interface MediaEditorProps {
@@ -139,10 +137,6 @@ const MediaEditorContent = ({ file, onSave, onCancel }: MediaEditorProps) => {
             </div>
             <span className="text-sm text-white">Crop</span>
           </button>
-        </div>
-
-        <div className="px-8">
-          <AdjustmentPanel />
         </div>
       </div>
     </div>

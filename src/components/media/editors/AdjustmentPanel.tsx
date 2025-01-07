@@ -1,10 +1,8 @@
 import { useState } from "react";
 import { Slider } from "@/components/ui/slider";
 import { Sun, Contrast } from "lucide-react";
-import { useImageEffects } from "@/hooks/useImageEffects";
 
 export const AdjustmentPanel = () => {
-  const { adjustBrightness, adjustContrast } = useImageEffects();
   const [activeControl, setActiveControl] = useState<'brightness' | 'contrast'>('brightness');
 
   return (
@@ -36,13 +34,6 @@ export const AdjustmentPanel = () => {
           min={0}
           max={200}
           step={1}
-          onValueChange={(value) => {
-            if (activeControl === 'brightness') {
-              adjustBrightness(value[0]);
-            } else {
-              adjustContrast(value[0]);
-            }
-          }}
           className="w-full"
         />
       </div>
