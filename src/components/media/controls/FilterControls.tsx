@@ -29,17 +29,17 @@ export const FilterControls: React.FC<FilterControlsProps> = ({
     const mainImage = canvas.getObjects()[0] as FabricImage;
     if (!mainImage) return;
 
-    filtersList.forEach(filter => {
+    const cleanupFunctions = filtersList.map(filter => {
       const previewCanvas = previewRefs.current[filter.value];
       if (!previewCanvas) return;
 
-      // Create a new Fabric canvas for the preview
       const previewFabricCanvas = new FabricCanvas(previewCanvas, {
         width: 64,
         height: 64,
         backgroundColor: '#000000',
         selection: false,
         renderOnAddRemove: true,
+        isDrawingMode: false
       });
 
       const img = new Image();
@@ -61,18 +61,24 @@ export const FilterControls: React.FC<FilterControlsProps> = ({
           top: (64 - (img.height * scale)) / 2,
         });
 
-        // Apply appropriate filter
-        if (filter.value === 'grayscale') {
-          fabricImage.filters = [new filters.Grayscale()];
-        } else if (filter.value === 'sepia') {
-          fabricImage.filters = [new filters.Sepia()];
-        } else if (filter.value === 'brightness') {
-          fabricImage.filters = [new filters.Brightness({ brightness: 0.2 })];
-        } else if (filter.value === 'contrast') {
-          fabricImage.filters = [new filters.Contrast({ contrast: 0.2 })];
+        // Apply filter to preview
+        fabricImage.filters = [];
+        switch (filter.value) {
+          case 'grayscale':
+            fabricImage.filters.push(new filters.Grayscale());
+            break;
+          case 'sepia':
+            fabricImage.filters.push(new filters.Sepia());
+            break;
+          case 'brightness':
+            fabricImage.filters.push(new filters.Brightness({ brightness: 0.2 }));
+            break;
+          case 'contrast':
+            fabricImage.filters.push(new filters.Contrast({ contrast: 0.2 }));
+            break;
         }
 
-        if (fabricImage.filters && fabricImage.filters.length > 0) {
+        if (fabricImage.filters.length > 0) {
           fabricImage.applyFilters();
         }
 
@@ -90,17 +96,40 @@ export const FilterControls: React.FC<FilterControlsProps> = ({
     });
 
     return () => {
-      filtersList.forEach(filter => {
-        const previewCanvas = previewRefs.current[filter.value];
-        if (previewCanvas) {
-          const fabricCanvas = new FabricCanvas(previewCanvas);
-          fabricCanvas.dispose();
-        }
-      });
+      cleanupFunctions.forEach(cleanup => cleanup && cleanup());
     };
   }, [canvas]);
 
   const handleFilterClick = (filterValue: string) => {
+    if (!canvas) return;
+    
+    const mainImage = canvas.getObjects()[0] as FabricImage;
+    if (!mainImage) return;
+
+    // Reset any existing filters
+    mainImage.filters = [];
+
+    // Apply the selected filter
+    switch (filterValue) {
+      case 'grayscale':
+        mainImage.filters.push(new filters.Grayscale());
+        break;
+      case 'sepia':
+        mainImage.filters.push(new filters.Sepia());
+        break;
+      case 'brightness':
+        mainImage.filters.push(new filters.Brightness({ brightness: 0.2 }));
+        break;
+      case 'contrast':
+        mainImage.filters.push(new filters.Contrast({ contrast: 0.2 }));
+        break;
+    }
+
+    if (mainImage.filters.length > 0) {
+      mainImage.applyFilters();
+    }
+    
+    canvas.renderAll();
     onFilterChange(filterValue);
   };
 
