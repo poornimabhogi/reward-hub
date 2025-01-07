@@ -1,7 +1,8 @@
 import React, { useEffect, useRef } from "react";
 import { Canvas as FabricCanvas, Image as FabricImage } from 'fabric';
 import { Button } from "@/components/ui/button";
-import { X, Check, ArrowLeft, ArrowRight, Filter, Sliders, Crop } from "lucide-react";
+import { Filter, Sliders, Crop, Send } from "lucide-react";
+import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { CanvasProvider } from "@/contexts/CanvasContext";
 import { useCanvas } from "@/contexts/CanvasContext";
 import { FilterControls } from "./controls/FilterControls";
@@ -33,7 +34,7 @@ const MediaEditorContent = ({ file, onSave, onCancel }: MediaEditorProps) => {
       const fabricImage = new FabricImage(img);
       
       const scale = Math.min(
-        window.innerWidth / img.width,
+        (window.innerWidth) / img.width,
         (window.innerHeight - 160) / img.height
       );
       
@@ -86,7 +87,7 @@ const MediaEditorContent = ({ file, onSave, onCancel }: MediaEditorProps) => {
           variant="ghost"
           size="sm"
           onClick={onCancel}
-          className="text-white hover:bg-transparent"
+          className="text-white hover:bg-white/10"
         >
           Cancel
         </Button>
@@ -95,35 +96,16 @@ const MediaEditorContent = ({ file, onSave, onCancel }: MediaEditorProps) => {
           variant="ghost"
           size="sm"
           onClick={handleSave}
-          className="text-white hover:bg-transparent"
+          className="text-white hover:bg-white/10"
         >
+          <Send className="h-4 w-4 mr-2" />
           Post
         </Button>
       </div>
 
       {/* Main Content Area */}
       <div className="flex-1 relative">
-        <div className="absolute inset-0 flex items-center justify-center">
-          <canvas ref={canvasRef} className="max-w-full max-h-full" />
-        </div>
-        
-        {/* Navigation Controls */}
-        <div className="absolute inset-x-0 top-1/2 flex justify-between px-4 -translate-y-1/2 pointer-events-none">
-          <Button 
-            variant="ghost" 
-            size="icon"
-            className="h-12 w-12 rounded-full bg-black/50 text-white hover:bg-black/70 pointer-events-auto"
-          >
-            <ArrowLeft className="h-6 w-6" />
-          </Button>
-          <Button 
-            variant="ghost" 
-            size="icon"
-            className="h-12 w-12 rounded-full bg-black/50 text-white hover:bg-black/70 pointer-events-auto"
-          >
-            <ArrowRight className="h-6 w-6" />
-          </Button>
-        </div>
+        <canvas ref={canvasRef} className="absolute inset-0 w-full h-full" />
       </div>
 
       {/* Bottom Controls */}
