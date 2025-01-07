@@ -1,6 +1,5 @@
 import React, { useEffect, useRef } from "react";
 import { Canvas as FabricCanvas, Image as FabricImage } from 'fabric';
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Button } from "@/components/ui/button";
 import { X, Check, ArrowLeft, ArrowRight, Sun, ImageIcon, Crop } from "lucide-react";
 import { CanvasProvider } from "@/contexts/CanvasContext";
@@ -73,10 +72,10 @@ const MediaEditorContent = ({ file, onSave, onCancel }: MediaEditorProps) => {
   return (
     <div 
       ref={containerRef}
-      className="fixed inset-0 z-50 flex flex-col bg-black/95"
+      className="fixed inset-0 z-50 bg-black flex flex-col"
     >
       {/* Header */}
-      <div className="flex justify-between items-center p-4">
+      <div className="flex justify-between items-center p-4 bg-black/90">
         <Button
           variant="ghost"
           size="icon"
@@ -97,7 +96,7 @@ const MediaEditorContent = ({ file, onSave, onCancel }: MediaEditorProps) => {
       </div>
 
       {/* Canvas */}
-      <div className="flex-grow relative flex items-center justify-center">
+      <div className="flex-grow relative flex items-center justify-center bg-black">
         <canvas ref={canvasRef} className="max-h-[70vh] object-contain" />
         
         {/* Navigation Controls */}
@@ -120,22 +119,22 @@ const MediaEditorContent = ({ file, onSave, onCancel }: MediaEditorProps) => {
       </div>
 
       {/* Bottom Controls */}
-      <div className="bg-black/95 pt-6 pb-12">
+      <div className="bg-black pt-6 pb-12">
         <div className="flex justify-center gap-16 mb-8">
           <button className="flex flex-col items-center gap-2">
-            <div className="h-16 w-16 rounded-full bg-zinc-900 flex items-center justify-center">
+            <div className="h-16 w-16 rounded-full bg-zinc-900 flex items-center justify-center hover:bg-zinc-800 transition-colors">
               <Sun className="h-8 w-8 text-white" />
             </div>
             <span className="text-sm text-white">Adjust</span>
           </button>
           <button className="flex flex-col items-center gap-2">
-            <div className="h-16 w-16 rounded-full bg-zinc-900 flex items-center justify-center">
+            <div className="h-16 w-16 rounded-full bg-zinc-900 flex items-center justify-center hover:bg-zinc-800 transition-colors">
               <ImageIcon className="h-8 w-8 text-white" />
             </div>
             <span className="text-sm text-white">Filters</span>
           </button>
           <button className="flex flex-col items-center gap-2">
-            <div className="h-16 w-16 rounded-full bg-zinc-900 flex items-center justify-center">
+            <div className="h-16 w-16 rounded-full bg-zinc-900 flex items-center justify-center hover:bg-zinc-800 transition-colors">
               <Crop className="h-8 w-8 text-white" />
             </div>
             <span className="text-sm text-white">Crop</span>
