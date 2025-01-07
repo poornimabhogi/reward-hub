@@ -24,6 +24,7 @@ const Social = () => {
   const { toast } = useToast();
   const [searchQuery, setSearchQuery] = useState("");
   const [selectedVideo, setSelectedVideo] = useState<string | null>(null);
+  const [selectedVideoId, setSelectedVideoId] = useState<number | null>(null);
   const [followedUsers, setFollowedUsers] = useState<FollowedUser[]>(() => {
     const stored = localStorage.getItem('followedUsers');
     return stored ? JSON.parse(stored) : [];
@@ -89,13 +90,19 @@ const Social = () => {
     }));
   };
 
-  const handleVideoClick = (videoUrl: string) => {
+  const handleVideoClick = (videoUrl: string, postId: number) => {
     setSelectedVideo(videoUrl);
+    setSelectedVideoId(postId);
   };
 
   const filteredPosts = posts.filter(post =>
     post.username.toLowerCase().includes(searchQuery.toLowerCase())
   );
+
+  const videoOnlyPosts = posts.filter(post => post.type === 'video').map(post => ({
+    id: post.id,
+    content: post.content
+  }));
 
   return (
     <div className="min-h-screen pb-20">
@@ -147,7 +154,7 @@ const Social = () => {
                     loop
                     muted={post.isMuted}
                     className="w-full h-auto cursor-pointer"
-                    onClick={() => handleVideoClick(post.content)}
+                    onClick={() => handleVideoClick(post.content, post.id)}
                   />
                   <button
                     onClick={() => toggleMute(post.id)}
@@ -168,8 +175,13 @@ const Social = () => {
 
       <VideoViewer
         isOpen={!!selectedVideo}
-        onClose={() => setSelectedVideo(null)}
+        onClose={() => {
+          setSelectedVideo(null);
+          setSelectedVideoId(null);
+        }}
         videoUrl={selectedVideo || ''}
+        allVideos={videoOnlyPosts}
+        currentVideoId={selectedVideoId || 0}
       />
     </div>
   );
