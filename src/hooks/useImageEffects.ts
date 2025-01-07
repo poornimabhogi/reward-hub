@@ -1,43 +1,47 @@
 import { useCallback } from 'react';
 import { useCanvas } from '../contexts/CanvasContext';
+import { Image as FabricImage } from 'fabric';
 
 export const useImageEffects = () => {
   const { canvas } = useCanvas();
 
   const adjustBrightness = useCallback((value: number) => {
     if (!canvas) return;
-    canvas.getObjects().forEach((obj) => {
-      obj.filters = [{ brightness: value / 100 }];
-      obj.applyFilters();
-    });
-    canvas.renderAll();
+    const bgImage = canvas.backgroundImage as FabricImage;
+    if (bgImage) {
+      bgImage.filters = [{ type: 'Brightness', brightness: value / 100 }];
+      bgImage.applyFilters();
+      canvas.renderAll();
+    }
   }, [canvas]);
 
   const adjustContrast = useCallback((value: number) => {
     if (!canvas) return;
-    canvas.getObjects().forEach((obj) => {
-      obj.filters = [{ contrast: value / 100 }];
-      obj.applyFilters();
-    });
-    canvas.renderAll();
+    const bgImage = canvas.backgroundImage as FabricImage;
+    if (bgImage) {
+      bgImage.filters = [{ type: 'Contrast', contrast: value / 100 }];
+      bgImage.applyFilters();
+      canvas.renderAll();
+    }
   }, [canvas]);
 
   const applyFilter = useCallback((filterName: string) => {
     if (!canvas) return;
-    canvas.getObjects().forEach((obj) => {
+    const bgImage = canvas.backgroundImage as FabricImage;
+    if (bgImage) {
       switch (filterName) {
         case 'grayscale':
-          obj.filters = [{ grayscale: true }];
+          bgImage.filters = [{ type: 'Grayscale' }];
           break;
         case 'sepia':
-          obj.filters = [{ sepia: true }];
+          bgImage.filters = [{ type: 'Sepia' }];
           break;
         default:
-          obj.filters = [];
+          bgImage.filters = [];
       }
-      obj.applyFilters();
-    });
-    canvas.renderAll();
+      bgImage.applyFilters();
+      canvas.renderAll();
+    }
   }, [canvas]);
 
   return {

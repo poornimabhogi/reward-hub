@@ -1,5 +1,5 @@
 import React, { useEffect, useRef } from "react";
-import { Canvas as FabricCanvas } from 'fabric';
+import { Canvas as FabricCanvas, Image as FabricImage } from 'fabric';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Button } from "@/components/ui/button";
 import { Check, RotateCcw } from "lucide-react";
@@ -26,7 +26,9 @@ const MediaEditorContent = ({ file, onSave, onCancel }: MediaEditorProps) => {
 
     const img = new Image();
     img.onload = () => {
-      fabricCanvas.setBackgroundImage(img.src, fabricCanvas.renderAll.bind(fabricCanvas));
+      FabricImage.fromURL(img.src, (fabricImage) => {
+        fabricCanvas.setBackgroundImage(fabricImage, fabricCanvas.renderAll.bind(fabricCanvas));
+      });
     };
     img.src = URL.createObjectURL(file);
 
