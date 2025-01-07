@@ -1,5 +1,5 @@
 import React, { useEffect, useRef } from 'react';
-import { Canvas as FabricCanvas, Image as FabricImage } from 'fabric';
+import { Canvas as FabricCanvas, Image as FabricImage, filters } from 'fabric';
 import { useCanvas } from '@/contexts/CanvasContext';
 import { ScrollArea } from "@/components/ui/scroll-area";
 
@@ -15,7 +15,7 @@ export const FilterControls: React.FC<FilterControlsProps> = ({
   const { canvas } = useCanvas();
   const previewRefs = useRef<{ [key: string]: HTMLCanvasElement | null }>({});
 
-  const filters = [
+  const filtersList = [
     { name: 'Original', value: 'none' },
     { name: 'Grayscale', value: 'grayscale' },
     { name: 'Sepia', value: 'sepia' },
@@ -30,7 +30,7 @@ export const FilterControls: React.FC<FilterControlsProps> = ({
     if (!mainImage) return;
 
     // Create preview for each filter
-    filters.forEach(filter => {
+    filtersList.forEach(filter => {
       const previewCanvas = previewRefs.current[filter.value];
       if (!previewCanvas) return;
 
@@ -61,13 +61,13 @@ export const FilterControls: React.FC<FilterControlsProps> = ({
 
         // Apply filter based on type
         if (filter.value === 'grayscale') {
-          fabricImage.filters = [new (FabricImage as any).filters.Grayscale()];
+          fabricImage.filters = [new filters.Grayscale()];
         } else if (filter.value === 'sepia') {
-          fabricImage.filters = [new (FabricImage as any).filters.Sepia()];
+          fabricImage.filters = [new filters.Sepia()];
         } else if (filter.value === 'brightness') {
-          fabricImage.filters = [new (FabricImage as any).filters.Brightness({ brightness: 0.2 })];
+          fabricImage.filters = [new filters.Brightness({ brightness: 0.2 })];
         } else if (filter.value === 'contrast') {
-          fabricImage.filters = [new (FabricImage as any).filters.Contrast({ contrast: 0.2 })];
+          fabricImage.filters = [new filters.Contrast({ contrast: 0.2 })];
         }
 
         if (fabricImage.filters && fabricImage.filters.length > 0) {
@@ -85,7 +85,7 @@ export const FilterControls: React.FC<FilterControlsProps> = ({
 
     // Cleanup
     return () => {
-      filters.forEach(filter => {
+      filtersList.forEach(filter => {
         const previewCanvas = previewRefs.current[filter.value];
         if (previewCanvas) {
           const fabricCanvas = new FabricCanvas(previewCanvas);
@@ -98,7 +98,7 @@ export const FilterControls: React.FC<FilterControlsProps> = ({
   return (
     <ScrollArea className="w-full">
       <div className="flex items-center gap-6 p-4">
-        {filters.map((filter) => (
+        {filtersList.map((filter) => (
           <button
             key={filter.value}
             onClick={() => onFilterChange(filter.value)}
