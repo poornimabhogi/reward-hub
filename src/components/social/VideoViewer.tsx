@@ -37,10 +37,10 @@ export const VideoViewer = ({
         </button>
         <Carousel
           className="w-full h-full"
-          defaultSlide={currentIndex}
           opts={{
             align: "center",
             containScroll: false,
+            startIndex: currentIndex
           }}
         >
           <CarouselContent className="h-full">
