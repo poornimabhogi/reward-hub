@@ -33,15 +33,21 @@ export const FilterControls: React.FC<FilterControlsProps> = ({
       const previewCanvas = previewRefs.current[filter.value];
       if (!previewCanvas) return;
 
+      // Create a new Fabric canvas for the preview
       const previewFabricCanvas = new FabricCanvas(previewCanvas, {
         width: 64,
         height: 64,
         backgroundColor: '#000000',
+        selection: false,
+        renderOnAddRemove: true,
       });
 
       const img = new Image();
       img.onload = () => {
-        const fabricImage = new FabricImage(img);
+        const fabricImage = new FabricImage(img, {
+          selectable: false,
+          evented: false,
+        });
         
         const scale = Math.min(
           64 / img.width,
@@ -51,11 +57,11 @@ export const FilterControls: React.FC<FilterControlsProps> = ({
         fabricImage.set({
           scaleX: scale,
           scaleY: scale,
-          left: (64 - img.width * scale) / 2,
-          top: (64 - img.height * scale) / 2,
-          selectable: false,
+          left: (64 - (img.width * scale)) / 2,
+          top: (64 - (img.height * scale)) / 2,
         });
 
+        // Apply appropriate filter
         if (filter.value === 'grayscale') {
           fabricImage.filters = [new filters.Grayscale()];
         } else if (filter.value === 'sepia') {
@@ -71,11 +77,16 @@ export const FilterControls: React.FC<FilterControlsProps> = ({
         }
 
         previewFabricCanvas.add(fabricImage);
+        previewFabricCanvas.centerObject(fabricImage);
         previewFabricCanvas.renderAll();
       };
 
       const dataUrl = mainImage.toDataURL();
       img.src = dataUrl;
+
+      return () => {
+        previewFabricCanvas.dispose();
+      };
     });
 
     return () => {
@@ -89,13 +100,17 @@ export const FilterControls: React.FC<FilterControlsProps> = ({
     };
   }, [canvas]);
 
+  const handleFilterClick = (filterValue: string) => {
+    onFilterChange(filterValue);
+  };
+
   return (
     <ScrollArea className="w-full h-32">
       <div className="flex items-center gap-6 p-4">
         {filtersList.map((filter) => (
           <button
             key={filter.value}
-            onClick={() => onFilterChange(filter.value)}
+            onClick={() => handleFilterClick(filter.value)}
             className="flex flex-col items-center gap-2 cursor-pointer flex-shrink-0"
           >
             <div
