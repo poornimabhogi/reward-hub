@@ -2,12 +2,11 @@ import React, { useEffect, useRef } from "react";
 import { Canvas as FabricCanvas, Image as FabricImage } from 'fabric';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Button } from "@/components/ui/button";
-import { X, Check, ArrowLeft, ArrowRight, Sun, Image as ImageIcon, Crop } from "lucide-react";
+import { X, Check, ArrowLeft, ArrowRight, Sun, ImageIcon, Crop } from "lucide-react";
 import { CanvasProvider } from "@/contexts/CanvasContext";
 import { AdjustmentPanel } from "./editors/AdjustmentPanel";
 import { FilterControls } from "./controls/FilterControls";
 import { useCanvas } from "@/contexts/CanvasContext";
-import { cn } from "@/lib/utils";
 
 interface MediaEditorProps {
   file: File;
@@ -74,7 +73,7 @@ const MediaEditorContent = ({ file, onSave, onCancel }: MediaEditorProps) => {
   return (
     <div 
       ref={containerRef}
-      className="flex flex-col h-screen bg-black text-white"
+      className="flex flex-col h-[80vh] bg-black text-white"
     >
       {/* Header */}
       <div className="flex justify-between items-center p-4 border-b border-white/10">
@@ -117,16 +116,22 @@ const MediaEditorContent = ({ file, onSave, onCancel }: MediaEditorProps) => {
         <Tabs defaultValue="adjust" className="w-full">
           <div className="flex justify-center mb-6">
             <div className="flex gap-12">
-              <button className="flex flex-col items-center gap-2 text-white/80 hover:text-white">
-                <Sun className="h-6 w-6" />
+              <button className="flex flex-col items-center gap-2 text-white group">
+                <div className="p-3 rounded-full bg-white/10 group-hover:bg-white/20">
+                  <Sun className="h-6 w-6" />
+                </div>
                 <span className="text-xs">Adjust</span>
               </button>
-              <button className="flex flex-col items-center gap-2 text-white/80 hover:text-white">
-                <ImageIcon className="h-6 w-6" />
+              <button className="flex flex-col items-center gap-2 text-white group">
+                <div className="p-3 rounded-full bg-white/10 group-hover:bg-white/20">
+                  <ImageIcon className="h-6 w-6" />
+                </div>
                 <span className="text-xs">Filters</span>
               </button>
-              <button className="flex flex-col items-center gap-2 text-white/80 hover:text-white">
-                <Crop className="h-6 w-6" />
+              <button className="flex flex-col items-center gap-2 text-white group">
+                <div className="p-3 rounded-full bg-white/10 group-hover:bg-white/20">
+                  <Crop className="h-6 w-6" />
+                </div>
                 <span className="text-xs">Crop</span>
               </button>
             </div>
