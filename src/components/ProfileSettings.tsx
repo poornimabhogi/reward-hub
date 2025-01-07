@@ -60,6 +60,20 @@ export const ProfileSettings = ({ userProfile }: { userProfile: UserProfile }) =
     }
   };
 
+  useEffect(() => {
+    const handleOpenPhotoGallery = (event: CustomEvent<{ postType: 'timeCapsule' | 'feature' | 'reel' }>) => {
+      setSelectedPostType(event.detail.postType);
+      if (fileInputRef.current) {
+        fileInputRef.current.click();
+      }
+    };
+
+    window.addEventListener('openPhotoGallery', handleOpenPhotoGallery as EventListener);
+    return () => {
+      window.removeEventListener('openPhotoGallery', handleOpenPhotoGallery as EventListener);
+    };
+  }, []);
+
   const handleDropdownItemClick = (postType: 'timeCapsule' | 'feature' | 'reel') => {
     setSelectedPostType(postType);
     if (fileInputRef.current) {
