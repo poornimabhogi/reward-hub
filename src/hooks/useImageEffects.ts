@@ -1,7 +1,6 @@
 import { useCallback } from 'react';
 import { useCanvas } from '../contexts/CanvasContext';
-import { Image as FabricImage } from 'fabric';
-import { filters } from 'fabric';
+import { Image as FabricImage, filters } from 'fabric';
 
 export const useImageEffects = () => {
   const { canvas } = useCanvas();
@@ -11,9 +10,10 @@ export const useImageEffects = () => {
     const objects = canvas.getObjects();
     if (objects.length > 0) {
       const image = objects[0] as FabricImage;
-      image.filters = [new filters.Brightness({
+      const brightnessFilter = new filters.Brightness({
         brightness: (value - 100) / 100
-      })];
+      });
+      image.filters = [brightnessFilter];
       image.applyFilters();
       canvas.renderAll();
     }
@@ -24,9 +24,10 @@ export const useImageEffects = () => {
     const objects = canvas.getObjects();
     if (objects.length > 0) {
       const image = objects[0] as FabricImage;
-      image.filters = [new filters.Contrast({
+      const contrastFilter = new filters.Contrast({
         contrast: value / 100
-      })];
+      });
+      image.filters = [contrastFilter];
       image.applyFilters();
       canvas.renderAll();
     }
@@ -37,16 +38,20 @@ export const useImageEffects = () => {
     const objects = canvas.getObjects();
     if (objects.length > 0) {
       const image = objects[0] as FabricImage;
+      let filter;
+      
       switch (filterName) {
         case 'grayscale':
-          image.filters = [new filters.Grayscale()];
+          filter = new filters.Grayscale();
           break;
         case 'sepia':
-          image.filters = [new filters.Sepia()];
+          filter = new filters.Sepia();
           break;
         default:
-          image.filters = [];
+          filter = null;
       }
+
+      image.filters = filter ? [filter] : [];
       image.applyFilters();
       canvas.renderAll();
     }
