@@ -6,34 +6,36 @@ import { Rotate3D, RotateCcw } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 
 const ChessGame = () => {
-  const [game, setGame] = useState(new Chess());
+  const [game] = useState<Chess>(new Chess());
   const [selectedSquare, setSelectedSquare] = useState<Square | null>(null);
   const [boardOrientation, setBoardOrientation] = useState<"white" | "black">("white");
+  const [, setForceUpdate] = useState({});
   const { toast } = useToast();
 
   const resetGame = () => {
-    setGame(new Chess());
+    game.reset();
     setSelectedSquare(null);
+    setForceUpdate({});
     toast({
       title: "Game Reset",
       description: "A new game has started!",
     });
   };
 
-  const handleSquareClick = (square: string) => {
+  const handleSquareClick = (square: Square) => {
     if (selectedSquare === null) {
-      const piece = game.get(square as Square);
+      const piece = game.get(square);
       if (piece && piece.color === game.turn()) {
-        setSelectedSquare(square as Square);
+        setSelectedSquare(square);
       }
     } else {
       try {
         game.move({
           from: selectedSquare,
-          to: square as Square,
+          to: square,
           promotion: 'q'
         });
-        setGame(new Chess(game.fen()));
+        setForceUpdate({});
         
         if (game.isGameOver()) {
           let status = "Game Over - ";
@@ -74,7 +76,7 @@ const ChessGame = () => {
           <div
             key={square}
             onClick={() => handleSquareClick(square)}
-            className={`w-10 h-10 flex items-center justify-center text-2xl cursor-pointer select-none
+            className={`w-12 h-12 flex items-center justify-center text-3xl cursor-pointer select-none
               ${isDark ? 'bg-neutral-300' : 'bg-white'}
               ${isSelected ? 'ring-2 ring-primary' : ''}
               hover:opacity-80 transition-opacity`}
@@ -109,7 +111,7 @@ const ChessGame = () => {
       <h1 className="text-2xl font-bold mb-6">Chess</h1>
       <Card className="p-6 max-w-md mx-auto">
         <div className="flex flex-col items-center gap-4">
-          <div className="border border-neutral-200 rounded-lg overflow-hidden">
+          <div className="border border-neutral-200 rounded-lg overflow-hidden shadow-lg">
             {renderBoard()}
           </div>
           <div className="flex gap-2">
