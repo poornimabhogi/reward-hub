@@ -77,15 +77,13 @@ const MediaEditorContent = ({ file, onSave, onCancel }: MediaEditorProps) => {
     const containerWidth = containerRef.current.clientWidth;
     const containerHeight = containerRef.current.clientHeight;
 
-    // Create a new Fabric canvas with container dimensions
     const fabricCanvas = new FabricCanvas(canvasRef.current, {
       width: containerWidth,
-      height: containerHeight * 0.7, // Increased height ratio to prevent cropping
-      backgroundColor: '#1a1a1a'
+      height: containerHeight * 0.8,
+      backgroundColor: '#000000'
     });
     setCanvas(fabricCanvas);
 
-    // Load and set up the image
     const img = new Image();
     img.onload = () => {
       const fabricImage = new FabricImage(img);
@@ -94,9 +92,16 @@ const MediaEditorContent = ({ file, onSave, onCancel }: MediaEditorProps) => {
       const scale = Math.min(
         (fabricCanvas.width || 800) / img.width,
         (fabricCanvas.height || 600) / img.height
-      ) * 0.9; // Add some padding
+      ) * 0.9;
       
-      fabricImage.scale(scale);
+      // Fix image orientation
+      fabricImage.set({
+        originX: 'center',
+        originY: 'center',
+        scaleX: scale,
+        scaleY: scale,
+      });
+
       fabricCanvas.add(fabricImage);
       fabricCanvas.centerObject(fabricImage);
       fabricCanvas.renderAll();
@@ -123,7 +128,7 @@ const MediaEditorContent = ({ file, onSave, onCancel }: MediaEditorProps) => {
     <div 
       ref={containerRef}
       className={cn(
-        "flex flex-col space-y-6 bg-zinc-950 text-white transition-all duration-300",
+        "flex flex-col space-y-6 bg-black text-white transition-all duration-300",
         isFullscreen ? "fixed inset-0 z-50 p-6" : "p-4"
       )}
     >
@@ -139,21 +144,25 @@ const MediaEditorContent = ({ file, onSave, onCancel }: MediaEditorProps) => {
         </Button>
       </div>
 
-      <div className="relative flex-grow rounded-lg overflow-hidden bg-black">
+      <div className="relative flex-grow rounded-lg overflow-hidden bg-black min-h-[400px]">
         <canvas ref={canvasRef} className="w-full h-full" />
       </div>
 
       <Tabs defaultValue="adjust" className="w-full">
-        <TabsList className="grid w-full grid-cols-2 bg-zinc-900">
-          <TabsTrigger value="adjust" className="data-[state=active]:bg-zinc-800">Adjust</TabsTrigger>
-          <TabsTrigger value="effects" className="data-[state=active]:bg-zinc-800">Effects</TabsTrigger>
+        <TabsList className="grid w-full grid-cols-2 bg-neutral-900">
+          <TabsTrigger value="adjust" className="text-white data-[state=active]:bg-neutral-800">
+            Adjust
+          </TabsTrigger>
+          <TabsTrigger value="effects" className="text-white data-[state=active]:bg-neutral-800">
+            Effects
+          </TabsTrigger>
         </TabsList>
 
-        <TabsContent value="adjust" className="bg-zinc-900 rounded-b-lg p-4">
+        <TabsContent value="adjust" className="bg-neutral-900 rounded-b-lg p-4">
           <AdjustmentPanel />
         </TabsContent>
 
-        <TabsContent value="effects" className="bg-zinc-900 rounded-b-lg p-4">
+        <TabsContent value="effects" className="bg-neutral-900 rounded-b-lg p-4">
           <FilterControls
             selectedFilter="none"
             onFilterChange={(filter) => {
@@ -163,17 +172,17 @@ const MediaEditorContent = ({ file, onSave, onCancel }: MediaEditorProps) => {
         </TabsContent>
       </Tabs>
 
-      <div className="flex justify-end gap-2">
+      <div className="flex justify-end gap-2 p-4 bg-neutral-900 rounded-lg">
         <Button 
           variant="outline" 
           onClick={onCancel}
-          className="bg-zinc-900 hover:bg-zinc-800 text-white border-zinc-800"
+          className="bg-neutral-800 hover:bg-neutral-700 text-white border-neutral-700"
         >
           <RotateCcw className="h-4 w-4 mr-2" /> Reset
         </Button>
         <Button 
           onClick={handleSave}
-          className="bg-violet-600 hover:bg-violet-700 text-white"
+          className="bg-white hover:bg-gray-200 text-black"
         >
           <Check className="h-4 w-4 mr-2" /> Save
         </Button>

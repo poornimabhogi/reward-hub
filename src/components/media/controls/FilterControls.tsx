@@ -14,6 +14,7 @@ export const FilterControls = ({ selectedFilter, onFilterChange }: FilterControl
         variant={selectedFilter === 'none' ? "default" : "outline"}
         size="sm"
         onClick={() => onFilterChange('none')}
+        className="bg-white text-black hover:bg-gray-200"
       >
         <Palette className="h-4 w-4 mr-2" /> Normal
       </Button>
@@ -21,6 +22,7 @@ export const FilterControls = ({ selectedFilter, onFilterChange }: FilterControl
         variant={selectedFilter === 'grayscale' ? "default" : "outline"}
         size="sm"
         onClick={() => onFilterChange('grayscale')}
+        className="bg-neutral-800 text-white hover:bg-neutral-700"
       >
         <Brush className="h-4 w-4 mr-2" /> Grayscale
       </Button>
@@ -28,6 +30,7 @@ export const FilterControls = ({ selectedFilter, onFilterChange }: FilterControl
         variant={selectedFilter === 'sepia' ? "default" : "outline"}
         size="sm"
         onClick={() => onFilterChange('sepia')}
+        className="bg-neutral-800 text-white hover:bg-neutral-700"
       >
         <Brush className="h-4 w-4 mr-2" /> Sepia
       </Button>
