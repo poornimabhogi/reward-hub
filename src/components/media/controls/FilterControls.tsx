@@ -126,21 +126,17 @@ export const FilterControls: React.FC<FilterControlsProps> = ({
     const mainImage = canvas.getObjects()[0] as FabricImage;
     if (!mainImage) return;
 
-    // Only reset filters if not selecting brightness
-    if (filterValue !== 'brightness') {
-      mainImage.filters = [];
+    mainImage.filters = [];
 
-      if (filterValue !== 'none') {
-        const filterInstance = createFilter(filterValue);
-        if (filterInstance) {
-          mainImage.filters = [filterInstance];
-        }
+    if (filterValue !== 'none') {
+      const filterInstance = createFilter(filterValue);
+      if (filterInstance) {
+        mainImage.filters = [filterInstance];
       }
-
-      mainImage.applyFilters();
-      canvas.renderAll();
     }
-    
+
+    mainImage.applyFilters();
+    canvas.renderAll();
     onFilterChange(filterValue);
   };
 
@@ -168,7 +164,7 @@ export const FilterControls: React.FC<FilterControlsProps> = ({
                 ref={(el) => (previewRefs.current[filter.value] = el)}
                 width="64"
                 height="64"
-                className="w-full h-full pointer-events-none select-none"
+                className="w-full h-full pointer-events-none"
               />
             </div>
             <span className="text-xs text-white">
