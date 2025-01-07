@@ -74,7 +74,7 @@ const ChessGame = () => {
           <div
             key={square}
             onClick={() => handleSquareClick(square)}
-            className={`w-10 h-10 flex items-center justify-center text-xl cursor-pointer
+            className={`w-10 h-10 flex items-center justify-center text-2xl cursor-pointer select-none
               ${isDark ? 'bg-neutral-300' : 'bg-white'}
               ${isSelected ? 'ring-2 ring-primary' : ''}
               hover:opacity-80 transition-opacity`}
