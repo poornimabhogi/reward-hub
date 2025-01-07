@@ -1,8 +1,11 @@
 import { getCurrentMonthEarnings } from './earningsTracker';
 
 export const calculateLuckyDrawAmount = (baseAmount: number) => {
-  // Get actual monthly earnings from tracker
-  const monthlyEarnings = getCurrentMonthEarnings();
+  // Get the current user ID from localStorage
+  const userId = localStorage.getItem('userId') || 'anonymous';
+  
+  // Get actual monthly earnings from tracker with userId
+  const monthlyEarnings = getCurrentMonthEarnings(userId);
   
   // Calculate 30% of total earnings (base amount + monthly earnings)
   const luckyDrawPool = (baseAmount + monthlyEarnings) * 0.3;
