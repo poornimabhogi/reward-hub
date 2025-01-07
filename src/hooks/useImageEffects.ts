@@ -7,13 +7,19 @@ export const useImageEffects = () => {
 
   const adjustBrightness = useCallback((value: number) => {
     if (!canvas) return;
+
     const objects = canvas.getObjects();
     if (objects.length > 0) {
       const image = objects[0] as FabricImage;
       const brightnessFilter = new filters.Brightness({
         brightness: (value - 100) / 100
       });
-      image.filters = [brightnessFilter];
+      
+      // Preserve other filters if they exist
+      const existingFilters = image.filters || [];
+      const otherFilters = existingFilters.filter(f => !(f instanceof filters.Brightness));
+      image.filters = [...otherFilters, brightnessFilter];
+      
       image.applyFilters();
       canvas.renderAll();
     }
@@ -21,13 +27,19 @@ export const useImageEffects = () => {
 
   const adjustContrast = useCallback((value: number) => {
     if (!canvas) return;
+
     const objects = canvas.getObjects();
     if (objects.length > 0) {
       const image = objects[0] as FabricImage;
       const contrastFilter = new filters.Contrast({
         contrast: value / 100
       });
-      image.filters = [contrastFilter];
+      
+      // Preserve other filters if they exist
+      const existingFilters = image.filters || [];
+      const otherFilters = existingFilters.filter(f => !(f instanceof filters.Contrast));
+      image.filters = [...otherFilters, contrastFilter];
+      
       image.applyFilters();
       canvas.renderAll();
     }
@@ -35,23 +47,33 @@ export const useImageEffects = () => {
 
   const applyFilter = useCallback((filterName: string) => {
     if (!canvas) return;
+
     const objects = canvas.getObjects();
     if (objects.length > 0) {
       const image = objects[0] as FabricImage;
-      let filter;
+      let newFilter;
       
       switch (filterName) {
         case 'grayscale':
-          filter = new filters.Grayscale();
+          newFilter = new filters.Grayscale();
           break;
         case 'sepia':
-          filter = new filters.Sepia();
+          newFilter = new filters.Sepia();
           break;
         default:
-          filter = null;
+          newFilter = null;
       }
 
-      image.filters = filter ? [filter] : [];
+      // Keep brightness and contrast filters if they exist
+      const existingFilters = image.filters || [];
+      const adjustmentFilters = existingFilters.filter(
+        f => f instanceof filters.Brightness || f instanceof filters.Contrast
+      );
+      
+      image.filters = newFilter 
+        ? [...adjustmentFilters, newFilter]
+        : adjustmentFilters;
+        
       image.applyFilters();
       canvas.renderAll();
     }
