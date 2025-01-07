@@ -4,6 +4,7 @@ import { Button } from "@/components/ui/button";
 import { Filter, Sliders, Crop, Send } from "lucide-react";
 import { useCanvas } from "@/contexts/CanvasContext";
 import { FilterControls } from "./controls/FilterControls";
+import { CanvasProvider } from "@/contexts/CanvasContext";
 
 interface MediaEditorProps {
   file: File;
@@ -11,7 +12,7 @@ interface MediaEditorProps {
   onCancel: () => void;
 }
 
-const MediaEditor = ({ file, onSave, onCancel }: MediaEditorProps) => {
+const MediaEditorContent = ({ file, onSave, onCancel }: MediaEditorProps) => {
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const { setCanvas, canvas } = useCanvas();
   const [selectedFilter, setSelectedFilter] = React.useState("none");
@@ -22,7 +23,7 @@ const MediaEditor = ({ file, onSave, onCancel }: MediaEditorProps) => {
 
     const fabricCanvas = new FabricCanvas(canvasRef.current, {
       width: window.innerWidth,
-      height: window.innerHeight - 160, // Account for header and controls
+      height: window.innerHeight - 160,
       backgroundColor: '#000000'
     });
     setCanvas(fabricCanvas);
@@ -155,4 +156,9 @@ const MediaEditor = ({ file, onSave, onCancel }: MediaEditorProps) => {
   );
 };
 
-export default MediaEditor;
+// Export the wrapped component as a named export
+export const MediaEditor = (props: MediaEditorProps) => (
+  <CanvasProvider>
+    <MediaEditorContent {...props} />
+  </CanvasProvider>
+);
