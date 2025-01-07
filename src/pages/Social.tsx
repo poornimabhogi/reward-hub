@@ -4,6 +4,7 @@ import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { useToast } from "@/components/ui/use-toast";
 import { SocialTimeCapsules } from "@/components/social/SocialTimeCapsules";
+import { VideoViewer } from "@/components/social/VideoViewer";
 
 interface Post {
   id: number;
@@ -22,6 +23,7 @@ interface FollowedUser {
 const Social = () => {
   const { toast } = useToast();
   const [searchQuery, setSearchQuery] = useState("");
+  const [selectedVideo, setSelectedVideo] = useState<string | null>(null);
   const [followedUsers, setFollowedUsers] = useState<FollowedUser[]>(() => {
     const stored = localStorage.getItem('followedUsers');
     return stored ? JSON.parse(stored) : [];
@@ -87,6 +89,10 @@ const Social = () => {
     }));
   };
 
+  const handleVideoClick = (videoUrl: string) => {
+    setSelectedVideo(videoUrl);
+  };
+
   const filteredPosts = posts.filter(post =>
     post.username.toLowerCase().includes(searchQuery.toLowerCase())
   );
@@ -140,7 +146,8 @@ const Social = () => {
                     autoPlay
                     loop
                     muted={post.isMuted}
-                    className="w-full h-auto"
+                    className="w-full h-auto cursor-pointer"
+                    onClick={() => handleVideoClick(post.content)}
                   />
                   <button
                     onClick={() => toggleMute(post.id)}
@@ -158,6 +165,12 @@ const Social = () => {
           ))}
         </div>
       </div>
+
+      <VideoViewer
+        isOpen={!!selectedVideo}
+        onClose={() => setSelectedVideo(null)}
+        videoUrl={selectedVideo || ''}
+      />
     </div>
   );
 };
