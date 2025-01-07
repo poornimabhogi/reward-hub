@@ -62,6 +62,30 @@ const Games = () => {
             </div>
           </div>
         </Card>
+
+        <Card 
+          className="group cursor-pointer hover:shadow-lg transition-all duration-300 aspect-square max-w-[240px] justify-self-center w-full"
+          onClick={() => navigate('/games/chess')}
+        >
+          <div className="p-4 h-full flex flex-col">
+            <div className="flex-1 rounded-lg bg-primary p-4">
+              <div className="w-full h-full grid grid-cols-4 grid-rows-2 gap-1">
+                {["♔", "♕", "♖", "♗", "♘", "♙", "♚", "♛"].map((piece, index) => (
+                  <div
+                    key={index}
+                    className="flex items-center justify-center rounded-md bg-white/90 font-bold text-2xl shadow-sm transition-all group-hover:scale-105"
+                  >
+                    {piece}
+                  </div>
+                ))}
+              </div>
+            </div>
+            <div className="text-center mt-4">
+              <h3 className="font-bold text-lg group-hover:text-primary transition-colors">Chess</h3>
+              <p className="text-sm text-muted-foreground">Classic strategy board game</p>
+            </div>
+          </div>
+        </Card>
       </div>
     </div>
   );

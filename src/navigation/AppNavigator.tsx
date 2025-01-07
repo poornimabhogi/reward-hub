@@ -14,6 +14,7 @@ export const ROUTES = {
   GAMES: "/games",
   GAME_2048: "/games/2048",
   GAME_SUDOKU: "/games/sudoku",
+  GAME_CHESS: "/games/chess",
   SOCIAL: "/social",
   HEALTH: "/health",
 } as const;
@@ -33,6 +34,7 @@ export const useAppNavigation = () => {
     goToGames: () => navigate(ROUTES.GAMES),
     goTo2048: () => navigate(ROUTES.GAME_2048),
     goToSudoku: () => navigate(ROUTES.GAME_SUDOKU),
+    goToChess: () => navigate(ROUTES.GAME_CHESS),
     goToSocial: () => navigate(ROUTES.SOCIAL),
     goToHealth: () => navigate(ROUTES.HEALTH),
     goBack: () => navigate(-1),
@@ -56,6 +58,7 @@ const routes: RouteConfig[] = [
   { path: ROUTES.GAMES, element: <Pages.Games /> },
   { path: ROUTES.GAME_2048, element: <Pages.Game2048 /> },
   { path: ROUTES.GAME_SUDOKU, element: <Pages.Sudoku /> },
+  { path: ROUTES.GAME_CHESS, element: <Pages.Chess /> },
   { path: ROUTES.SOCIAL, element: <Pages.Social /> },
   { path: ROUTES.HEALTH, element: <Pages.Health /> },
 ];
