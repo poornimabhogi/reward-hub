@@ -1,17 +1,14 @@
 import { useState, useRef, useEffect } from "react";
-import { Settings2, Plus } from "lucide-react";
+import { Settings2 } from "lucide-react";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
 import { ViewDetailsDropdown } from "./profile/ViewDetailsDropdown";
 import { EditProfileForm } from "./profile/EditProfileForm";
+import { MediaEditor } from "./media/MediaEditor";
+import { MediaUploadButton } from "./profile/MediaUploadButton";
+import { MediaPreviewDialog } from "./profile/MediaPreviewDialog";
 import { toast } from "sonner";
 import { addTimeCapsule, TimeCapsule } from "@/utils/timeCapsuleUtils";
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu";
 
 interface UserProfile {
   name: string;
@@ -27,14 +24,21 @@ export const ProfileSettings = ({ userProfile }: { userProfile: UserProfile }) =
   const [selectedPostType, setSelectedPostType] = useState<'timeCapsule' | 'feature' | 'reel'>('feature');
   const [selectedFile, setSelectedFile] = useState<File | null>(null);
   const [isConfirmDialogOpen, setIsConfirmDialogOpen] = useState(false);
+  const [isEditingMedia, setIsEditingMedia] = useState(false);
 
   const handleFileSelect = (event: React.ChangeEvent<HTMLInputElement>) => {
     const file = event.target.files?.[0];
     if (file) {
       setSelectedFile(file);
-      setIsConfirmDialogOpen(true);
+      setIsEditingMedia(true);
       event.target.value = '';
     }
+  };
+
+  const handleSaveEdit = (editedFile: File) => {
+    setSelectedFile(editedFile);
+    setIsEditingMedia(false);
+    setIsConfirmDialogOpen(true);
   };
 
   const handleConfirmPost = () => {
@@ -53,7 +57,6 @@ export const ProfileSettings = ({ userProfile }: { userProfile: UserProfile }) =
 
       addTimeCapsule(newCapsule);
       toast.success(`${selectedPostType === 'timeCapsule' ? "Time capsule" : "Post"} added!`);
-      console.log('New time capsule added:', newCapsule);
       
       setSelectedFile(null);
       setIsConfirmDialogOpen(false);
@@ -74,7 +77,7 @@ export const ProfileSettings = ({ userProfile }: { userProfile: UserProfile }) =
     };
   }, []);
 
-  const handleDropdownItemClick = (postType: 'timeCapsule' | 'feature' | 'reel') => {
+  const handleSelectPostType = (postType: 'timeCapsule' | 'feature' | 'reel') => {
     setSelectedPostType(postType);
     if (fileInputRef.current) {
       fileInputRef.current.click();
@@ -91,24 +94,7 @@ export const ProfileSettings = ({ userProfile }: { userProfile: UserProfile }) =
         onChange={handleFileSelect}
       />
       
-      <DropdownMenu>
-        <DropdownMenuTrigger asChild>
-          <Button variant="ghost" size="icon">
-            <Plus className="h-5 w-5" />
-          </Button>
-        </DropdownMenuTrigger>
-        <DropdownMenuContent align="end">
-          <DropdownMenuItem onClick={() => handleDropdownItemClick('timeCapsule')}>
-            Today's Time Capsule
-          </DropdownMenuItem>
-          <DropdownMenuItem onClick={() => handleDropdownItemClick('feature')}>
-            Feature Post
-          </DropdownMenuItem>
-          <DropdownMenuItem onClick={() => handleDropdownItemClick('reel')}>
-            Reel
-          </DropdownMenuItem>
-        </DropdownMenuContent>
-      </DropdownMenu>
+      <MediaUploadButton onSelectPostType={handleSelectPostType} />
 
       <Dialog>
         <DialogTrigger asChild>
@@ -142,37 +128,27 @@ export const ProfileSettings = ({ userProfile }: { userProfile: UserProfile }) =
         </DialogContent>
       </Dialog>
 
-      <Dialog open={isConfirmDialogOpen} onOpenChange={setIsConfirmDialogOpen}>
+      <Dialog open={isEditingMedia} onOpenChange={(open) => !open && setIsEditingMedia(false)}>
         <DialogContent className="max-w-2xl">
           <DialogHeader>
-            <DialogTitle className="flex justify-between items-center">
-              <span>Preview Post</span>
-              <Button onClick={handleConfirmPost} size="sm">
-                Post
-              </Button>
-            </DialogTitle>
+            <DialogTitle>Edit Media</DialogTitle>
           </DialogHeader>
-          <div className="space-y-4">
-            {selectedFile && (
-              <div className="w-full max-h-[70vh] relative overflow-hidden rounded-lg">
-                {selectedFile.type.startsWith('image/') ? (
-                  <img
-                    src={URL.createObjectURL(selectedFile)}
-                    alt="Preview"
-                    className="w-full h-full object-contain"
-                  />
-                ) : (
-                  <video
-                    src={URL.createObjectURL(selectedFile)}
-                    className="w-full h-full object-contain"
-                    controls
-                  />
-                )}
-              </div>
-            )}
-          </div>
+          {selectedFile && (
+            <MediaEditor
+              file={selectedFile}
+              onSave={handleSaveEdit}
+              onCancel={() => setIsEditingMedia(false)}
+            />
+          )}
         </DialogContent>
       </Dialog>
+
+      <MediaPreviewDialog
+        isOpen={isConfirmDialogOpen}
+        onOpenChange={setIsConfirmDialogOpen}
+        selectedFile={selectedFile}
+        onConfirm={handleConfirmPost}
+      />
     </div>
   );
 };
