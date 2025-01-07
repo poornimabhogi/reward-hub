@@ -11,7 +11,7 @@ interface MediaEditorProps {
   onCancel: () => void;
 }
 
-const MediaEditorContent = ({ file, onSave, onCancel }: MediaEditorProps) => {
+const MediaEditor = ({ file, onSave, onCancel }: MediaEditorProps) => {
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const { setCanvas, canvas } = useCanvas();
   const [selectedFilter, setSelectedFilter] = React.useState("none");
@@ -155,8 +155,4 @@ const MediaEditorContent = ({ file, onSave, onCancel }: MediaEditorProps) => {
   );
 };
 
-export const MediaEditor = (props: MediaEditorProps) => (
-  <CanvasProvider>
-    <MediaEditorContent {...props} />
-  </CanvasProvider>
-);
+export default MediaEditor;
