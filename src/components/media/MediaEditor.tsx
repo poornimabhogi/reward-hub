@@ -13,18 +13,18 @@ interface MediaEditorProps {
 
 const MediaEditorContent = ({ file, onSave, onCancel }: MediaEditorProps) => {
   const canvasRef = useRef<HTMLCanvasElement>(null);
-  const containerRef = useRef<HTMLDivElement>(null);
   const { setCanvas, canvas } = useCanvas();
 
   useEffect(() => {
-    if (!canvasRef.current || !containerRef.current) return;
+    if (!canvasRef.current) return;
 
-    const containerWidth = containerRef.current.clientWidth;
-    const containerHeight = containerRef.current.clientHeight;
+    // Get window dimensions
+    const windowWidth = window.innerWidth;
+    const windowHeight = window.innerHeight;
 
     const fabricCanvas = new FabricCanvas(canvasRef.current, {
-      width: containerWidth,
-      height: containerHeight * 0.7,
+      width: windowWidth,
+      height: windowHeight - 200, // Leave space for controls
       backgroundColor: '#000000'
     });
     setCanvas(fabricCanvas);
@@ -33,9 +33,10 @@ const MediaEditorContent = ({ file, onSave, onCancel }: MediaEditorProps) => {
     img.onload = () => {
       const fabricImage = new FabricImage(img);
       
+      // Calculate scale to fit the image while maintaining aspect ratio
       const scale = Math.min(
-        (fabricCanvas.width || 800) / img.width,
-        (fabricCanvas.height || 600) / img.height
+        (fabricCanvas.width || windowWidth) / img.width,
+        (fabricCanvas.height || (windowHeight - 200)) / img.height
       ) * 0.9;
       
       fabricImage.set({
@@ -43,6 +44,7 @@ const MediaEditorContent = ({ file, onSave, onCancel }: MediaEditorProps) => {
         originY: 'center',
         scaleX: scale,
         scaleY: scale,
+        selectable: false, // Prevent image manipulation until post
       });
 
       fabricCanvas.add(fabricImage);
@@ -51,9 +53,21 @@ const MediaEditorContent = ({ file, onSave, onCancel }: MediaEditorProps) => {
     };
     img.src = URL.createObjectURL(file);
 
+    // Handle window resize
+    const handleResize = () => {
+      fabricCanvas.setDimensions({
+        width: window.innerWidth,
+        height: window.innerHeight - 200
+      });
+      fabricCanvas.renderAll();
+    };
+
+    window.addEventListener('resize', handleResize);
+
     return () => {
       fabricCanvas.dispose();
       URL.revokeObjectURL(img.src);
+      window.removeEventListener('resize', handleResize);
     };
   }, [file, setCanvas]);
 
@@ -68,10 +82,7 @@ const MediaEditorContent = ({ file, onSave, onCancel }: MediaEditorProps) => {
   };
 
   return (
-    <div 
-      ref={containerRef}
-      className="fixed inset-0 z-50 bg-black flex flex-col"
-    >
+    <div className="fixed inset-0 z-50 bg-black flex flex-col">
       {/* Header */}
       <div className="flex justify-between items-center p-4 bg-black/90">
         <Button
@@ -93,9 +104,9 @@ const MediaEditorContent = ({ file, onSave, onCancel }: MediaEditorProps) => {
         </Button>
       </div>
 
-      {/* Canvas */}
+      {/* Canvas Container */}
       <div className="flex-grow relative flex items-center justify-center bg-black">
-        <canvas ref={canvasRef} className="max-h-[70vh] object-contain" />
+        <canvas ref={canvasRef} className="max-w-full" />
         
         {/* Navigation Controls */}
         <div className="absolute inset-x-0 top-1/2 flex justify-between px-4 -translate-y-1/2">
@@ -118,7 +129,7 @@ const MediaEditorContent = ({ file, onSave, onCancel }: MediaEditorProps) => {
 
       {/* Bottom Controls */}
       <div className="bg-black pt-6 pb-12">
-        <div className="flex justify-center gap-16 mb-8">
+        <div className="flex justify-center gap-16">
           <button className="flex flex-col items-center gap-2">
             <div className="h-16 w-16 rounded-full bg-zinc-900 flex items-center justify-center hover:bg-zinc-800 transition-colors">
               <Sun className="h-8 w-8 text-white" />
