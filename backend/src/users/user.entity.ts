@@ -19,4 +19,13 @@ export class User {
 
   @Column({ nullable: true })
   address?: string;
+
+  @Column({ default: 0 })
+  totalViews: number;
+
+  @Column({ default: 'beginner' })
+  creatorLevel: 'beginner' | 'bronze' | 'silver' | 'gold';
+
+  @Column({ default: 0 })
+  reelsCount: number;
 }
