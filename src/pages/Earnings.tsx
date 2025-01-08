@@ -73,21 +73,40 @@ const Earnings = () => {
             <Card className="p-6 bg-white shadow-md">
               <div className="flex items-center gap-2 mb-4">
                 <Info className="h-5 w-5 text-primary" />
-                <h2 className="text-lg font-semibold">Creator Earnings Guide</h2>
+                <h2 className="text-lg font-semibold">Monetization Rules</h2>
               </div>
               
               <Accordion type="single" collapsible className="w-full">
-                <AccordionItem value="earnings-structure">
-                  <AccordionTrigger>Earnings Structure</AccordionTrigger>
+                <AccordionItem value="revenue-share">
+                  <AccordionTrigger>Revenue Sharing</AccordionTrigger>
                   <AccordionContent>
                     <div className="space-y-2">
-                      <p className="text-sm">We offer a simple and transparent earnings structure:</p>
-                      <ul className="list-disc pl-4 space-y-1 text-sm">
-                        <li>$5 per 1,000 views on your content</li>
-                        <li>Example: A video with 20,000 views earns $100</li>
-                        <li>Bonus: Additional $50 for viral hits (100,000+ views)</li>
-                      </ul>
+                      <p className="text-sm">We believe in giving back to our creators! You'll receive 70% of all revenue generated from your content when you meet the monthly threshold.</p>
+                      <p className="text-sm font-medium text-primary">Monthly Threshold: $100 in earnings</p>
                     </div>
+                  </AccordionContent>
+                </AccordionItem>
+
+                <AccordionItem value="earnings-tiers">
+                  <AccordionTrigger>Earnings Per View</AccordionTrigger>
+                  <AccordionContent>
+                    <ul className="space-y-2 text-sm">
+                      <li>• 1,000-5,000 views: $5 per reel</li>
+                      <li>• 5,000-20,000 views: $15 per reel</li>
+                      <li>• 20,000+ views: $30 per reel</li>
+                      <li>• Viral bonus: Additional $50 for 100,000+ views</li>
+                    </ul>
+                  </AccordionContent>
+                </AccordionItem>
+
+                <AccordionItem value="creator-levels">
+                  <AccordionTrigger>Creator Levels</AccordionTrigger>
+                  <AccordionContent>
+                    <ul className="space-y-2 text-sm">
+                      <li>• Bronze: Unlock at 1,000+ total views</li>
+                      <li>• Silver: Unlock at 5,000+ total views</li>
+                      <li>• Gold: Unlock at 20,000+ total views</li>
+                    </ul>
                   </AccordionContent>
                 </AccordionItem>
 
@@ -95,26 +114,13 @@ const Earnings = () => {
                   <AccordionTrigger>Payment Information</AccordionTrigger>
                   <AccordionContent>
                     <div className="space-y-2 text-sm">
-                      <p>Monthly payments are processed when:</p>
+                      <p>Payments are processed monthly for creators who:</p>
                       <ul className="list-disc pl-4 space-y-1">
-                        <li>You reach the $100 minimum threshold</li>
-                        <li>Your account is verified</li>
-                        <li>Payment information is complete</li>
+                        <li>Generate at least $100 in monthly earnings</li>
+                        <li>Have a verified account</li>
+                        <li>Have completed their payment information</li>
                       </ul>
-                      <p className="mt-2 text-muted-foreground">Tip: Most creators reach $100 with 2-3 successful videos per month!</p>
                     </div>
-                  </AccordionContent>
-                </AccordionItem>
-
-                <AccordionItem value="success-tips">
-                  <AccordionTrigger>Tips for Success</AccordionTrigger>
-                  <AccordionContent>
-                    <ul className="space-y-2 text-sm">
-                      <li>• Post consistently (aim for 2-3 videos per week)</li>
-                      <li>• Focus on quality content that engages viewers</li>
-                      <li>• Engage with your audience to boost views</li>
-                      <li>• Use trending topics and hashtags effectively</li>
-                    </ul>
                   </AccordionContent>
                 </AccordionItem>
               </Accordion>
