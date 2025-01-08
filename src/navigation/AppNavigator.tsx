@@ -16,6 +16,7 @@ export const ROUTES = {
   GAME_SUDOKU: "/games/sudoku",
   SOCIAL: "/social",
   HEALTH: "/health",
+  EARNINGS: "/earnings",
 } as const;
 
 export const useAppNavigation = () => {
@@ -35,6 +36,7 @@ export const useAppNavigation = () => {
     goToSudoku: () => navigate(ROUTES.GAME_SUDOKU),
     goToSocial: () => navigate(ROUTES.SOCIAL),
     goToHealth: () => navigate(ROUTES.HEALTH),
+    goToEarnings: () => navigate(ROUTES.EARNINGS),
     goBack: () => navigate(-1),
   };
 };
@@ -58,6 +60,7 @@ const routes: RouteConfig[] = [
   { path: ROUTES.GAME_SUDOKU, element: <Pages.Sudoku /> },
   { path: ROUTES.SOCIAL, element: <Pages.Social /> },
   { path: ROUTES.HEALTH, element: <Pages.Health /> },
+  { path: ROUTES.EARNINGS, element: <Pages.Earnings /> },
 ];
 
 export const AppNavigator = () => {

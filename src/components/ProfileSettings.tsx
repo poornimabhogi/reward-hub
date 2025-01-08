@@ -1,5 +1,5 @@
 import { useState, useRef, useEffect } from "react";
-import { Settings2 } from "lucide-react";
+import { Settings2, Coins } from "lucide-react";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
 import { ViewDetailsDropdown } from "./profile/ViewDetailsDropdown";
@@ -9,6 +9,7 @@ import { MediaUploadButton } from "./profile/MediaUploadButton";
 import { MediaPreviewDialog } from "./profile/MediaPreviewDialog";
 import { toast } from "sonner";
 import { addTimeCapsule, TimeCapsule } from "@/utils/timeCapsuleUtils";
+import { useNavigate } from "react-router-dom";
 
 interface UserProfile {
   name: string;
@@ -18,6 +19,7 @@ interface UserProfile {
 }
 
 export const ProfileSettings = ({ userProfile }: { userProfile: UserProfile }) => {
+  const navigate = useNavigate();
   const [isEditing, setIsEditing] = useState(false);
   const [editableProfile, setEditableProfile] = useState(userProfile);
   const fileInputRef = useRef<HTMLInputElement>(null);
@@ -108,6 +110,14 @@ export const ProfileSettings = ({ userProfile }: { userProfile: UserProfile }) =
               onClick={() => setIsEditing(!isEditing)}
             >
               <Settings2 className="h-4 w-4" /> Edit Profile
+            </Button>
+
+            <Button
+              variant="outline"
+              className="w-full justify-start gap-2"
+              onClick={() => navigate('/earnings')}
+            >
+              <Coins className="h-4 w-4" /> Earn With Us
             </Button>
 
             {isEditing && (
