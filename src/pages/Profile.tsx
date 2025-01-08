@@ -6,6 +6,7 @@ import { ProfileSettings } from "@/components/ProfileSettings";
 import { CreatePostForm } from "@/components/profile/CreatePostForm";
 import { PostsGrid } from "@/components/profile/PostsGrid";
 import { TimeCapsules } from "@/components/profile/TimeCapsules";
+import { CreatorProgress } from "@/components/profile/CreatorProgress";
 import { Status, FollowedUser, UserProfile } from "@/types/profile";
 import { TimeCapsule } from "@/utils/timeCapsuleUtils";
 
@@ -75,6 +76,13 @@ const Profile = () => {
     setIsCreatePostOpen(false);
   };
 
+  // Mock creator stats for demonstration - replace with actual API data
+  const creatorStats = {
+    totalViews: 3500,
+    creatorLevel: 'bronze' as const,
+    reelsCount: 12
+  };
+
   return (
     <div className="container mx-auto px-4 py-4 max-w-2xl">
       <div className="bg-white rounded-lg shadow-sm p-4 mb-4">
@@ -99,6 +107,12 @@ const Profile = () => {
           </div>
           <ProfileSettings userProfile={userProfile} />
         </div>
+        
+        <CreatorProgress 
+          totalViews={creatorStats.totalViews}
+          creatorLevel={creatorStats.creatorLevel}
+          reelsCount={creatorStats.reelsCount}
+        />
       </div>
 
       <TimeCapsules timeCapsules={timeCapsules} />
