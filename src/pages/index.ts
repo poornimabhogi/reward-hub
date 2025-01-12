@@ -12,3 +12,4 @@ export { default as Sudoku } from "./Sudoku";
 export { default as Social } from "./Social";
 export { default as Health } from "./Health";
 export { default as Earnings } from "./Earnings";
+export { default as AdminDashboard } from "./AdminDashboard";

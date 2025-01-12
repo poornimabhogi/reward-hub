@@ -1,6 +1,7 @@
 import { ReactNode } from "react";
 import { Routes, Route, useNavigate } from "react-router-dom";
 import * as Pages from "@/pages";
+import AdminDashboard from "@/pages/AdminDashboard";
 
 export const ROUTES = {
   INDEX: "/",
@@ -17,6 +18,7 @@ export const ROUTES = {
   SOCIAL: "/social",
   HEALTH: "/health",
   EARNINGS: "/earnings",
+  ADMIN: "/admin",
 } as const;
 
 export const useAppNavigation = () => {
@@ -37,6 +39,7 @@ export const useAppNavigation = () => {
     goToSocial: () => navigate(ROUTES.SOCIAL),
     goToHealth: () => navigate(ROUTES.HEALTH),
     goToEarnings: () => navigate(ROUTES.EARNINGS),
+    goToAdmin: () => navigate(ROUTES.ADMIN),
     goBack: () => navigate(-1),
   };
 };
@@ -61,6 +64,7 @@ const routes: RouteConfig[] = [
   { path: ROUTES.SOCIAL, element: <Pages.Social /> },
   { path: ROUTES.HEALTH, element: <Pages.Health /> },
   { path: ROUTES.EARNINGS, element: <Pages.Earnings /> },
+  { path: ROUTES.ADMIN, element: <AdminDashboard /> },
 ];
 
 export const AppNavigator = () => {
