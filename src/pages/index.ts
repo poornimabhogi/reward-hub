@@ -1,4 +1,4 @@
-export { default as Index } from "./Index";
+export { default as Index } from './index/Index';
 export { default as Signup } from "./Signup";
 export { default as Profile } from "./Profile";
 export { default as LuckyDraw } from "./LuckyDraw";
