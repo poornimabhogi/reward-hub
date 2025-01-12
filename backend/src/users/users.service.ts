@@ -15,6 +15,10 @@ export class UsersService {
     return this.usersRepository.findOne({ where: { email } });
   }
 
+  async findAll(): Promise<User[]> {
+    return this.usersRepository.find();
+  }
+
   async create(userData: Partial<User>): Promise<User> {
     const hashedPassword = await bcrypt.hash(userData.password, 10);
     const user = this.usersRepository.create({
@@ -27,6 +31,10 @@ export class UsersService {
   async update(id: number, userData: Partial<User>): Promise<User> {
     await this.usersRepository.update(id, userData);
     return this.usersRepository.findOne({ where: { id } });
+  }
+
+  async remove(id: number): Promise<void> {
+    await this.usersRepository.delete(id);
   }
 
   async calculateReelEarnings(userId: number, views: number): Promise<number> {

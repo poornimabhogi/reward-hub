@@ -20,6 +20,9 @@ export class User {
   @Column({ nullable: true })
   address?: string;
 
+  @Column({ default: false })
+  isAdmin: boolean;
+
   @Column({ default: 0 })
   totalViews: number;
 
