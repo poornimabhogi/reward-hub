@@ -1,8 +1,8 @@
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
-import { Game2048 } from "./Game2048";
-import { Sudoku } from "./Sudoku";
+import Game2048 from "./Game2048";
+import Sudoku from "./Sudoku";
 
 const Games = () => {
   const navigate = useNavigate();
