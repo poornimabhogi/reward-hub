@@ -1,9 +1,4 @@
 import type { Config } from "tailwindcss";
-import { indexScreenConfig } from "./src/styles/screens/indexScreen";
-import { shopScreenConfig } from "./src/styles/screens/shopScreen";
-import { gamesScreenConfig } from "./src/styles/screens/gamesScreen";
-import { healthScreenConfig } from "./src/styles/screens/healthScreen";
-import { socialScreenConfig } from "./src/styles/screens/socialScreen";
 
 export default {
   darkMode: ["class"],
@@ -57,25 +52,6 @@ export default {
           DEFAULT: "hsl(var(--card))",
           foreground: "hsl(var(--card-foreground))",
         },
-        ...indexScreenConfig.colors,
-        ...shopScreenConfig.colors,
-        ...gamesScreenConfig.colors,
-        ...healthScreenConfig.colors,
-        ...socialScreenConfig.colors,
-      },
-      fontSize: {
-        ...indexScreenConfig.fontSize,
-        ...shopScreenConfig.fontSize,
-        ...gamesScreenConfig.fontSize,
-        ...healthScreenConfig.fontSize,
-        ...socialScreenConfig.fontSize,
-      },
-      spacing: {
-        ...indexScreenConfig.spacing,
-        ...shopScreenConfig.spacing,
-        ...gamesScreenConfig.spacing,
-        ...healthScreenConfig.spacing,
-        ...socialScreenConfig.spacing,
       },
       borderRadius: {
         lg: "var(--radius)",
