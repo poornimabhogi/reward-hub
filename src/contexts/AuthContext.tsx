@@ -3,6 +3,7 @@ import React, { createContext, useContext, useState, ReactNode } from 'react';
 interface User {
   email: string;
   name: string;
+  isAdmin: boolean;  // Added this property
 }
 
 interface AuthContextType {
@@ -10,19 +11,23 @@ interface AuthContextType {
   login: (email: string, password: string) => boolean;
   logout: () => void;
   isAuthenticated: boolean;
-  isLoading: boolean;  // Added this property
+  isLoading: boolean;
 }
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
 export function AuthProvider({ children }: { children: ReactNode }) {
   const [user, setUser] = useState<User | null>(null);
-  const [isLoading, setIsLoading] = useState(true);  // Added loading state
+  const [isLoading, setIsLoading] = useState(true);
 
   const login = (email: string, password: string): boolean => {
     // In a real app, you'd validate credentials against a backend
     if (email && password.length >= 6) {
-      setUser({ email, name: email.split('@')[0] });
+      setUser({ 
+        email, 
+        name: email.split('@')[0],
+        isAdmin: email.includes('admin') // Simple example: users with 'admin' in their email are admins
+      });
       setIsLoading(false);
       return true;
     }
@@ -36,8 +41,6 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
   // Simulate initial auth check
   React.useEffect(() => {
-    // Here you would typically check for an existing session
-    // For now, we'll just set loading to false after a brief delay
     const timer = setTimeout(() => {
       setIsLoading(false);
     }, 1000);
