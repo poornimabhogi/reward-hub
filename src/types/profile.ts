@@ -5,6 +5,9 @@ export interface Status {
   timestamp: Date;
   postType?: 'timeCapsule' | 'feature' | 'reel';
   caption?: string;
+  likes: number;
+  comments: number;
+  shares: number;
 }
 
 export interface FollowedUser {
