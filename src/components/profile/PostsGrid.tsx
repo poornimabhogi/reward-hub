@@ -2,6 +2,7 @@ import { useState } from "react";
 import { Status } from "@/types/profile";
 import { LayoutGrid, LayoutList, PlusSquare } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { PostInteractions } from "@/components/social/PostInteractions";
 import {
   Tooltip,
   TooltipContent,
@@ -25,6 +26,11 @@ export const PostsGrid = ({ posts, viewMode: externalViewMode }: PostsGridProps)
       detail: { postType: 'feature' }
     });
     window.dispatchEvent(event);
+  };
+
+  const handleInteraction = (postId: number, type: 'like' | 'comment' | 'share', count: number) => {
+    // In a real app, this would update the backend
+    console.log(`Post ${postId} ${type} count updated to ${count}`);
   };
 
   return (
@@ -127,6 +133,13 @@ export const PostsGrid = ({ posts, viewMode: externalViewMode }: PostsGridProps)
                   </div>
                 )}
               </div>
+              <PostInteractions
+                postId={post.id}
+                initialLikes={post.likes}
+                initialComments={post.comments}
+                initialShares={post.shares}
+                onInteraction={(type, count) => handleInteraction(post.id, type, count)}
+              />
             </div>
           ))
         ) : (

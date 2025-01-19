@@ -5,6 +5,7 @@ import { Button } from "@/components/ui/button";
 import { useToast } from "@/components/ui/use-toast";
 import { SocialTimeCapsules } from "@/components/social/SocialTimeCapsules";
 import { VideoViewer } from "@/components/social/VideoViewer";
+import { PostInteractions } from "@/components/social/PostInteractions";
 
 interface Post {
   id: number;
@@ -13,6 +14,9 @@ interface Post {
   content: string;
   isFollowing: boolean;
   isMuted?: boolean;
+  likes: number;
+  comments: number;
+  shares: number;
 }
 
 interface FollowedUser {
@@ -35,7 +39,10 @@ const Social = () => {
       username: "jane_doe",
       type: 'photo',
       content: "https://picsum.photos/400/600",
-      isFollowing: false
+      isFollowing: false,
+      likes: 0,
+      comments: 0,
+      shares: 0
     },
     {
       id: 2,
@@ -43,7 +50,10 @@ const Social = () => {
       type: 'video',
       content: "https://sample-videos.com/video123/mp4/720/big_buck_bunny_720p_1mb.mp4",
       isFollowing: false,
-      isMuted: true
+      isMuted: true,
+      likes: 0,
+      comments: 0,
+      shares: 0
     },
   ]);
 
@@ -103,6 +113,18 @@ const Social = () => {
     id: post.id,
     content: post.content
   }));
+
+  const handleInteraction = (postId: number, type: 'like' | 'comment' | 'share', count: number) => {
+    setPosts(posts.map(post => {
+      if (post.id === postId) {
+        return {
+          ...post,
+          [type === 'like' ? 'likes' : type === 'comment' ? 'comments' : 'shares']: count
+        };
+      }
+      return post;
+    }));
+  };
 
   return (
     <div className="min-h-screen pb-20">
@@ -168,6 +190,16 @@ const Social = () => {
                   </button>
                 </div>
               )}
+              
+              <div className="p-4">
+                <PostInteractions
+                  postId={post.id}
+                  initialLikes={post.likes}
+                  initialComments={post.comments}
+                  initialShares={post.shares}
+                  onInteraction={(type, count) => handleInteraction(post.id, type, count)}
+                />
+              </div>
             </div>
           ))}
         </div>
