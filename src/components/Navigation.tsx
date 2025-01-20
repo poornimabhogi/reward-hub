@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { Link, useLocation } from "react-router-dom";
-import { Home, ShoppingBag, Gamepad2, Video, Heart, MessageCircle, LogOut } from "lucide-react";
+import { Home, ShoppingBag, Gamepad2, Video, Heart, MessageCircle } from "lucide-react";
 import { useAuth } from "@/contexts/AuthContext";
 
 const Navigation = () => {
@@ -8,7 +8,7 @@ const Navigation = () => {
   const [wishlistCount] = useState(0);
   const [cartCount] = useState(0);
   const [coins] = useState(100);
-  const { isAuthenticated, logout } = useAuth();
+  const { isAuthenticated } = useAuth();
 
   // Don't render navigation if user is not authenticated
   if (!isAuthenticated) {
@@ -52,14 +52,6 @@ const Navigation = () => {
             </svg>
             <span className="text-xs mt-1">Health</span>
           </Link>
-
-          <button 
-            onClick={logout}
-            className="nav-link flex flex-col items-center text-gray-500"
-          >
-            <LogOut className="h-6 w-6" />
-            <span className="text-xs mt-1">Logout</span>
-          </button>
         </div>
       </div>
     </nav>
