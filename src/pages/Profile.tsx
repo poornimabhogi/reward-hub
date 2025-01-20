@@ -1,14 +1,12 @@
 import { useState, useEffect } from "react";
-import { User, MessageSquare } from "lucide-react";
+import { User } from "lucide-react";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { ScrollArea } from "@/components/ui/scroll-area";
-import { Button } from "@/components/ui/button";
 import { ProfileSettings } from "@/components/ProfileSettings";
 import { CreatePostForm } from "@/components/profile/CreatePostForm";
 import { PostsGrid } from "@/components/profile/PostsGrid";
 import { TimeCapsules } from "@/components/profile/TimeCapsules";
 import { CreatorProgress } from "@/components/profile/CreatorProgress";
-import { Messages } from "@/components/messages/Messages";
 import { Status, FollowedUser, UserProfile } from "@/types/profile";
 import { TimeCapsule } from "@/utils/timeCapsuleUtils";
 
@@ -30,8 +28,6 @@ const Profile = () => {
     const storedUsers = localStorage.getItem('followedUsers');
     return storedUsers ? JSON.parse(storedUsers) : [];
   });
-
-  const [isMessagesOpen, setIsMessagesOpen] = useState(false);
 
   useEffect(() => {
     const handleNewTimeCapsule = (event: CustomEvent<Status>) => {
@@ -109,17 +105,7 @@ const Profile = () => {
               </div>
             </div>
           </div>
-          <div className="flex gap-2">
-            <Button
-              variant="outline"
-              size="sm"
-              onClick={() => setIsMessagesOpen(true)}
-            >
-              <MessageSquare className="h-4 w-4 mr-2" />
-              Message
-            </Button>
-            <ProfileSettings userProfile={userProfile} />
-          </div>
+          <ProfileSettings userProfile={userProfile} />
         </div>
         
         <CreatorProgress 
@@ -131,12 +117,18 @@ const Profile = () => {
 
       <TimeCapsules timeCapsules={timeCapsules} />
 
-      <Dialog open={isMessagesOpen} onOpenChange={setIsMessagesOpen}>
-        <DialogContent className="sm:max-w-[500px]">
+      <Dialog open={isCreatePostOpen} onOpenChange={setIsCreatePostOpen}>
+        <DialogContent>
           <DialogHeader>
-            <DialogTitle>Messages with {userProfile.name}</DialogTitle>
+            <DialogTitle>
+              {selectedPostType === 'timeCapsule' 
+                ? "Create Time Capsule" 
+                : selectedPostType === 'feature' 
+                  ? "Create Feature Post" 
+                  : "Create Reel"}
+            </DialogTitle>
           </DialogHeader>
-          <Messages receiverId={userProfile.email} />
+          <CreatePostForm onPost={handleNewPost} initialPostType={selectedPostType} />
         </DialogContent>
       </Dialog>
 
