@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { User, Coins, Dice1 } from "lucide-react";
+import { User, Coins, Dice1, MessageCircle, LogOut } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "@/contexts/AuthContext";
@@ -7,6 +7,8 @@ import { LoginForm } from "@/components/auth/LoginForm";
 import { HealthGoals } from "@/components/dashboard/HealthGoals";
 import { WishlistSection } from "@/components/dashboard/WishlistSection";
 import { useToast } from "@/hooks/use-toast";
+import { Dialog, DialogContent } from "@/components/ui/dialog";
+import { Messages } from "@/components/messages/Messages";
 
 interface Product {
   id: number;
@@ -29,6 +31,7 @@ const Index = () => {
   const [coins, setCoins] = useState(100);
   const navigate = useNavigate();
   const { toast } = useToast();
+  const [isMessagesOpen, setIsMessagesOpen] = useState(false);
   const [wishlistedProducts, setWishlistedProducts] = useState<Product[]>([]);
   const [healthGoals] = useState<HealthGoal[]>([
     {
@@ -72,7 +75,6 @@ const Index = () => {
     };
   }, []);
 
-  // Show loading state
   if (isLoading) {
     return (
       <div className="min-h-screen bg-neutral flex items-center justify-center p-4">
@@ -81,7 +83,6 @@ const Index = () => {
     );
   }
 
-  // Show login form if not authenticated
   if (!isAuthenticated) {
     return (
       <div className="min-h-screen bg-neutral flex items-center justify-center p-4">
@@ -119,13 +120,22 @@ const Index = () => {
             </Button>
           </div>
           
-          <Button 
-            onClick={logout}
-            variant="outline"
-            size="sm"
-          >
-            Logout
-          </Button>
+          <div className="flex items-center gap-2">
+            <Button
+              variant="ghost"
+              size="icon"
+              onClick={() => setIsMessagesOpen(true)}
+            >
+              <MessageCircle className="h-6 w-6" />
+            </Button>
+            <Button 
+              variant="ghost"
+              size="icon"
+              onClick={logout}
+            >
+              <LogOut className="h-6 w-6" />
+            </Button>
+          </div>
         </div>
       </div>
 
@@ -133,6 +143,12 @@ const Index = () => {
         <HealthGoals goals={healthGoals} />
         <WishlistSection products={wishlistedProducts} />
       </div>
+
+      <Dialog open={isMessagesOpen} onOpenChange={setIsMessagesOpen}>
+        <DialogContent className="sm:max-w-[425px]">
+          <Messages onClose={() => setIsMessagesOpen(false)} />
+        </DialogContent>
+      </Dialog>
     </div>
   );
 };
