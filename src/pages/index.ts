@@ -10,6 +10,7 @@ export { default as Games } from "./Games";
 export { default as Game2048 } from "./Game2048";
 export { default as Sudoku } from "./Sudoku";
 export { default as Social } from "./Social";
+export { default as PostDetail } from "./PostDetail";
 export { default as Health } from "./Health";
 export { default as Earnings } from "./Earnings";
 export { default as AdminDashboard } from "./AdminDashboard";
