@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { Status } from "@/types/profile";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { toast } from "sonner";
