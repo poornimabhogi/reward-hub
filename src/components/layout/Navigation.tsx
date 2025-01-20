@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { Link, useLocation } from "react-router-dom";
-import { Home, ShoppingBag, Gamepad2, Video, Heart, Settings } from "lucide-react";
+import { Home, ShoppingBag, Gamepad2, Video, Heart, Settings, MessageCircle, LogOut } from "lucide-react";
 import { useAuth } from "@/contexts/AuthContext";
 
 const Navigation = () => {
@@ -8,7 +8,7 @@ const Navigation = () => {
   const [wishlistCount] = useState(0);
   const [cartCount] = useState(0);
   const [coins] = useState(100);
-  const { user, isAuthenticated } = useAuth();
+  const { user, isAuthenticated, logout } = useAuth();
 
   if (!isAuthenticated) {
     return null;
@@ -38,6 +38,11 @@ const Navigation = () => {
             <span className="text-xs mt-1">Social</span>
           </Link>
           
+          <Link to="/messages" className={`nav-link flex flex-col items-center ${location.pathname === "/messages" ? "text-primary" : "text-gray-500"}`}>
+            <MessageCircle className="h-6 w-6" />
+            <span className="text-xs mt-1">Messages</span>
+          </Link>
+          
           <Link to="/health" className={`nav-link flex flex-col items-center ${location.pathname === "/health" ? "text-primary" : "text-gray-500"}`}>
             <svg className="h-6 w-6" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
               <path d="M16 2H8a4 4 0 0 0-4 4v12a4 4 0 0 0 4 4h8a4 4 0 0 0 4-4V6a4 4 0 0 0-4-4Z" />
@@ -53,6 +58,14 @@ const Navigation = () => {
               <span className="text-xs mt-1">Admin</span>
             </Link>
           )}
+
+          <button 
+            onClick={logout}
+            className="nav-link flex flex-col items-center text-gray-500"
+          >
+            <LogOut className="h-6 w-6" />
+            <span className="text-xs mt-1">Logout</span>
+          </button>
         </div>
       </div>
     </nav>
