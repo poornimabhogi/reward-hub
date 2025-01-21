@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { Link, useLocation } from "react-router-dom";
-import { Home, ShoppingBag, Gamepad2, Video, Heart, MessageCircle } from "lucide-react";
+import { Home, ShoppingBag, Gamepad2, Video, Heart } from "lucide-react";
 import { useAuth } from "@/contexts/AuthContext";
 
 const Navigation = () => {
@@ -37,11 +37,6 @@ const Navigation = () => {
           <Link to="/social" className={`nav-link flex flex-col items-center ${location.pathname === "/social" ? "text-primary" : "text-gray-500"}`}>
             <Video className="h-6 w-6" />
             <span className="text-xs mt-1">Social</span>
-          </Link>
-          
-          <Link to="/messages" className={`nav-link flex flex-col items-center ${location.pathname === "/messages" ? "text-primary" : "text-gray-500"}`}>
-            <MessageCircle className="h-6 w-6" />
-            <span className="text-xs mt-1">Messages</span>
           </Link>
           
           <Link to="/health" className={`nav-link flex flex-col items-center ${location.pathname === "/health" ? "text-primary" : "text-gray-500"}`}>

@@ -4,7 +4,6 @@ import { useNavigate } from "react-router-dom";
 import { calculateLuckyDrawAmount } from "@/utils/luckyDrawCalculations";
 import { LuckyDrawWheel } from "@/components/lucky-draw/LuckyDrawWheel";
 import { MonthlyEvent } from "@/components/lucky-draw/MonthlyEvent";
-import { ROUTES } from "@/navigation/AppNavigator";
 
 const LuckyDraw = () => {
   const navigate = useNavigate();
@@ -31,7 +30,7 @@ const LuckyDraw = () => {
               variant="ghost"
               size="icon"
               className="absolute left-0 top-0"
-              onClick={() => navigate(ROUTES.INDEX)}
+              onClick={() => navigate('/')}
             >
               <ArrowLeft className="h-6 w-6" />
             </Button>
