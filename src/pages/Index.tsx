@@ -58,13 +58,6 @@ const Index = () => {
   ]);
 
   useEffect(() => {
-    // Check authentication status when component mounts
-    if (!isLoading && !isAuthenticated) {
-      navigate('/');
-    }
-  }, [isAuthenticated, isLoading, navigate]);
-
-  useEffect(() => {
     const handleStorageChange = () => {
       const storedProducts = localStorage.getItem('products');
       if (storedProducts) {
