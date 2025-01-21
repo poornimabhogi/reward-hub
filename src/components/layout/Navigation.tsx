@@ -10,11 +10,8 @@ const Navigation = () => {
   const [coins] = useState(100);
   const { user, isAuthenticated } = useAuth();
 
-  // Don't render navigation if user is not authenticated
-  if (!isAuthenticated) {
-    return null;
-  }
-
+  // Even if not authenticated, we'll still render the navigation
+  // The auth check will be handled at the route level instead
   return (
     <nav className="fixed bottom-0 left-0 right-0 z-50 bg-white border-t">
       <div className="container mx-auto px-4">
