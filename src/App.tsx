@@ -14,8 +14,10 @@ const App = () => (
     <TooltipProvider>
       <BrowserRouter>
         <AuthProvider>
-          <Navigation />
-          <AppNavigator />
+          <div className="min-h-screen pb-20">
+            <AppNavigator />
+            <Navigation />
+          </div>
           <Toaster />
           <Sonner />
         </AuthProvider>

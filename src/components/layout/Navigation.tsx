@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { Link, useLocation } from "react-router-dom";
-import { Home, ShoppingBag, Gamepad2, Video, Heart, Settings } from "lucide-react";
+import { Home, ShoppingBag, Gamepad2, Video, Heart } from "lucide-react";
 import { useAuth } from "@/contexts/AuthContext";
 
 const Navigation = () => {
@@ -10,6 +10,7 @@ const Navigation = () => {
   const [coins] = useState(100);
   const { user, isAuthenticated } = useAuth();
 
+  // Don't render navigation if user is not authenticated
   if (!isAuthenticated) {
     return null;
   }
@@ -46,13 +47,6 @@ const Navigation = () => {
             </svg>
             <span className="text-xs mt-1">Health</span>
           </Link>
-
-          {user?.isAdmin && (
-            <Link to="/admin" className={`nav-link flex flex-col items-center ${location.pathname === "/admin" ? "text-primary" : "text-gray-500"}`}>
-              <Settings className="h-6 w-6" />
-              <span className="text-xs mt-1">Admin</span>
-            </Link>
-          )}
         </div>
       </div>
     </nav>
