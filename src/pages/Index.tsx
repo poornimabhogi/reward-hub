@@ -3,7 +3,7 @@ import { User, Coins, Dice1, MessageCircle, LogOut } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "@/contexts/AuthContext";
-import { LoginForm } from "@/components/auth/LoginForm";
+import { LoginForm } from "@/components/LoginForm";
 import { HealthGoals } from "@/components/dashboard/HealthGoals";
 import { WishlistSection } from "@/components/dashboard/WishlistSection";
 import { useToast } from "@/hooks/use-toast";
@@ -58,6 +58,13 @@ const Index = () => {
   ]);
 
   useEffect(() => {
+    // Check authentication status when component mounts
+    if (!isLoading && !isAuthenticated) {
+      navigate('/');
+    }
+  }, [isAuthenticated, isLoading, navigate]);
+
+  useEffect(() => {
     const handleStorageChange = () => {
       const storedProducts = localStorage.getItem('products');
       if (storedProducts) {
@@ -74,6 +81,15 @@ const Index = () => {
       window.removeEventListener('storage', handleStorageChange);
     };
   }, []);
+
+  const handleLogout = () => {
+    logout();
+    toast({
+      title: "Logged out",
+      description: "You have been successfully logged out",
+    });
+    navigate('/');
+  };
 
   if (isLoading) {
     return (
@@ -131,7 +147,7 @@ const Index = () => {
             <Button 
               variant="ghost"
               size="icon"
-              onClick={logout}
+              onClick={handleLogout}
             >
               <LogOut className="h-6 w-6" />
             </Button>
