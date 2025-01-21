@@ -57,7 +57,7 @@ export const PostInteractions = ({
       const comment: Comment = {
         id: Date.now(),
         text: newComment,
-        username: "You",
+        username: "You", // In a real app, this would come from auth context
         timestamp: new Date(),
       };
       
@@ -71,21 +71,20 @@ export const PostInteractions = ({
 
   const handleShare = async () => {
     try {
-      const shareUrl = `${window.location.origin}/social/post/${postId}`;
-      const shareData = {
-        title: 'Check out this post!',
-        text: 'I found this interesting post',
-        url: shareUrl,
-      };
-
-      if (navigator.canShare && navigator.canShare(shareData)) {
-        await navigator.share(shareData);
+      // Check if the Web Share API is available
+      if (navigator.share) {
+        await navigator.share({
+          title: 'Check out this post!',
+          text: 'I found this interesting post',
+          url: `${window.location.origin}/post/${postId}`,
+        });
         const newShares = shares + 1;
         setShares(newShares);
         onInteraction?.('share', newShares);
         toast.success("Post shared successfully!");
       } else {
         // Fallback for browsers that don't support Web Share API
+        const shareUrl = `${window.location.origin}/post/${postId}`;
         await navigator.clipboard.writeText(shareUrl);
         const newShares = shares + 1;
         setShares(newShares);
@@ -94,10 +93,6 @@ export const PostInteractions = ({
       }
     } catch (error) {
       console.error('Error sharing:', error);
-      if (error instanceof Error && error.name === 'AbortError') {
-        // User cancelled the share
-        return;
-      }
       toast.error("Unable to share post. Please try again.");
     }
   };
