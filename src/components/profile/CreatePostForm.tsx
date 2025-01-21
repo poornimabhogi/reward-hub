@@ -1,64 +1,145 @@
 import { useState } from "react";
-import { Status } from "@/types/profile";
+import { Image, Send, Film, CircleDot, LayoutGrid, Plus } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
+import { Textarea } from "@/components/ui/textarea";
+import { Status } from "@/types/profile";
 import { toast } from "sonner";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 
 interface CreatePostFormProps {
   onPost: (newStatus: Status, postType: 'timeCapsule' | 'feature' | 'reel') => void;
-  initialPostType: 'timeCapsule' | 'feature' | 'reel';
+  initialPostType?: 'timeCapsule' | 'feature' | 'reel';
 }
 
-export const CreatePostForm = ({ onPost, initialPostType }: CreatePostFormProps) => {
-  const [selectedFile, setSelectedFile] = useState<File | null>(null);
-  const [caption, setCaption] = useState("");
-  const [selectedPostType, setSelectedPostType] = useState(initialPostType);
+export const CreatePostForm = ({ onPost, initialPostType = 'feature' }: CreatePostFormProps) => {
+  const [thoughtText, setThoughtText] = useState('');
+  const [caption, setCaption] = useState('');
+  const [thoughtMedia, setThoughtMedia] = useState<File | null>(null);
+  const [postType, setPostType] = useState<'timeCapsule' | 'feature' | 'reel'>(initialPostType);
 
-  const handleFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-    const file = event.target.files?.[0];
-    if (file) {
-      setSelectedFile(file);
-    }
-  };
+  const validateVideoDuration = (file: File): Promise<boolean> => {
+    return new Promise((resolve) => {
+      const video = document.createElement('video');
+      video.preload = 'metadata';
 
-  const handleSubmit = (event: React.FormEvent) => {
-    event.preventDefault();
-    if (selectedFile) {
-      const fileUrl = URL.createObjectURL(selectedFile);
-      const fileType = selectedFile.type.startsWith('image/') ? 'photo' as const : 'video' as const;
-      
-      const newStatus: Status = {
-        id: Date.now(),
-        type: fileType,
-        url: fileUrl,
-        timestamp: new Date(),
-        postType: selectedPostType,
-        caption: caption,
-        likes: 0,
-        comments: 0,
-        shares: 0
+      video.onloadedmetadata = () => {
+        window.URL.revokeObjectURL(video.src);
+        const duration = video.duration;
+        
+        if (postType === 'reel') {
+          if (duration < 30) {
+            toast.error("Reels must be at least 30 seconds long");
+            resolve(false);
+          } else if (duration > 900) {
+            toast.error("Reels cannot be longer than 15 minutes");
+            resolve(false);
+          } else {
+            resolve(true);
+          }
+        } else {
+          resolve(true);
+        }
       };
 
-      onPost(newStatus, selectedPostType);
+      video.src = URL.createObjectURL(file);
+    });
+  };
+
+  const handleMediaChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+
+    if (file.type.startsWith('video/')) {
+      const isValidDuration = await validateVideoDuration(file);
+      if (!isValidDuration) {
+        e.target.value = '';
+        return;
+      }
+    }
+
+    setThoughtMedia(file);
+  };
+
+  const handleSubmit = () => {
+    if (thoughtMedia) {
+      const newStatus: Status = {
+        id: Date.now(),
+        type: thoughtMedia.type.startsWith('image/') ? 'photo' : 'video',
+        url: URL.createObjectURL(thoughtMedia),
+        timestamp: new Date(),
+        postType,
+        caption: caption.trim() || undefined
+      };
+      onPost(newStatus, postType);
+      setThoughtText('');
       setCaption('');
-      setSelectedFile(null);
+      setThoughtMedia(null);
+      toast.success(`${postType === 'timeCapsule' ? "Time capsule" : "Post"} created!`);
     }
   };
 
   return (
-    <form onSubmit={handleSubmit} className="space-y-4">
-      <Input
+    <div className="space-y-4">
+      <div className="flex items-center gap-4 mb-4">
+        <Button
+          variant="outline"
+          size="icon"
+          className="rounded-full"
+          onClick={() => document.getElementById('photoInput')?.click()}
+        >
+          <Plus className="h-4 w-4" />
+        </Button>
+        <Select value={postType} onValueChange={(value: 'timeCapsule' | 'feature' | 'reel') => setPostType(value)}>
+          <SelectTrigger className="w-[180px]">
+            <SelectValue placeholder="Select post type" />
+          </SelectTrigger>
+          <SelectContent>
+            <SelectItem value="timeCapsule">Today's Capsule</SelectItem>
+            <SelectItem value="feature">Feature Post</SelectItem>
+            <SelectItem value="reel">Reel</SelectItem>
+          </SelectContent>
+        </Select>
+      </div>
+
+      <input
+        id="photoInput"
         type="file"
         accept="image/*,video/*"
-        onChange={handleFileChange}
-        required
+        className="hidden"
+        onChange={handleMediaChange}
       />
-      <Input
-        placeholder="Add a caption..."
-        value={caption}
-        onChange={(e) => setCaption(e.target.value)}
-      />
-      <Button type="submit">Post</Button>
-    </form>
+
+      {postType !== 'timeCapsule' && (
+        <Textarea
+          placeholder="Add a caption..."
+          value={caption}
+          onChange={(e) => setCaption(e.target.value)}
+          className="min-h-[80px]"
+        />
+      )}
+      
+      {thoughtMedia && (
+        <span className="text-sm text-muted-foreground">
+          Selected: {thoughtMedia.name}
+        </span>
+      )}
+
+      <div className="flex justify-end">
+        <Button
+          size="sm"
+          onClick={handleSubmit}
+          disabled={!thoughtMedia}
+        >
+          <Send className="h-4 w-4 mr-2" />
+          Share
+        </Button>
+      </div>
+    </div>
   );
 };
