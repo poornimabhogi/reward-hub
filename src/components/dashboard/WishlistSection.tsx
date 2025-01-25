@@ -19,7 +19,8 @@ export const WishlistSection = ({ products }: WishlistSectionProps) => {
       {products.length === 0 ? (
         <Card className="border border-neutral">
           <CardContent className="p-6 text-center text-muted-foreground">
-            No items in your wishlist yet. Visit the shop to add items!
+            <p className="mb-2">No items in your wishlist yet.</p>
+            <p className="text-sm">Visit the shop to add items you love!</p>
           </CardContent>
         </Card>
       ) : (
