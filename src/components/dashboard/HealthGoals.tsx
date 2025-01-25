@@ -22,33 +22,32 @@ export const HealthGoals = ({ goals }: HealthGoalsProps) => {
   return (
     <section>
       <div className="flex items-center justify-between mb-4">
-        <h3 className="text-lg font-semibold">Pending Goals</h3>
+        <h3 className="text-2xl font-semibold text-gray-700">Pending Goals</h3>
         <Button 
-          variant="ghost" 
-          size="sm" 
+          variant="link" 
           onClick={() => navigate('/health')}
-          className="flex items-center gap-2 text-primary"
+          className="flex items-center gap-2 text-primary hover:text-primary/90 p-0 h-auto font-normal text-base"
         >
-          <Activity className="h-4 w-4" />
+          <Activity className="h-5 w-5" />
           View All
         </Button>
       </div>
-      <div className="space-y-3">
+      <div className="space-y-4">
         {goals.map((goal) => (
-          <Card key={goal.id} className="border border-neutral">
+          <Card key={goal.id} className="border border-neutral shadow-none">
             <CardContent className="p-4">
               <div className="flex items-center justify-between mb-2">
                 <div className="flex items-center gap-2">
-                  <Target className="h-4 w-4 text-primary" />
-                  <h4 className="font-medium">{goal.title}</h4>
+                  <Target className="h-5 w-5 text-primary" />
+                  <h4 className="text-xl text-gray-700">{goal.title}</h4>
                 </div>
-                <span className="text-sm text-muted-foreground">
+                <span className="text-gray-500">
                   {goal.current} / {goal.target} {goal.unit}
                 </span>
               </div>
               <Progress 
                 value={(goal.current / goal.target) * 100} 
-                className="h-2"
+                className="h-2 bg-primary/20"
               />
             </CardContent>
           </Card>

@@ -15,18 +15,17 @@ interface WishlistSectionProps {
 export const WishlistSection = ({ products }: WishlistSectionProps) => {
   return (
     <section>
-      <h3 className="text-lg font-semibold mb-4">Your Wishlist</h3>
+      <h3 className="text-2xl font-semibold mb-4 text-gray-700">Your Wishlist</h3>
       {products.length === 0 ? (
-        <Card className="border border-neutral">
-          <CardContent className="p-6 text-center text-muted-foreground">
-            <p className="mb-2">No items in your wishlist yet.</p>
-            <p className="text-sm">Visit the shop to add items you love!</p>
+        <Card className="border border-neutral shadow-none">
+          <CardContent className="p-6 text-center">
+            <p className="text-gray-500">No items in your wishlist yet. Visit the shop to add items!</p>
           </CardContent>
         </Card>
       ) : (
         <div className="grid grid-cols-2 gap-3">
           {products.map((product) => (
-            <Card key={product.id} className="border border-neutral">
+            <Card key={product.id} className="border border-neutral shadow-none">
               <CardContent className="p-3">
                 <img
                   src={product.image}
