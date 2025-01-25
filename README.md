@@ -1,69 +1,90 @@
-# Welcome to your Lovable project
+# Reward Hub Application
 
-## Project info
+## Overview
+Reward Hub is a comprehensive web application that combines health tracking, social features, and a rewards system. Users can track their health goals, earn rewards through various activities, and engage with a social community.
 
-**URL**: https://lovable.dev/projects/de2697d9-5b5d-4880-8fca-c705a510dda9
+## Features
 
-## How can I edit this code?
+### Health Tracking
+- Daily health goals monitoring
+- Progress visualization
+- Activity tracking with rewards
 
-There are several ways of editing your application.
+### Social Features
+- User profiles
+- Social interactions
+- Content sharing capabilities
 
-**Use Lovable**
+### Reward System
+- Points-based rewards
+- Lucky draw system
+- Achievement badges
 
-Simply visit the [Lovable Project](https://lovable.dev/projects/de2697d9-5b5d-4880-8fca-c705a510dda9) and start prompting.
+## Tech Stack
+- React + TypeScript
+- Vite for build tooling
+- Tailwind CSS for styling
+- shadcn/ui for UI components
+- React Query for data management
+- React Router for navigation
 
-Changes made via Lovable will be committed automatically to this repo.
+## Getting Started
 
-**Use your preferred IDE**
+### Prerequisites
+- Node.js (v16 or higher)
+- npm or yarn package manager
 
-If you want to work locally using your own IDE, you can clone this repo and push changes. Pushed changes will also be reflected in Lovable.
-
-The only requirement is having Node.js & npm installed - [install with nvm](https://github.com/nvm-sh/nvm#installing-and-updating)
-
-Follow these steps:
-
+### Installation
 ```sh
-# Step 1: Clone the repository using the project's Git URL.
-git clone <YOUR_GIT_URL>
+# Clone the repository
+git clone <repository-url>
 
-# Step 2: Navigate to the project directory.
-cd <YOUR_PROJECT_NAME>
+# Navigate to project directory
+cd reward-hub
 
-# Step 3: Install the necessary dependencies.
-npm i
+# Install dependencies
+npm install
 
-# Step 4: Start the development server with auto-reloading and an instant preview.
+# Start development server
 npm run dev
 ```
 
-**Edit a file directly in GitHub**
+### Environment Setup
+Make sure to set up the following environment variables:
+```
+VITE_API_URL=your_api_url
+```
 
-- Navigate to the desired file(s).
-- Click the "Edit" button (pencil icon) at the top right of the file view.
-- Make your changes and commit the changes.
+## Project Structure
+```
+src/
+├── components/     # Reusable UI components
+├── contexts/       # React contexts
+├── hooks/         # Custom hooks
+├── pages/         # Page components
+├── utils/         # Utility functions
+└── types/         # TypeScript types
+```
 
-**Use GitHub Codespaces**
+## Available Scripts
+- `npm run dev` - Start development server
+- `npm run build` - Build for production
+- `npm run preview` - Preview production build
+- `npm run lint` - Run ESLint
 
-- Navigate to the main page of your repository.
-- Click on the "Code" button (green button) near the top right.
-- Select the "Codespaces" tab.
-- Click on "New codespace" to launch a new Codespace environment.
-- Edit files directly within the Codespace and commit and push your changes once you're done.
+## Contributing
+1. Fork the repository
+2. Create your feature branch (`git checkout -b feature/AmazingFeature`)
+3. Commit your changes (`git commit -m 'Add some AmazingFeature'`)
+4. Push to the branch (`git push origin feature/AmazingFeature`)
+5. Open a Pull Request
 
-## What technologies are used for this project?
+## License
+This project is licensed under the MIT License - see the LICENSE file for details.
 
-This project is built with .
+## Support
+For support, please open an issue in the repository or contact the development team.
 
-- Vite
-- TypeScript
-- React
-- shadcn-ui
-- Tailwind CSS
-
-## How can I deploy this project?
-
-Simply open [Lovable](https://lovable.dev/projects/de2697d9-5b5d-4880-8fca-c705a510dda9) and click on Share -> Publish.
-
-## I want to use a custom domain - is that possible?
-
-We don't support custom domains (yet). If you want to deploy your project under your own domain then we recommend using Netlify. Visit our docs for more details: [Custom domains](https://docs.lovable.dev/tips-tricks/custom-domain/)
+## Acknowledgments
+- Thanks to all contributors who have helped shape this project
+- Built with [Lovable](https://lovable.dev)
