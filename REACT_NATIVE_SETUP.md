@@ -33,145 +33,219 @@ src/
 └── types/        # TypeScript types
 ```
 
-## Core Features Implementation
+## Screen Structure
 
-### 1. Authentication
-
+### Authentication Screens
 ```typescript
-// screens/LoginScreen.tsx
-import { useState } from 'react';
-import { View, TextInput, TouchableOpacity, Text } from 'react-native';
-import AsyncStorage from '@react-native-async-storage/async-storage';
+// screens/auth/LoginScreen.tsx
+import { View, TextInput, TouchableOpacity, StyleSheet } from 'react-native';
+import { Text, Button } from 'react-native-paper';
 
 const LoginScreen = () => {
-  const [email, setEmail] = useState('');
-  const [password, setPassword] = useState('');
-
-  const handleLogin = async () => {
-    // Implementation for login
-    await AsyncStorage.setItem('user', JSON.stringify({ email }));
-  };
+  return (
+    <View style={styles.container}>
+      <Text variant="headlineMedium">Welcome Back</Text>
+      <TextInput
+        placeholder="Email"
+        style={styles.input}
+        keyboardType="email-address"
+      />
+      <TextInput
+        placeholder="Password"
+        style={styles.input}
+        secureTextEntry
+      />
+      <Button mode="contained" onPress={() => {}}>
+        Login
+      </Button>
+    </View>
+  );
 };
+
+const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+    padding: 20,
+    justifyContent: 'center',
+  },
+  input: {
+    marginVertical: 8,
+    padding: 12,
+    borderWidth: 1,
+    borderRadius: 8,
+  },
+});
 ```
 
-### 2. Health Tracking
-
+### Dashboard Screen
 ```typescript
-// components/health/StepCounter.tsx
-import { useState, useEffect } from 'react';
-import { Pedometer } from 'expo-sensors';
+// screens/DashboardScreen.tsx
+import { ScrollView, View, StyleSheet } from 'react-native';
+import { Text, Card } from 'react-native-paper';
 
-const StepCounter = () => {
-  const [steps, setSteps] = useState(0);
-
-  useEffect(() => {
-    let subscription;
-    
-    const subscribe = async () => {
-      const isAvailable = await Pedometer.isAvailableAsync();
-      if (isAvailable) {
-        subscription = Pedometer.watchStepCount(result => {
-          setSteps(result.steps);
-        });
-      }
-    };
-
-    subscribe();
-    return () => subscription && subscription.remove();
-  }, []);
+const DashboardScreen = () => {
+  return (
+    <ScrollView style={styles.container}>
+      <View style={styles.header}>
+        <Text variant="headlineSmall">Dashboard</Text>
+        <Text variant="bodyLarge">Your Rewards: 100 coins</Text>
+      </View>
+      
+      <Card style={styles.card}>
+        <Card.Title title="Health Goals" />
+        <Card.Content>
+          {/* Health tracking components */}
+        </Card.Content>
+      </Card>
+      
+      <Card style={styles.card}>
+        <Card.Title title="Recent Activities" />
+        <Card.Content>
+          {/* Activity feed */}
+        </Card.Content>
+      </Card>
+    </ScrollView>
+  );
 };
+
+const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+  },
+  header: {
+    padding: 16,
+  },
+  card: {
+    margin: 16,
+  },
+});
 ```
 
-### 3. Social Features
-
+### Health Tracking Screen
 ```typescript
-// components/social/PostCreation.tsx
-import { Camera } from 'expo-camera';
-import * as ImagePicker from 'expo-image-picker';
+// screens/HealthScreen.tsx
+import { View, StyleSheet } from 'react-native';
+import { Text, ProgressBar } from 'react-native-paper';
 
-const PostCreation = () => {
-  const takePhoto = async () => {
-    const { status } = await Camera.requestCameraPermissionsAsync();
-    if (status === 'granted') {
-      // Camera implementation
-    }
-  };
-
-  const pickImage = async () => {
-    const result = await ImagePicker.launchImageLibraryAsync({
-      mediaTypes: ImagePicker.MediaTypeOptions.All,
-      allowsEditing: true,
-      quality: 1,
-    });
-  };
+const HealthScreen = () => {
+  return (
+    <View style={styles.container}>
+      <Text variant="headlineSmall">Health Tracking</Text>
+      
+      <View style={styles.goalContainer}>
+        <Text>Daily Steps</Text>
+        <ProgressBar progress={0.7} />
+        <Text>7,000 / 10,000 steps</Text>
+      </View>
+      
+      <View style={styles.goalContainer}>
+        <Text>Water Intake</Text>
+        <ProgressBar progress={0.5} />
+        <Text>4 / 8 glasses</Text>
+      </View>
+    </View>
+  );
 };
+
+const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+    padding: 16,
+  },
+  goalContainer: {
+    marginVertical: 12,
+  },
+});
 ```
 
-### 4. Rewards System
-
+### Social Features Screen
 ```typescript
-// components/rewards/LuckyDraw.tsx
-import { Animated, Easing } from 'react-native';
+// screens/SocialScreen.tsx
+import { FlatList, View, StyleSheet } from 'react-native';
+import { Text, Card, Avatar } from 'react-native-paper';
 
-const LuckyDraw = () => {
-  const spinValue = new Animated.Value(0);
-
-  const spin = spinValue.interpolate({
-    inputRange: [0, 1],
-    outputRange: ['0deg', '360deg']
-  });
-
-  const startSpin = () => {
-    Animated.timing(spinValue, {
-      toValue: 1,
-      duration: 3000,
-      easing: Easing.out(Easing.ease),
-      useNativeDriver: true
-    }).start();
-  };
+const SocialScreen = () => {
+  return (
+    <View style={styles.container}>
+      <Text variant="headlineSmall">Social Feed</Text>
+      
+      <FlatList
+        data={[]}
+        renderItem={({ item }) => (
+          <Card style={styles.post}>
+            <Card.Title
+              title={item.username}
+              left={(props) => <Avatar.Icon {...props} icon="account" />}
+            />
+            <Card.Content>
+              <Text variant="bodyMedium">{item.content}</Text>
+            </Card.Content>
+          </Card>
+        )}
+      />
+    </View>
+  );
 };
+
+const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+    padding: 16,
+  },
+  post: {
+    marginVertical: 8,
+  },
+});
 ```
 
-## Additional Mobile Features
-
-### Push Notifications
+### Rewards Screen
 ```typescript
-import * as Notifications from 'expo-notifications';
+// screens/RewardsScreen.tsx
+import { View, StyleSheet } from 'react-native';
+import { Text, Card, Button } from 'react-native-paper';
 
-const setupNotifications = async () => {
-  const { status } = await Notifications.requestPermissionsAsync();
-  if (status === 'granted') {
-    const token = await Notifications.getExpoPushTokenAsync();
-    // Store token for later use
-  }
+const RewardsScreen = () => {
+  return (
+    <View style={styles.container}>
+      <Text variant="headlineSmall">Rewards</Text>
+      
+      <Card style={styles.rewardCard}>
+        <Card.Content>
+          <Text variant="titleLarge">Lucky Draw</Text>
+          <Text variant="bodyMedium">Try your luck to win rewards!</Text>
+        </Card.Content>
+        <Card.Actions>
+          <Button mode="contained">Play Now</Button>
+        </Card.Actions>
+      </Card>
+      
+      <Card style={styles.rewardCard}>
+        <Card.Content>
+          <Text variant="titleLarge">Daily Rewards</Text>
+          <Text variant="bodyMedium">Complete daily tasks to earn coins</Text>
+        </Card.Content>
+        <Card.Actions>
+          <Button mode="contained">Claim</Button>
+        </Card.Actions>
+      </Card>
+    </View>
+  );
 };
+
+const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+    padding: 16,
+  },
+  rewardCard: {
+    marginVertical: 8,
+  },
+});
 ```
 
-### Local Storage
+## Navigation Setup
 ```typescript
-import AsyncStorage from '@react-native-async-storage/async-storage';
-
-const storeData = async (key: string, value: any) => {
-  try {
-    await AsyncStorage.setItem(key, JSON.stringify(value));
-  } catch (error) {
-    console.error('Error storing data:', error);
-  }
-};
-
-const getData = async (key: string) => {
-  try {
-    const value = await AsyncStorage.getItem(key);
-    return value ? JSON.parse(value) : null;
-  } catch (error) {
-    console.error('Error retrieving data:', error);
-    return null;
-  }
-};
-```
-
-### Navigation Setup
-```typescript
+// navigation/AppNavigator.tsx
 import { NavigationContainer } from '@react-navigation/native';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 
@@ -181,8 +255,8 @@ const AppNavigator = () => {
   return (
     <NavigationContainer>
       <Stack.Navigator>
-        <Stack.Screen name="Home" component={HomeScreen} />
-        <Stack.Screen name="Profile" component={ProfileScreen} />
+        <Stack.Screen name="Login" component={LoginScreen} />
+        <Stack.Screen name="Dashboard" component={DashboardScreen} />
         <Stack.Screen name="Health" component={HealthScreen} />
         <Stack.Screen name="Social" component={SocialScreen} />
         <Stack.Screen name="Rewards" component={RewardsScreen} />
@@ -192,37 +266,19 @@ const AppNavigator = () => {
 };
 ```
 
-## Styling Guide
-Instead of Tailwind CSS, use React Native's StyleSheet:
-
+## Theme Configuration
 ```typescript
-import { StyleSheet } from 'react-native';
+// theme/index.ts
+import { MD3LightTheme } from 'react-native-paper';
 
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    padding: 20,
-    backgroundColor: '#ffffff',
+export const theme = {
+  ...MD3LightTheme,
+  colors: {
+    ...MD3LightTheme.colors,
+    primary: '#007AFF',
+    secondary: '#5856D6',
   },
-  header: {
-    fontSize: 24,
-    fontWeight: 'bold',
-    marginBottom: 16,
-  },
-  card: {
-    backgroundColor: '#ffffff',
-    borderRadius: 8,
-    padding: 16,
-    shadowColor: '#000',
-    shadowOffset: {
-      width: 0,
-      height: 2,
-    },
-    shadowOpacity: 0.25,
-    shadowRadius: 3.84,
-    elevation: 5,
-  },
-});
+};
 ```
 
 ## Required Dependencies
@@ -250,12 +306,5 @@ const styles = StyleSheet.create({
 4. Implement proper error handling for native features
 5. Use React Native Paper components for consistent UI
 6. Implement proper permissions handling for device features
-
-## Common Issues and Solutions
-1. iOS vs Android styling differences
-2. Handling different screen sizes
-3. Permission management
-4. Deep linking setup
-5. Push notification configuration
 
 For more detailed implementation guides and troubleshooting, refer to the official documentation of each package used in the project.
