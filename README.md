@@ -1,26 +1,12 @@
 # Reward Hub Application
 
 ## Overview
-Reward Hub is a comprehensive web application that combines health tracking, social features, and a rewards system. Users can track their health goals, earn rewards through various activities, and engage with a social community.
+Reward Hub is a comprehensive application available for both web and mobile platforms that combines health tracking, social features, and a rewards system. Users can track their health goals, earn rewards through various activities, and engage with a social community.
 
-## Features
+## Web Version (Current)
+The web version is built with React + TypeScript and uses Vite for build tooling. See below for web-specific setup and features.
 
-### Health Tracking
-- Daily health goals monitoring
-- Progress visualization
-- Activity tracking with rewards
-
-### Social Features
-- User profiles
-- Social interactions
-- Content sharing capabilities
-
-### Reward System
-- Points-based rewards
-- Lucky draw system
-- Achievement badges
-
-## Tech Stack
+### Web Tech Stack
 - React + TypeScript
 - Vite for build tooling
 - Tailwind CSS for styling
@@ -28,13 +14,7 @@ Reward Hub is a comprehensive web application that combines health tracking, soc
 - React Query for data management
 - React Router for navigation
 
-## Getting Started
-
-### Prerequisites
-- Node.js (v16 or higher)
-- npm or yarn package manager
-
-### Installation
+### Web Installation
 ```sh
 # Clone the repository
 git clone <repository-url>
@@ -49,28 +29,124 @@ npm install
 npm run dev
 ```
 
-### Environment Setup
-Make sure to set up the following environment variables:
-```
-VITE_API_URL=your_api_url
+## Mobile Version (React Native)
+The mobile version provides the same core features using React Native. Below is the guide for setting up and implementing the mobile version.
+
+### Mobile Tech Stack
+- React Native
+- Expo (recommended)
+- React Navigation for routing
+- React Query for data management
+- AsyncStorage for local storage
+- React Native Paper for UI components
+
+### Mobile Setup
+```sh
+# Create new Expo project
+npx create-expo-app RewardHubMobile
+
+# Navigate to project
+cd RewardHubMobile
+
+# Install dependencies
+npx expo install @react-navigation/native @react-navigation/native-stack
+npx expo install @tanstack/react-query
+npx expo install @react-native-async-storage/async-storage
+npx expo install react-native-paper
 ```
 
-## Project Structure
-```
-src/
-├── components/     # Reusable UI components
-├── contexts/       # React contexts
-├── hooks/         # Custom hooks
-├── pages/         # Page components
-├── utils/         # Utility functions
-└── types/         # TypeScript types
+### Feature Implementation Guide
+
+#### 1. Health Tracking
+```typescript
+// Mobile implementation using React Native sensors
+import { Accelerometer } from 'expo-sensors';
+
+const PedometerComponent = () => {
+  // Implementation details for step counting
+};
 ```
 
-## Available Scripts
-- `npm run dev` - Start development server
-- `npm run build` - Build for production
-- `npm run preview` - Preview production build
-- `npm run lint` - Run ESLint
+#### 2. Social Features
+```typescript
+// Using React Native specific components
+import { FlatList, Image } from 'react-native';
+
+const SocialFeed = () => {
+  // Implementation for social feed
+};
+```
+
+#### 3. Reward System
+```typescript
+// Using AsyncStorage for local data
+import AsyncStorage from '@react-native-async-storage/async-storage';
+
+const RewardSystem = () => {
+  // Implementation for rewards
+};
+```
+
+### Key Differences from Web Version
+
+1. **Navigation**
+   - Web: React Router
+   - Mobile: React Navigation
+   ```typescript
+   import { NavigationContainer } from '@react-navigation/native';
+   import { createNativeStackNavigator } from '@react-navigation/native-stack';
+   ```
+
+2. **Storage**
+   - Web: localStorage
+   - Mobile: AsyncStorage
+   ```typescript
+   // Instead of localStorage.setItem
+   await AsyncStorage.setItem('key', value);
+   ```
+
+3. **UI Components**
+   - Web: HTML elements + shadcn/ui
+   - Mobile: React Native components + React Native Paper
+   ```typescript
+   // Web
+   <button onClick={handleClick}>Click me</button>
+   
+   // Mobile
+   <TouchableOpacity onPress={handlePress}>
+     <Text>Click me</Text>
+   </TouchableOpacity>
+   ```
+
+4. **Styling**
+   - Web: Tailwind CSS
+   - Mobile: StyleSheet
+   ```typescript
+   // Instead of Tailwind classes
+   const styles = StyleSheet.create({
+     container: {
+       flex: 1,
+       padding: 20,
+     },
+   });
+   ```
+
+### Mobile-Specific Features
+
+1. **Push Notifications**
+   ```typescript
+   import * as Notifications from 'expo-notifications';
+   ```
+
+2. **Device Sensors**
+   ```typescript
+   import { Pedometer } from 'expo-sensors';
+   ```
+
+3. **Camera Integration**
+   ```typescript
+   import { Camera } from 'expo-camera';
+   ```
 
 ## Contributing
 1. Fork the repository
