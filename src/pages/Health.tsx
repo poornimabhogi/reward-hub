@@ -23,11 +23,61 @@ const Health = () => {
     dailyRewardClaimed: false,
   });
 
+  useEffect(() => {
+    // Check if device motion is supported
+    if (window.DeviceMotionEvent) {
+      let stepCount = 0;
+      let lastAcceleration = 0;
+      const threshold = 10; // Adjust this value based on testing
+
+      const handleMotion = (event: DeviceMotionEvent) => {
+        const acceleration = event.accelerationIncludingGravity;
+        if (!acceleration) return;
+
+        const total = Math.sqrt(
+          Math.pow(acceleration.x || 0, 2) +
+          Math.pow(acceleration.y || 0, 2) +
+          Math.pow(acceleration.z || 0, 2)
+        );
+
+        const delta = Math.abs(total - lastAcceleration);
+        
+        if (delta > threshold) {
+          stepCount++;
+          setFitnessData(prev => ({
+            ...prev,
+            steps: stepCount,
+            calories: Math.floor(stepCount * 0.04),
+          }));
+        }
+        
+        lastAcceleration = total;
+      };
+
+      window.addEventListener('devicemotion', handleMotion);
+      
+      toast({
+        title: "Step Tracking Active",
+        description: "Move your device to count steps",
+      });
+
+      return () => {
+        window.removeEventListener('devicemotion', handleMotion);
+      };
+    } else {
+      toast({
+        title: "Device Motion Not Supported",
+        description: "Step tracking may not work on this device",
+        variant: "destructive",
+      });
+    }
+  }, [toast]);
+
   // Check and reward steps achievement
   useEffect(() => {
     if (fitnessData.steps >= 10000 && !fitnessData.dailyRewardClaimed) {
       const userId = localStorage.getItem('userId') || 'anonymous';
-      updateUserEarnings(userId, 50); // Award 50 coins for completing daily steps
+      updateUserEarnings(userId, 50);
       
       toast({
         title: "Congratulations! 🎉",
@@ -40,19 +90,6 @@ const Health = () => {
       }));
     }
   }, [fitnessData.steps, toast]);
-
-  // Simulate pedometer functionality
-  useEffect(() => {
-    const interval = setInterval(() => {
-      setFitnessData(prev => ({
-        ...prev,
-        steps: prev.steps + Math.floor(Math.random() * 10),
-        calories: Math.floor(prev.steps * 0.04),
-      }));
-    }, 5000);
-
-    return () => clearInterval(interval);
-  }, []);
 
   const addWaterIntake = () => {
     setFitnessData(prev => ({
