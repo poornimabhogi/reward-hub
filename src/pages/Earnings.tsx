@@ -1,8 +1,10 @@
 import { useQuery } from "@tanstack/react-query";
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { ArrowLeft, Info } from "lucide-react";
+import { Switch } from "@/components/ui/switch";
+import { ArrowLeft, Info, TrendingUp, DollarSign, Check } from "lucide-react";
 import { useNavigate } from "react-router-dom";
+import { toast } from "sonner";
 import {
   Accordion,
   AccordionContent,
@@ -35,6 +37,24 @@ const Earnings = () => {
     },
   });
 
+  const handleEarningsToggle = async (enabled: boolean) => {
+    try {
+      const response = await fetch('/api/earnings/toggle', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ enabled }),
+      });
+
+      if (response.ok) {
+        toast.success(enabled ? "Earnings features activated!" : "Earnings features deactivated");
+      }
+    } catch (error) {
+      toast.error("Failed to update earnings status");
+    }
+  };
+
   return (
     <div className="min-h-screen bg-white">
       <div className="fixed inset-0 overflow-y-auto">
@@ -49,24 +69,57 @@ const Earnings = () => {
           </Button>
 
           <div className="space-y-6">
-            <div>
-              <h1 className="text-2xl font-bold mb-2">Earnings Dashboard</h1>
-              <p className="text-muted-foreground">Track your earnings and understand how you can maximize your revenue.</p>
+            <div className="flex items-center justify-between">
+              <div>
+                <h1 className="text-2xl font-bold mb-2">Earnings Dashboard</h1>
+                <p className="text-muted-foreground">Track your earnings and understand how you can maximize your revenue.</p>
+              </div>
+              <div className="flex items-center gap-2">
+                <span className="text-sm text-muted-foreground">Enable Earnings</span>
+                <Switch onCheckedChange={handleEarningsToggle} />
+              </div>
             </div>
 
             <div className="grid gap-6">
               <Card className="p-6 bg-white shadow-md">
-                <h2 className="text-lg font-semibold mb-2">Total Earnings</h2>
+                <div className="flex items-center justify-between mb-4">
+                  <h2 className="text-lg font-semibold">Total Earnings</h2>
+                  <DollarSign className="h-5 w-5 text-primary" />
+                </div>
                 <p className="text-3xl font-bold text-primary">
                   {isLoading ? "Loading..." : `$${earningsData?.total || 0}`}
                 </p>
               </Card>
 
               <Card className="p-6 bg-white shadow-md">
-                <h2 className="text-lg font-semibold mb-2">Pending Payouts</h2>
+                <div className="flex items-center justify-between mb-4">
+                  <h2 className="text-lg font-semibold">Pending Payouts</h2>
+                  <TrendingUp className="h-5 w-5 text-primary" />
+                </div>
                 <p className="text-3xl font-bold text-primary">
                   {isLoadingPayouts ? "Loading..." : `$${pendingPayouts || 0}`}
                 </p>
+              </Card>
+
+              <Card className="p-6 bg-white shadow-md">
+                <div className="flex items-center gap-2 mb-4">
+                  <Check className="h-5 w-5 text-green-500" />
+                  <h2 className="text-lg font-semibold">Achievement Tracking</h2>
+                </div>
+                <div className="space-y-4">
+                  <div>
+                    <p className="text-sm text-muted-foreground mb-1">Total Views</p>
+                    <div className="text-xl font-semibold">{earningsData?.totalViews || 0}</div>
+                  </div>
+                  <div>
+                    <p className="text-sm text-muted-foreground mb-1">Creator Level</p>
+                    <div className="text-xl font-semibold capitalize">{earningsData?.creatorLevel || "Beginner"}</div>
+                  </div>
+                  <div>
+                    <p className="text-sm text-muted-foreground mb-1">Reels Posted</p>
+                    <div className="text-xl font-semibold">{earningsData?.reelsCount || 0}</div>
+                  </div>
+                </div>
               </Card>
             </div>
 
