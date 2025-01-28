@@ -70,12 +70,8 @@ const Earnings = () => {
 
           <div className="space-y-6">
             <div className="flex items-center justify-between">
-              <div>
-                <h1 className="text-2xl font-bold mb-2">Earnings Dashboard</h1>
-                <p className="text-muted-foreground">Track your earnings and understand how you can maximize your revenue.</p>
-              </div>
-              <div className="flex items-center gap-2">
-                <span className="text-sm text-muted-foreground">Enable Earnings</span>
+              <div className="flex items-center gap-4">
+                <h1 className="text-2xl font-bold">Earnings Dashboard</h1>
                 <Switch onCheckedChange={handleEarningsToggle} />
               </div>
             </div>
@@ -124,11 +120,6 @@ const Earnings = () => {
             </div>
 
             <Card className="p-6 bg-white shadow-md">
-              <div className="flex items-center gap-2 mb-4">
-                <Info className="h-5 w-5 text-primary" />
-                <h2 className="text-lg font-semibold">Monetization Rules</h2>
-              </div>
-              
               <Accordion type="single" collapsible className="w-full">
                 <AccordionItem value="revenue-share">
                   <AccordionTrigger>Revenue Sharing</AccordionTrigger>
