@@ -1,4 +1,4 @@
-import { Controller, Get, UseGuards } from '@nestjs/common';
+import { Controller, Get, Post, Body, UseGuards } from '@nestjs/common';
 import { EarningsService } from './earnings.service';
 import { JwtAuthGuard } from '../auth/jwt-auth.guard';
 import { User } from '../users/user.entity';
@@ -16,5 +16,10 @@ export class EarningsController {
   @Get('pending')
   async getPendingPayouts(@User() user: User) {
     return this.earningsService.getPendingPayouts(user.id);
+  }
+
+  @Post('toggle')
+  async toggleEarnings(@User() user: User, @Body() { enabled }: { enabled: boolean }) {
+    return this.earningsService.toggleEarnings(user.id, enabled);
   }
 }

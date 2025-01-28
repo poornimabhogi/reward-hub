@@ -44,4 +44,10 @@ export class EarningsService {
 
     return Number(result.total) || 0;
   }
+
+  async toggleEarnings(userId: number, enabled: boolean): Promise<{ enabled: boolean }> {
+    // In a real application, you would update the user's earnings status in the database
+    // For now, we'll just return the status
+    return { enabled };
+  }
 }
