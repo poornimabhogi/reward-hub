@@ -11,9 +11,11 @@ import {
   AccordionItem,
   AccordionTrigger,
 } from "@/components/ui/accordion";
+import { useState } from "react";
 
 const Earnings = () => {
   const navigate = useNavigate();
+  const [isEnabled, setIsEnabled] = useState(false);
 
   const { data: earningsData, isLoading } = useQuery({
     queryKey: ['earnings'],
@@ -48,6 +50,7 @@ const Earnings = () => {
       });
 
       if (response.ok) {
+        setIsEnabled(enabled);
         toast.success(enabled ? "Earnings features activated!" : "Earnings features deactivated");
       }
     } catch (error) {
@@ -72,52 +75,57 @@ const Earnings = () => {
             <div className="flex items-center justify-between">
               <div className="flex items-center gap-4">
                 <h1 className="text-2xl font-bold">Earnings Dashboard</h1>
-                <Switch onCheckedChange={handleEarningsToggle} />
+                <Switch 
+                  checked={isEnabled}
+                  onCheckedChange={handleEarningsToggle} 
+                />
               </div>
             </div>
 
-            <div className="grid gap-6">
-              <Card className="p-6 bg-white shadow-md">
-                <div className="flex items-center justify-between mb-4">
-                  <h2 className="text-lg font-semibold">Total Earnings</h2>
-                  <DollarSign className="h-5 w-5 text-primary" />
-                </div>
-                <p className="text-3xl font-bold text-primary">
-                  {isLoading ? "Loading..." : `$${earningsData?.total || 0}`}
-                </p>
-              </Card>
+            {isEnabled && (
+              <div className="grid gap-6">
+                <Card className="p-6 bg-white shadow-md">
+                  <div className="flex items-center justify-between mb-4">
+                    <h2 className="text-lg font-semibold">Total Earnings</h2>
+                    <DollarSign className="h-5 w-5 text-primary" />
+                  </div>
+                  <p className="text-3xl font-bold text-primary">
+                    {isLoading ? "Loading..." : `$${earningsData?.total || 0}`}
+                  </p>
+                </Card>
 
-              <Card className="p-6 bg-white shadow-md">
-                <div className="flex items-center justify-between mb-4">
-                  <h2 className="text-lg font-semibold">Pending Payouts</h2>
-                  <TrendingUp className="h-5 w-5 text-primary" />
-                </div>
-                <p className="text-3xl font-bold text-primary">
-                  {isLoadingPayouts ? "Loading..." : `$${pendingPayouts || 0}`}
-                </p>
-              </Card>
+                <Card className="p-6 bg-white shadow-md">
+                  <div className="flex items-center justify-between mb-4">
+                    <h2 className="text-lg font-semibold">Pending Payouts</h2>
+                    <TrendingUp className="h-5 w-5 text-primary" />
+                  </div>
+                  <p className="text-3xl font-bold text-primary">
+                    {isLoadingPayouts ? "Loading..." : `$${pendingPayouts || 0}`}
+                  </p>
+                </Card>
 
-              <Card className="p-6 bg-white shadow-md">
-                <div className="flex items-center gap-2 mb-4">
-                  <Check className="h-5 w-5 text-green-500" />
-                  <h2 className="text-lg font-semibold">Achievement Tracking</h2>
-                </div>
-                <div className="space-y-4">
-                  <div>
-                    <p className="text-sm text-muted-foreground mb-1">Total Views</p>
-                    <div className="text-xl font-semibold">{earningsData?.totalViews || 0}</div>
+                <Card className="p-6 bg-white shadow-md">
+                  <div className="flex items-center gap-2 mb-4">
+                    <Check className="h-5 w-5 text-green-500" />
+                    <h2 className="text-lg font-semibold">Achievement Tracking</h2>
                   </div>
-                  <div>
-                    <p className="text-sm text-muted-foreground mb-1">Creator Level</p>
-                    <div className="text-xl font-semibold capitalize">{earningsData?.creatorLevel || "Beginner"}</div>
+                  <div className="space-y-4">
+                    <div>
+                      <p className="text-sm text-muted-foreground mb-1">Total Views</p>
+                      <div className="text-xl font-semibold">{earningsData?.totalViews || 0}</div>
+                    </div>
+                    <div>
+                      <p className="text-sm text-muted-foreground mb-1">Creator Level</p>
+                      <div className="text-xl font-semibold capitalize">{earningsData?.creatorLevel || "Beginner"}</div>
+                    </div>
+                    <div>
+                      <p className="text-sm text-muted-foreground mb-1">Reels Posted</p>
+                      <div className="text-xl font-semibold">{earningsData?.reelsCount || 0}</div>
+                    </div>
                   </div>
-                  <div>
-                    <p className="text-sm text-muted-foreground mb-1">Reels Posted</p>
-                    <div className="text-xl font-semibold">{earningsData?.reelsCount || 0}</div>
-                  </div>
-                </div>
-              </Card>
-            </div>
+                </Card>
+              </div>
+            )}
 
             <Card className="p-6 bg-white shadow-md">
               <Accordion type="single" collapsible className="w-full">
