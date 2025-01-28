@@ -1,4 +1,4 @@
-import { useQuery } from "@tanstack/react-query";
+import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Switch } from "@/components/ui/switch";
@@ -11,12 +11,14 @@ import {
   AccordionItem,
   AccordionTrigger,
 } from "@/components/ui/accordion";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 
 const Earnings = () => {
   const navigate = useNavigate();
+  const queryClient = useQueryClient();
   const [isEnabled, setIsEnabled] = useState(false);
 
+  // Set up polling for real-time updates
   const { data: earningsData, isLoading } = useQuery({
     queryKey: ['earnings'],
     queryFn: async () => {
@@ -26,6 +28,7 @@ const Earnings = () => {
       }
       return response.json();
     },
+    refetchInterval: isEnabled ? 5000 : false, // Poll every 5 seconds when enabled
   });
 
   const { data: pendingPayouts, isLoading: isLoadingPayouts } = useQuery({
@@ -37,6 +40,7 @@ const Earnings = () => {
       }
       return response.json();
     },
+    refetchInterval: isEnabled ? 5000 : false, // Poll every 5 seconds when enabled
   });
 
   const handleEarningsToggle = async (enabled: boolean) => {
@@ -51,6 +55,9 @@ const Earnings = () => {
 
       if (response.ok) {
         setIsEnabled(enabled);
+        // Invalidate queries to trigger immediate refetch
+        queryClient.invalidateQueries({ queryKey: ['earnings'] });
+        queryClient.invalidateQueries({ queryKey: ['pending-payouts'] });
         toast.success(enabled ? "Earnings features activated!" : "Earnings features deactivated");
       }
     } catch (error) {
