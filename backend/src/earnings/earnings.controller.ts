@@ -18,6 +18,11 @@ export class EarningsController {
     return this.earningsService.getPendingPayouts(user.id);
   }
 
+  @Get('status')
+  async getEarningsStatus(@User() user: User) {
+    return this.earningsService.getEarningsStatus(user.id);
+  }
+
   @Post('toggle')
   async toggleEarnings(@User() user: User, @Body() { enabled }: { enabled: boolean }) {
     return this.earningsService.toggleEarnings(user.id, enabled);

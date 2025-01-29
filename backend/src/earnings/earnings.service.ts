@@ -6,6 +6,9 @@ import { User } from '../users/user.entity';
 
 @Injectable()
 export class EarningsService {
+  // In-memory store for earnings status (in production, this should be in the database)
+  private earningsStatusMap: Map<number, boolean> = new Map();
+
   constructor(
     @InjectRepository(Earning)
     private earningsRepository: Repository<Earning>,
@@ -46,8 +49,11 @@ export class EarningsService {
   }
 
   async toggleEarnings(userId: number, enabled: boolean): Promise<{ enabled: boolean }> {
-    // In a real application, you would update the user's earnings status in the database
-    // For now, we'll just return the status
+    this.earningsStatusMap.set(userId, enabled);
     return { enabled };
+  }
+
+  async getEarningsStatus(userId: number): Promise<{ enabled: boolean }> {
+    return { enabled: this.earningsStatusMap.get(userId) || false };
   }
 }
