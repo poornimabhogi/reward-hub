@@ -9,6 +9,7 @@ import { TimeCapsules } from "@/components/profile/TimeCapsules";
 import { CreatorProgress } from "@/components/profile/CreatorProgress";
 import { Status, FollowedUser, UserProfile } from "@/types/profile";
 import { TimeCapsule } from "@/utils/timeCapsuleUtils";
+import { useQuery } from "@tanstack/react-query";
 
 const Profile = () => {
   const [userProfile, setUserProfile] = useState<UserProfile>({
@@ -24,6 +25,32 @@ const Profile = () => {
   const [isCreatePostOpen, setIsCreatePostOpen] = useState(false);
   const [selectedPostType, setSelectedPostType] = useState<'timeCapsule' | 'feature' | 'reel'>('feature');
   
+  // Query to check if earnings is enabled
+  const { data: earningsEnabled = false } = useQuery({
+    queryKey: ['earnings-enabled'],
+    queryFn: async () => {
+      const response = await fetch('/api/earnings/status');
+      if (!response.ok) {
+        return false;
+      }
+      const data = await response.json();
+      return data.enabled;
+    }
+  });
+
+  // Query for creator stats, only runs if earnings is enabled
+  const { data: creatorStats = { totalViews: 0, creatorLevel: 'beginner', reelsCount: 0 } } = useQuery({
+    queryKey: ['creator-stats'],
+    queryFn: async () => {
+      const response = await fetch('/api/creator/stats');
+      if (!response.ok) {
+        throw new Error('Failed to fetch creator stats');
+      }
+      return response.json();
+    },
+    enabled: earningsEnabled // Only fetch if earnings is enabled
+  });
+
   const [followedUsers, setFollowedUsers] = useState<FollowedUser[]>(() => {
     const storedUsers = localStorage.getItem('followedUsers');
     return storedUsers ? JSON.parse(storedUsers) : [];
@@ -76,13 +103,6 @@ const Profile = () => {
     setIsCreatePostOpen(false);
   };
 
-  // Mock creator stats for demonstration - replace with actual API data
-  const creatorStats = {
-    totalViews: 3500,
-    creatorLevel: 'bronze' as const,
-    reelsCount: 12
-  };
-
   return (
     <div className="container mx-auto px-4 py-4 max-w-2xl">
       <div className="bg-white rounded-lg shadow-sm p-4 mb-4">
@@ -108,11 +128,13 @@ const Profile = () => {
           <ProfileSettings userProfile={userProfile} />
         </div>
         
-        <CreatorProgress 
-          totalViews={creatorStats.totalViews}
-          creatorLevel={creatorStats.creatorLevel}
-          reelsCount={creatorStats.reelsCount}
-        />
+        {earningsEnabled && (
+          <CreatorProgress 
+            totalViews={creatorStats.totalViews}
+            creatorLevel={creatorStats.creatorLevel}
+            reelsCount={creatorStats.reelsCount}
+          />
+        )}
       </div>
 
       <TimeCapsules timeCapsules={timeCapsules} />
