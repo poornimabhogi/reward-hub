@@ -16,10 +16,22 @@ import { useState, useEffect } from "react";
 // Helper function to get auth headers
 const getAuthHeaders = () => {
   const token = localStorage.getItem('token');
+  if (!token) {
+    throw new Error('No authentication token found');
+  }
   return {
     'Authorization': `Bearer ${token}`,
     'Content-Type': 'application/json',
   };
+};
+
+// Helper function to handle API responses
+const handleApiResponse = async (response: Response) => {
+  if (!response.ok) {
+    const errorData = await response.json().catch(() => ({ message: 'An error occurred' }));
+    throw new Error(errorData.message || `HTTP error! status: ${response.status}`);
+  }
+  return response.json();
 };
 
 const Earnings = () => {
@@ -31,17 +43,20 @@ const Earnings = () => {
   const { data: statusData } = useQuery({
     queryKey: ['earnings-status'],
     queryFn: async () => {
-      const response = await fetch('/earnings/status', {
-        headers: getAuthHeaders(),
-      });
-      if (!response.ok) {
-        throw new Error('Failed to fetch earnings status');
+      try {
+        const response = await fetch('/api/earnings/status', {
+          headers: getAuthHeaders(),
+        });
+        return handleApiResponse(response);
+      } catch (error) {
+        console.error('Status fetch error:', error);
+        toast.error('Failed to fetch earnings status');
+        throw error;
       }
-      return response.json();
     },
+    retry: 1,
   });
 
-  // Update isEnabled when status is fetched
   useEffect(() => {
     if (statusData) {
       setIsEnabled(statusData.enabled);
@@ -51,53 +66,63 @@ const Earnings = () => {
   const { data: earningsData, isLoading } = useQuery({
     queryKey: ['earnings'],
     queryFn: async () => {
-      const response = await fetch('/earnings', {
-        headers: getAuthHeaders(),
-      });
-      if (!response.ok) {
-        throw new Error('Failed to fetch earnings');
+      try {
+        const response = await fetch('/api/earnings', {
+          headers: getAuthHeaders(),
+        });
+        return handleApiResponse(response);
+      } catch (error) {
+        console.error('Earnings fetch error:', error);
+        toast.error('Failed to fetch earnings data');
+        throw error;
       }
-      return response.json();
     },
     refetchInterval: isEnabled ? 5000 : false,
+    enabled: isEnabled,
   });
 
   const { data: pendingPayouts, isLoading: isLoadingPayouts } = useQuery({
     queryKey: ['pending-payouts'],
     queryFn: async () => {
-      const response = await fetch('/earnings/pending', {
-        headers: getAuthHeaders(),
-      });
-      if (!response.ok) {
-        throw new Error('Failed to fetch pending payouts');
+      try {
+        const response = await fetch('/api/earnings/pending', {
+          headers: getAuthHeaders(),
+        });
+        return handleApiResponse(response);
+      } catch (error) {
+        console.error('Pending payouts fetch error:', error);
+        toast.error('Failed to fetch pending payouts');
+        throw error;
       }
-      return response.json();
     },
     refetchInterval: isEnabled ? 5000 : false,
+    enabled: isEnabled,
   });
 
   const handleEarningsToggle = async (enabled: boolean) => {
     try {
-      const response = await fetch('/earnings/toggle', {
+      const response = await fetch('/api/earnings/toggle', {
         method: 'POST',
         headers: getAuthHeaders(),
         body: JSON.stringify({ enabled }),
       });
 
-      if (response.ok) {
-        const data = await response.json();
-        setIsEnabled(data.enabled);
-        queryClient.invalidateQueries({ queryKey: ['earnings'] });
-        queryClient.invalidateQueries({ queryKey: ['pending-payouts'] });
-        queryClient.invalidateQueries({ queryKey: ['earnings-status'] });
-        toast.success(enabled ? "Earnings features activated!" : "Earnings features deactivated");
-      } else {
-        const errorData = await response.json().catch(() => ({ message: 'Failed to update earnings status' }));
-        throw new Error(errorData.message || 'Failed to update earnings status');
-      }
+      const data = await handleApiResponse(response);
+      setIsEnabled(data.enabled);
+      
+      // Invalidate queries only after successful toggle
+      await Promise.all([
+        queryClient.invalidateQueries({ queryKey: ['earnings'] }),
+        queryClient.invalidateQueries({ queryKey: ['pending-payouts'] }),
+        queryClient.invalidateQueries({ queryKey: ['earnings-status'] }),
+      ]);
+
+      toast.success(enabled ? "Earnings features activated!" : "Earnings features deactivated");
     } catch (error) {
       console.error('Toggle error:', error);
       toast.error(error instanceof Error ? error.message : "Failed to update earnings status");
+      // Revert the switch state on error
+      setIsEnabled(!enabled);
     }
   };
 
