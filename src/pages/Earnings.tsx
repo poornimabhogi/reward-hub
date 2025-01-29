@@ -13,6 +13,15 @@ import {
 } from "@/components/ui/accordion";
 import { useState, useEffect } from "react";
 
+// Helper function to get auth headers
+const getAuthHeaders = () => {
+  const token = localStorage.getItem('token'); // Assuming token is stored in localStorage
+  return {
+    'Authorization': `Bearer ${token}`,
+    'Content-Type': 'application/json',
+  };
+};
+
 const Earnings = () => {
   const navigate = useNavigate();
   const queryClient = useQueryClient();
@@ -22,7 +31,9 @@ const Earnings = () => {
   const { data: statusData } = useQuery({
     queryKey: ['earnings-status'],
     queryFn: async () => {
-      const response = await fetch('/earnings/status');
+      const response = await fetch('/earnings/status', {
+        headers: getAuthHeaders(),
+      });
       if (!response.ok) {
         throw new Error('Failed to fetch earnings status');
       }
@@ -41,7 +52,9 @@ const Earnings = () => {
   const { data: earningsData, isLoading } = useQuery({
     queryKey: ['earnings'],
     queryFn: async () => {
-      const response = await fetch('/earnings');
+      const response = await fetch('/earnings', {
+        headers: getAuthHeaders(),
+      });
       if (!response.ok) {
         throw new Error('Failed to fetch earnings');
       }
@@ -53,7 +66,9 @@ const Earnings = () => {
   const { data: pendingPayouts, isLoading: isLoadingPayouts } = useQuery({
     queryKey: ['pending-payouts'],
     queryFn: async () => {
-      const response = await fetch('/earnings/pending');
+      const response = await fetch('/earnings/pending', {
+        headers: getAuthHeaders(),
+      });
       if (!response.ok) {
         throw new Error('Failed to fetch pending payouts');
       }
@@ -66,9 +81,7 @@ const Earnings = () => {
     try {
       const response = await fetch('/earnings/toggle', {
         method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
+        headers: getAuthHeaders(),
         body: JSON.stringify({ enabled }),
       });
 
@@ -80,10 +93,12 @@ const Earnings = () => {
         queryClient.invalidateQueries({ queryKey: ['earnings-status'] });
         toast.success(enabled ? "Earnings features activated!" : "Earnings features deactivated");
       } else {
-        throw new Error('Failed to update earnings status');
+        const errorData = await response.json();
+        throw new Error(errorData.message || 'Failed to update earnings status');
       }
     } catch (error) {
-      toast.error("Failed to update earnings status");
+      console.error('Toggle error:', error);
+      toast.error(error instanceof Error ? error.message : "Failed to update earnings status");
     }
   };
 
