@@ -18,11 +18,30 @@ const Earnings = () => {
   const queryClient = useQueryClient();
   const [isEnabled, setIsEnabled] = useState(false);
 
+  // Get initial earnings status
+  const { data: statusData } = useQuery({
+    queryKey: ['earnings-status'],
+    queryFn: async () => {
+      const response = await fetch('/earnings/status');
+      if (!response.ok) {
+        throw new Error('Failed to fetch earnings status');
+      }
+      return response.json();
+    },
+  });
+
+  // Update isEnabled when status is fetched
+  useEffect(() => {
+    if (statusData) {
+      setIsEnabled(statusData.enabled);
+    }
+  }, [statusData]);
+
   // Set up polling for real-time updates
   const { data: earningsData, isLoading } = useQuery({
     queryKey: ['earnings'],
     queryFn: async () => {
-      const response = await fetch('/api/earnings');
+      const response = await fetch('/earnings');
       if (!response.ok) {
         throw new Error('Failed to fetch earnings');
       }
@@ -34,7 +53,7 @@ const Earnings = () => {
   const { data: pendingPayouts, isLoading: isLoadingPayouts } = useQuery({
     queryKey: ['pending-payouts'],
     queryFn: async () => {
-      const response = await fetch('/api/earnings/pending');
+      const response = await fetch('/earnings/pending');
       if (!response.ok) {
         throw new Error('Failed to fetch pending payouts');
       }
@@ -45,7 +64,7 @@ const Earnings = () => {
 
   const handleEarningsToggle = async (enabled: boolean) => {
     try {
-      const response = await fetch('/api/earnings/toggle', {
+      const response = await fetch('/earnings/toggle', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -58,7 +77,10 @@ const Earnings = () => {
         // Invalidate queries to trigger immediate refetch
         queryClient.invalidateQueries({ queryKey: ['earnings'] });
         queryClient.invalidateQueries({ queryKey: ['pending-payouts'] });
+        queryClient.invalidateQueries({ queryKey: ['earnings-status'] });
         toast.success(enabled ? "Earnings features activated!" : "Earnings features deactivated");
+      } else {
+        throw new Error('Failed to update earnings status');
       }
     } catch (error) {
       toast.error("Failed to update earnings status");
