@@ -15,7 +15,7 @@ import { useState, useEffect } from "react";
 
 // Helper function to get auth headers
 const getAuthHeaders = () => {
-  const token = localStorage.getItem('token'); // Assuming token is stored in localStorage
+  const token = localStorage.getItem('token');
   return {
     'Authorization': `Bearer ${token}`,
     'Content-Type': 'application/json',
@@ -48,7 +48,6 @@ const Earnings = () => {
     }
   }, [statusData]);
 
-  // Set up polling for real-time updates
   const { data: earningsData, isLoading } = useQuery({
     queryKey: ['earnings'],
     queryFn: async () => {
@@ -60,7 +59,7 @@ const Earnings = () => {
       }
       return response.json();
     },
-    refetchInterval: isEnabled ? 5000 : false, // Poll every 5 seconds when enabled
+    refetchInterval: isEnabled ? 5000 : false,
   });
 
   const { data: pendingPayouts, isLoading: isLoadingPayouts } = useQuery({
@@ -74,7 +73,7 @@ const Earnings = () => {
       }
       return response.json();
     },
-    refetchInterval: isEnabled ? 5000 : false, // Poll every 5 seconds when enabled
+    refetchInterval: isEnabled ? 5000 : false,
   });
 
   const handleEarningsToggle = async (enabled: boolean) => {
@@ -86,14 +85,14 @@ const Earnings = () => {
       });
 
       if (response.ok) {
-        setIsEnabled(enabled);
-        // Invalidate queries to trigger immediate refetch
+        const data = await response.json();
+        setIsEnabled(data.enabled);
         queryClient.invalidateQueries({ queryKey: ['earnings'] });
         queryClient.invalidateQueries({ queryKey: ['pending-payouts'] });
         queryClient.invalidateQueries({ queryKey: ['earnings-status'] });
         toast.success(enabled ? "Earnings features activated!" : "Earnings features deactivated");
       } else {
-        const errorData = await response.json();
+        const errorData = await response.json().catch(() => ({ message: 'Failed to update earnings status' }));
         throw new Error(errorData.message || 'Failed to update earnings status');
       }
     } catch (error) {
@@ -121,7 +120,7 @@ const Earnings = () => {
                 <h1 className="text-2xl font-bold">Earnings Dashboard</h1>
                 <Switch 
                   checked={isEnabled}
-                  onCheckedChange={handleEarningsToggle} 
+                  onCheckedChange={handleEarningsToggle}
                 />
               </div>
             </div>
