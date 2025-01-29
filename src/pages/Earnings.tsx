@@ -2,10 +2,9 @@ import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Switch } from "@/components/ui/switch";
-import { ArrowLeft, Info, TrendingUp, DollarSign, Check, UserPlus } from "lucide-react";
+import { ArrowLeft, Info, TrendingUp, DollarSign, Check } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import { toast } from "sonner";
-import { useAuth } from "@/contexts/AuthContext";
 import {
   Accordion,
   AccordionContent,
@@ -18,7 +17,7 @@ import { useState, useEffect } from "react";
 const getAuthHeaders = () => {
   const token = localStorage.getItem('token');
   if (!token) {
-    return null;
+    throw new Error('No authentication token found');
   }
   return {
     'Authorization': `Bearer ${token}`,
@@ -35,57 +34,10 @@ const handleApiResponse = async (response: Response) => {
   return response.json();
 };
 
-const GuestView = () => {
-  const navigate = useNavigate();
-  
-  return (
-    <div className="flex flex-col items-center justify-center space-y-6 p-8">
-      <div className="text-center space-y-4">
-        <UserPlus className="h-16 w-16 text-primary mx-auto" />
-        <h2 className="text-2xl font-bold">Enable Earnings Dashboard</h2>
-        <p className="text-muted-foreground max-w-md">
-          Register or sign in to access the earnings dashboard and start monetizing your content.
-        </p>
-      </div>
-      <div className="flex gap-4">
-        <Button onClick={() => navigate("/signup")}>
-          Register Now
-        </Button>
-        <Button variant="outline" onClick={() => navigate("/login")}>
-          Sign In
-        </Button>
-      </div>
-    </div>
-  );
-};
-
 const Earnings = () => {
   const navigate = useNavigate();
   const queryClient = useQueryClient();
   const [isEnabled, setIsEnabled] = useState(false);
-  const { isAuthenticated } = useAuth();
-  const headers = getAuthHeaders();
-
-  // If user is not authenticated, show guest view
-  if (!isAuthenticated || !headers) {
-    return (
-      <div className="min-h-screen bg-white">
-        <div className="fixed inset-0 overflow-y-auto">
-          <div className="container max-w-2xl mx-auto px-4 py-8">
-            <Button
-              variant="ghost"
-              className="mb-6"
-              onClick={() => navigate(-1)}
-            >
-              <ArrowLeft className="h-4 w-4 mr-2" />
-              Back
-            </Button>
-            <GuestView />
-          </div>
-        </div>
-      </div>
-    );
-  }
 
   // Get initial earnings status
   const { data: statusData } = useQuery({
@@ -93,7 +45,7 @@ const Earnings = () => {
     queryFn: async () => {
       try {
         const response = await fetch('/api/earnings/status', {
-          headers,
+          headers: getAuthHeaders(),
         });
         return handleApiResponse(response);
       } catch (error) {
@@ -103,7 +55,6 @@ const Earnings = () => {
       }
     },
     retry: 1,
-    enabled: isAuthenticated,
   });
 
   useEffect(() => {
@@ -152,13 +103,14 @@ const Earnings = () => {
     try {
       const response = await fetch('/api/earnings/toggle', {
         method: 'POST',
-        headers,
+        headers: getAuthHeaders(),
         body: JSON.stringify({ enabled }),
       });
 
       const data = await handleApiResponse(response);
       setIsEnabled(data.enabled);
       
+      // Invalidate queries only after successful toggle
       await Promise.all([
         queryClient.invalidateQueries({ queryKey: ['earnings'] }),
         queryClient.invalidateQueries({ queryKey: ['pending-payouts'] }),
@@ -169,6 +121,7 @@ const Earnings = () => {
     } catch (error) {
       console.error('Toggle error:', error);
       toast.error(error instanceof Error ? error.message : "Failed to update earnings status");
+      // Revert the switch state on error
       setIsEnabled(!enabled);
     }
   };
