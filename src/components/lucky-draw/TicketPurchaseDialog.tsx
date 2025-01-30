@@ -3,6 +3,7 @@ import { Coins } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useToast } from "@/hooks/use-toast";
 import { createCheckoutSession } from "@/utils/stripe";
+import { useQuery } from "@tanstack/react-query";
 import {
   DialogContent,
   DialogHeader,
@@ -33,29 +34,67 @@ export const TicketPurchaseDialog = ({
   
   const TICKET_PRICE_CASH = 1;
   const TICKET_PRICE_COINS = 50;
-  const userCoins = parseInt(localStorage.getItem('userCoins') || '1000');
 
-  const handlePurchaseWithCoins = () => {
+  // Fetch actual reward balance
+  const { data: userCoins = 0, isLoading: isLoadingRewards } = useQuery({
+    queryKey: ['rewards', 'balance'],
+    queryFn: async () => {
+      const response = await fetch('/api/rewards/balance', {
+        headers: {
+          'Authorization': `Bearer ${localStorage.getItem('token')}`
+        }
+      });
+      if (!response.ok) {
+        throw new Error('Failed to fetch rewards');
+      }
+      const data = await response.json();
+      return data;
+    },
+  });
+
+  const handlePurchaseWithCoins = async () => {
     const totalCost = parseInt(ticketQuantity) * TICKET_PRICE_COINS;
     if (userCoins >= totalCost) {
-      const remainingCoins = userCoins - totalCost;
-      localStorage.setItem('userCoins', remainingCoins.toString());
-      
-      // Create and store tickets
-      const userId = localStorage.getItem('userId') || 'anonymous';
-      const eventId = 'monthly_2024_04';
-      
-      for (let i = 0; i < parseInt(ticketQuantity); i++) {
-        const ticket = createTicket(userId, eventId);
-        storeTicket(ticket);
+      try {
+        // Deduct coins using the rewards API
+        const response = await fetch('/api/rewards/spend', {
+          method: 'POST',
+          headers: {
+            'Authorization': `Bearer ${localStorage.getItem('token')}`,
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({
+            amount: totalCost,
+            reason: `Purchased ${ticketQuantity} lucky draw ticket(s)`,
+          }),
+        });
+
+        if (!response.ok) {
+          throw new Error('Failed to spend coins');
+        }
+        
+        // Create and store tickets
+        const userId = localStorage.getItem('userId') || 'anonymous';
+        const eventId = 'monthly_2024_04';
+        
+        for (let i = 0; i < parseInt(ticketQuantity); i++) {
+          const ticket = createTicket(userId, eventId);
+          storeTicket(ticket);
+        }
+        
+        onPurchaseComplete();
+        setIsDialogOpen(false);
+        toast({
+          title: "Successfully Enrolled!",
+          description: `Purchased ${ticketQuantity} ticket(s) for ${totalCost} coins.`,
+        });
+      } catch (error) {
+        toast({
+          title: "Purchase Failed",
+          description: "Failed to complete the purchase. Please try again.",
+          variant: "destructive",
+        });
       }
-      
-      onPurchaseComplete();
-      setIsDialogOpen(false);
-      toast({
-        title: "Successfully Enrolled!",
-        description: `Purchased ${ticketQuantity} ticket(s) for ${totalCost} coins.`,
-      });
     } else {
       toast({
         title: "Insufficient Coins",
@@ -136,13 +175,18 @@ export const TicketPurchaseDialog = ({
         {paymentMethod === 'coins' && (
           <div className="flex items-center gap-2 text-sm">
             <Coins className="h-4 w-4" />
-            <span>Your balance: {userCoins} coins</span>
+            {isLoadingRewards ? (
+              <span className="animate-pulse">Loading balance...</span>
+            ) : (
+              <span>Your balance: {userCoins} coins</span>
+            )}
           </div>
         )}
 
         <Button 
           className="w-full" 
           onClick={handlePurchase}
+          disabled={isLoadingRewards}
         >
           Purchase Tickets
         </Button>
