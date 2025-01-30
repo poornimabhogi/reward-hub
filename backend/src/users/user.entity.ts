@@ -31,4 +31,14 @@ export class User {
 
   @Column({ default: 0 })
   reelsCount: number;
+
+  @Column({ default: 0 })
+  rewardPoints: number;
+
+  @Column('json', { default: '[]' })
+  rewardHistory: {
+    amount: number;
+    reason: string;
+    timestamp: Date;
+  }[];
 }
