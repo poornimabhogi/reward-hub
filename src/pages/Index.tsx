@@ -7,6 +7,7 @@ import { LoginForm } from "@/components/auth/LoginForm";
 import { HealthGoals } from "@/components/dashboard/HealthGoals";
 import { WishlistSection } from "@/components/dashboard/WishlistSection";
 import { useToast } from "@/hooks/use-toast";
+import { useQuery } from "@tanstack/react-query";
 
 interface Product {
   id: number;
@@ -26,10 +27,27 @@ interface HealthGoal {
 
 const Index = () => {
   const { isAuthenticated, user, logout, isLoading } = useAuth();
-  const [coins, setCoins] = useState(100);
   const navigate = useNavigate();
   const { toast } = useToast();
   const [wishlistedProducts, setWishlistedProducts] = useState<Product[]>([]);
+  
+  // Fetch reward balance using React Query
+  const { data: rewardPoints = 0, isLoading: isLoadingRewards } = useQuery({
+    queryKey: ['rewards', 'balance'],
+    queryFn: async () => {
+      const response = await fetch('/api/rewards/balance', {
+        headers: {
+          'Authorization': `Bearer ${localStorage.getItem('token')}`
+        }
+      });
+      if (!response.ok) {
+        throw new Error('Failed to fetch rewards');
+      }
+      return response.json();
+    },
+    enabled: isAuthenticated, // Only fetch when user is authenticated
+  });
+
   const [healthGoals] = useState<HealthGoal[]>([
     {
       id: 1,
@@ -72,7 +90,6 @@ const Index = () => {
     };
   }, []);
 
-  // Show loading state
   if (isLoading) {
     return (
       <div className="min-h-screen bg-neutral flex items-center justify-center p-4">
@@ -81,7 +98,6 @@ const Index = () => {
     );
   }
 
-  // Show login form if not authenticated
   if (!isAuthenticated) {
     return (
       <div className="min-h-screen bg-neutral flex items-center justify-center p-4">
@@ -106,7 +122,13 @@ const Index = () => {
           <div className="flex items-center gap-2">
             <div className="flex items-center gap-2 bg-neutral px-3 py-1.5 rounded-full">
               <Coins className="h-5 w-5 text-yellow-500" />
-              <span className="font-medium">{coins}</span>
+              <span className="font-medium">
+                {isLoadingRewards ? (
+                  <span className="animate-pulse">...</span>
+                ) : (
+                  rewardPoints
+                )}
+              </span>
             </div>
             <Button
               variant="outline"
