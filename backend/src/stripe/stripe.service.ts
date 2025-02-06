@@ -22,7 +22,11 @@ export class StripeService {
     quantity: number;
     userId: string;
   }) {
-    return this.stripe.checkout.sessions.create({
+    try {
+      if (!product.price || product.price <= 0) {
+        throw new HttpException('Invalid price', HttpStatus.BAD_REQUEST);
+      }
+      return await this.stripe.checkout.sessions.create({
       payment_method_types: ['card'],
       line_items: [
         {

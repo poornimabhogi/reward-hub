@@ -1,6 +1,6 @@
 import { loadStripe } from '@stripe/stripe-js';
 
-const stripePromise = loadStripe('pk_test_your_publishable_key');
+const stripePromise = loadStripe(import.meta.env.VITE_STRIPE_PUBLISHABLE_KEY);
 
 export const createCheckoutSession = async (product: {
   name: string;
@@ -23,6 +23,9 @@ export const createCheckoutSession = async (product: {
     window.location.href = url;
   } catch (error) {
     console.error('Error creating checkout session:', error);
-    throw error;
+    if (error.response) {
+      throw new Error(error.response.data.message);
+    }
+    throw new Error('Failed to create checkout session');
   }
 };
