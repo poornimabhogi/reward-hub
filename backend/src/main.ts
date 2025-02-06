@@ -14,7 +14,7 @@ async function bootstrap() {
   
   // CORS
   app.enableCors({
-    origin: process.env.FRONTEND_URL || 'http://localhost:8080',
+    origin: [process.env.FRONTEND_URL || 'http://localhost:8080', 'https://*.replit.dev'],
     credentials: true,
   });
   
