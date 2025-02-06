@@ -16,9 +16,9 @@ const Navigation = () => {
   }
 
   return (
-    <nav className="fixed bottom-0 left-0 right-0 z-50 bg-white border-t w-full">
-      <div className="max-w-screen-xl mx-auto">
-        <div className="grid grid-cols-5 items-center py-3">
+    <nav className="fixed bottom-0 left-0 right-0 z-50 bg-white border-t">
+      <div className="container mx-auto px-4">
+        <div className="flex items-center justify-around py-3">
           <Link to="/" className={`nav-link flex flex-col items-center ${location.pathname === "/" ? "text-primary" : "text-gray-500"}`}>
             <Home className="h-6 w-6" />
             <span className="text-xs mt-1">Home</span>
