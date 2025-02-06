@@ -1,3 +1,4 @@
+
 import { Module } from '@nestjs/common';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
@@ -6,6 +7,7 @@ import { UsersModule } from './users/users.module';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { StripeModule } from './stripe/stripe.module';
 import { EarningsModule } from './earnings/earnings.module';
+import { ThrottlerModule } from '@nestjs/throttler';
 
 @Module({
   imports: [
@@ -17,8 +19,13 @@ import { EarningsModule } from './earnings/earnings.module';
       password: process.env.DB_PASSWORD || 'postgres',
       database: process.env.DB_NAME || 'myapp',
       entities: [__dirname + '/**/*.entity{.ts,.js}'],
-      synchronize: true, // Set to false in production
+      synchronize: process.env.NODE_ENV !== 'production',
+      ssl: process.env.NODE_ENV === 'production',
     }),
+    ThrottlerModule.forRoot([{
+      ttl: 60,
+      limit: 100,
+    }]),
     AuthModule,
     UsersModule,
     StripeModule,
