@@ -29,40 +29,23 @@ const Social = () => {
     const stored = localStorage.getItem('followedUsers');
     return stored ? JSON.parse(stored) : [];
   });
-  const [posts, setPosts] = useState<Post[]>(() => {
-    const storedCapsules = getTimeCapsules();
-    return storedCapsules
-      .filter(capsule => capsule.postType === 'feature')
-      .map(capsule => ({
-        id: capsule.id,
-        username: capsule.username || 'Anonymous',
-        type: capsule.type,
-        content: capsule.url,
-        isFollowing: followedUsers.some(user => user.username === capsule.username),
-        isMuted: capsule.type === 'video'
-      }));
-  });
-
-  useEffect(() => {
-    const handleNewPost = (event: CustomEvent<TimeCapsule>) => {
-      const newPost = event.detail;
-      if (newPost.postType === 'feature') {
-        setPosts(prevPosts => [{
-          id: newPost.id,
-          username: newPost.username || 'Anonymous',
-          type: newPost.type,
-          content: newPost.url,
-          isFollowing: followedUsers.some(user => user.username === newPost.username),
-          isMuted: newPost.type === 'video'
-        }, ...prevPosts]);
-      }
-    };
-
-    window.addEventListener('newTimeCapsule', handleNewPost as EventListener);
-    return () => {
-      window.removeEventListener('newTimeCapsule', handleNewPost as EventListener);
-    };
-  }, [followedUsers]);
+  const [posts, setPosts] = useState<Post[]>([
+    {
+      id: 1,
+      username: "jane_doe",
+      type: 'photo',
+      content: "https://picsum.photos/400/600",
+      isFollowing: false
+    },
+    {
+      id: 2,
+      username: "john_smith",
+      type: 'video',
+      content: "https://sample-videos.com/video123/mp4/720/big_buck_bunny_720p_1mb.mp4",
+      isFollowing: false,
+      isMuted: true
+    },
+  ]);
 
   useEffect(() => {
     const storedUsers = JSON.parse(localStorage.getItem('followedUsers') || '[]');

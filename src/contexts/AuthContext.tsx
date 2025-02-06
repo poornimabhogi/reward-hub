@@ -19,10 +19,14 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   const [user, setUser] = useState<User | null>(null);
   const [isLoading, setIsLoading] = useState(true);  // Added loading state
 
-  const login = (token: string, email: string) => {
-    localStorage.setItem('token', token);
-    setUser({ email, name: email.split('@')[0] });
-    setIsLoading(false);
+  const login = (email: string, password: string): boolean => {
+    // In a real app, you'd validate credentials against a backend
+    if (email && password.length >= 6) {
+      setUser({ email, name: email.split('@')[0] });
+      setIsLoading(false);
+      return true;
+    }
+    return false;
   };
 
   const logout = () => {
