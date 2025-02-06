@@ -29,23 +29,26 @@ const Social = () => {
     const stored = localStorage.getItem('followedUsers');
     return stored ? JSON.parse(stored) : [];
   });
-  const [posts, setPosts] = useState<Post[]>([
-    {
-      id: 1,
-      username: "jane_doe",
-      type: 'photo',
-      content: "https://picsum.photos/400/600",
-      isFollowing: false
-    },
-    {
-      id: 2,
-      username: "john_smith",
-      type: 'video',
-      content: "https://sample-videos.com/video123/mp4/720/big_buck_bunny_720p_1mb.mp4",
-      isFollowing: false,
-      isMuted: true
-    },
-  ]);
+  const [posts, setPosts] = useState<Post[]>([]);
+
+  useEffect(() => {
+    const handleNewFeaturePost = (event: CustomEvent<Status>) => {
+      const featurePost = event.detail;
+      setPosts(prevPosts => [{
+        id: featurePost.id,
+        username: featurePost.username || 'Anonymous',
+        type: featurePost.type,
+        content: featurePost.url,
+        isFollowing: followedUsers.some(user => user.username === featurePost.username),
+        isMuted: featurePost.type === 'video'
+      }, ...prevPosts]);
+    };
+
+    window.addEventListener('newFeaturePost', handleNewFeaturePost as EventListener);
+    return () => {
+      window.removeEventListener('newFeaturePost', handleNewFeaturePost as EventListener);
+    };
+  }, [followedUsers]);
 
   useEffect(() => {
     const storedUsers = JSON.parse(localStorage.getItem('followedUsers') || '[]');

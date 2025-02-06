@@ -41,14 +41,32 @@ export const ProfileSettings = ({ userProfile }: { userProfile: UserProfile }) =
       const fileUrl = URL.createObjectURL(editedFile);
       const fileType = editedFile.type.startsWith('image/') ? 'photo' as const : 'video' as const;
       
-      const newCapsule: TimeCapsule = {
-        id: Date.now(),
-        type: fileType,
-        url: fileUrl,
-        timestamp: new Date().toISOString(),
-        postType: selectedPostType,
-        username: userProfile.name
-      };
+      const id = Date.now();
+      const timestamp = new Date().toISOString();
+      
+      if (selectedPostType === 'timeCapsule') {
+        const newCapsule: TimeCapsule = {
+          id,
+          type: fileType,
+          url: fileUrl,
+          timestamp,
+          postType: 'timeCapsule',
+          username: userProfile.name
+        };
+        const event = new CustomEvent('newTimeCapsule', { detail: newCapsule });
+        window.dispatchEvent(event);
+      } else {
+        const newFeaturePost = {
+          id,
+          type: fileType,
+          url: fileUrl,
+          timestamp,
+          postType: 'feature',
+          username: userProfile.name
+        };
+        const event = new CustomEvent('newFeaturePost', { detail: newFeaturePost });
+        window.dispatchEvent(event);
+      }
 
       addTimeCapsule(newCapsule);
       toast.success(`${selectedPostType === 'timeCapsule' ? "Time capsule" : "Post"} added!`);

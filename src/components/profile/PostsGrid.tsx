@@ -27,6 +27,11 @@ export const PostsGrid = ({ posts, viewMode: externalViewMode }: PostsGridProps)
     window.dispatchEvent(event);
   };
 
+  const dispatchFeaturePost = (post: Status) => {
+    const event = new CustomEvent('newFeaturePost', { detail: post });
+    window.dispatchEvent(event);
+  };
+
   return (
     <div className="space-y-4">
       <div className="flex justify-between items-center border-t pt-4">
