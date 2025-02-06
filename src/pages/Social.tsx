@@ -29,24 +29,38 @@ const Social = () => {
     const stored = localStorage.getItem('followedUsers');
     return stored ? JSON.parse(stored) : [];
   });
-  const [posts, setPosts] = useState<Post[]>([]);
+  const [posts, setPosts] = useState<Post[]>(() => {
+    const storedCapsules = getTimeCapsules();
+    return storedCapsules
+      .filter(capsule => capsule.postType === 'feature')
+      .map(capsule => ({
+        id: capsule.id,
+        username: capsule.username || 'Anonymous',
+        type: capsule.type,
+        content: capsule.url,
+        isFollowing: followedUsers.some(user => user.username === capsule.username),
+        isMuted: capsule.type === 'video'
+      }));
+  });
 
   useEffect(() => {
-    const handleNewFeaturePost = (event: CustomEvent<Status>) => {
-      const featurePost = event.detail;
-      setPosts(prevPosts => [{
-        id: featurePost.id,
-        username: featurePost.username || 'Anonymous',
-        type: featurePost.type,
-        content: featurePost.url,
-        isFollowing: followedUsers.some(user => user.username === featurePost.username),
-        isMuted: featurePost.type === 'video'
-      }, ...prevPosts]);
+    const handleNewPost = (event: CustomEvent<TimeCapsule>) => {
+      const newPost = event.detail;
+      if (newPost.postType === 'feature') {
+        setPosts(prevPosts => [{
+          id: newPost.id,
+          username: newPost.username || 'Anonymous',
+          type: newPost.type,
+          content: newPost.url,
+          isFollowing: followedUsers.some(user => user.username === newPost.username),
+          isMuted: newPost.type === 'video'
+        }, ...prevPosts]);
+      }
     };
 
-    window.addEventListener('newFeaturePost', handleNewFeaturePost as EventListener);
+    window.addEventListener('newTimeCapsule', handleNewPost as EventListener);
     return () => {
-      window.removeEventListener('newFeaturePost', handleNewFeaturePost as EventListener);
+      window.removeEventListener('newTimeCapsule', handleNewPost as EventListener);
     };
   }, [followedUsers]);
 
