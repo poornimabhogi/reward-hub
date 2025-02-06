@@ -14,8 +14,8 @@ const App = () => (
     <BrowserRouter>
       <AuthProvider>
         <TooltipProvider>
-          <div className="flex flex-col min-h-screen">
-            <main className="flex-1 pb-20">
+          <div className="flex flex-col min-h-screen max-w-screen-md mx-auto w-full">
+            <main className="flex-1 pb-16">
               <AppNavigator />
             </main>
             <Navigation />
