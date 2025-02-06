@@ -108,8 +108,8 @@ const Index = () => {
 
   return (
     <div className="min-h-screen bg-white">
-      <div className="sticky top-0 bg-white/80 backdrop-blur-md border-b z-50">
-        <div className="flex items-center justify-between p-4 max-w-md mx-auto">
+      <div className="sticky top-0 bg-white/80 backdrop-blur-md border-b z-50 w-full">
+        <div className="flex items-center justify-between p-4 w-full">
           <Button 
             variant="ghost" 
             size="icon"

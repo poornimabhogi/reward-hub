@@ -15,7 +15,7 @@ const App = () => (
       <AuthProvider>
         <TooltipProvider>
           <div className="flex flex-col min-h-screen">
-            <main className="flex-1 pb-16 max-w-screen-md mx-auto w-full px-4">
+            <main className="flex-1 pb-16 w-full">
               <AppNavigator />
             </main>
             <Navigation />
