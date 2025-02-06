@@ -1,9 +1,4 @@
-import { Injectable, HttpException, HttpStatus } from '@nestjs/common';
-import Stripe from 'stripe';
-
-const stripe = new Stripe(process.env.STRIPE_SECRET_KEY, {
-  apiVersion: '2023-10-16'
-});
+import { Injectable } from '@nestjs/common';
 import Stripe from 'stripe';
 
 @Injectable()
@@ -22,11 +17,7 @@ export class StripeService {
     quantity: number;
     userId: string;
   }) {
-    try {
-      if (!product.price || product.price <= 0) {
-        throw new HttpException('Invalid price', HttpStatus.BAD_REQUEST);
-      }
-      return await this.stripe.checkout.sessions.create({
+    return this.stripe.checkout.sessions.create({
       payment_method_types: ['card'],
       line_items: [
         {
