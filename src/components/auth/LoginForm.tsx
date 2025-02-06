@@ -17,17 +17,35 @@ export const LoginForm = () => {
 
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
-    const success = login(email, password);
-    if (success) {
-      toast({
-        title: "Success",
-        description: "Logged in successfully",
+    try {
+      const response = await fetch('/api/auth/login', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ email, password }),
       });
-      navigate("/");
-    } else {
+
+      const data = await response.json();
+      
+      if (response.ok) {
+        login(data.access_token, email);
+        toast({
+          title: "Success",
+          description: "Logged in successfully",
+        });
+        navigate("/");
+      } else {
+        toast({
+          title: "Error",
+          description: data.message || "Invalid credentials",
+          variant: "destructive",
+        });
+      }
+    } catch (error) {
       toast({
         title: "Error",
-        description: "Invalid credentials",
+        description: "Failed to connect to server",
         variant: "destructive",
       });
     }
