@@ -23,9 +23,11 @@ export const createCheckoutSession = async (product: {
     window.location.href = url;
   } catch (error) {
     console.error('Error creating checkout session:', error);
-    if (error.response) {
+    if (error.response?.data?.message) {
       throw new Error(error.response.data.message);
+    } else if (error.message) {
+      throw new Error(error.message);
     }
-    throw new Error('Failed to create checkout session');
+    throw new Error('Failed to create checkout session. Please try again later.');
   }
 };

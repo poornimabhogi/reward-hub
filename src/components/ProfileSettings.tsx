@@ -68,7 +68,15 @@ export const ProfileSettings = ({ userProfile }: { userProfile: UserProfile }) =
         window.dispatchEvent(event);
       }
 
-      addTimeCapsule(newCapsule);
+      const capsule = {
+        id,
+        type: fileType,
+        url: fileUrl,
+        timestamp,
+        postType: selectedPostType,
+        username: userProfile.name
+      };
+      addTimeCapsule(capsule);
       toast.success(`${selectedPostType === 'timeCapsule' ? "Time capsule" : "Post"} added!`);
       
       setSelectedFile(null);
