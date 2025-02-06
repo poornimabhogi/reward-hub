@@ -17,28 +17,58 @@ interface ShopSheetsProps {
   handleCheckout: () => void;
 }
 
-export const WishlistSheet = ({ wishlistedProducts, toggleWishlist }: Pick<ShopSheetsProps, 'wishlistedProducts' | 'toggleWishlist'>) => (
-  <SheetContent>
-    <SheetHeader>
-      <SheetTitle>Wishlist</SheetTitle>
-    </SheetHeader>
-    <div className="mt-4 space-y-4">
-      {wishlistedProducts.map((product) => (
-        <div key={product.id} className="flex items-center justify-between">
-          <div className="flex items-center gap-3">
-            <img src={product.image} alt={product.name} className="h-12 w-12 object-cover rounded" />
-            <div>
-              <div className="font-medium">{product.name}</div>
-              <div className="text-sm text-muted-foreground">${product.price}</div>
+export const WishlistSheet = ({ wishlistedProducts, toggleWishlist, toggleCart }: Pick<ShopSheetsProps, 'wishlistedProducts' | 'toggleWishlist' | 'toggleCart'>) => {
+  const handleBuyNow = async (product) => {
+    try {
+      await createCheckoutSession({
+        name: product.name,
+        price: product.price,
+        quantity: 1,
+      });
+    } catch (error) {
+      console.error('Checkout error:', error);
+    }
+  };
+
+  return (
+    <SheetContent>
+      <SheetHeader>
+        <SheetTitle>Wishlist</SheetTitle>
+      </SheetHeader>
+      <div className="mt-4 space-y-4">
+        {wishlistedProducts.map((product) => (
+          <div key={product.id} className="flex flex-col gap-2">
+            <div className="flex items-center justify-between">
+              <div className="flex items-center gap-3">
+                <img src={product.image} alt={product.name} className="h-12 w-12 object-cover rounded" />
+                <div>
+                  <div className="font-medium">{product.name}</div>
+                  <div className="text-sm text-muted-foreground">${product.price}</div>
+                </div>
+              </div>
+              <div className="flex gap-2">
+                <Button size="icon" variant="ghost" onClick={() => toggleCart(product.id)}>
+                  <ShoppingCart className={`h-5 w-5 ${product.inCart ? 'text-primary' : ''}`} />
+                </Button>
+                <Button size="icon" variant="ghost" onClick={() => toggleWishlist(product.id)}>
+                  <Heart className="h-5 w-5 fill-primary text-primary" />
+                </Button>
+              </div>
             </div>
+            <Button 
+              className="w-full" 
+              variant="outline"
+              onClick={() => handleBuyNow(product)}
+            >
+              Buy Now
+            </Button>
           </div>
-          <Button size="icon" variant="ghost" onClick={() => toggleWishlist(product.id)}>
-            <Heart className="h-5 w-5 fill-primary text-primary" />
-          </Button>
-        </div>
-      ))}
-    </div>
+        ))}
+      </div>
+    </SheetContent>
   </SheetContent>
+  );
+};
 );
 
 export const CartSheet = ({ cartProducts, toggleCart, handleCheckout }: Pick<ShopSheetsProps, 'cartProducts' | 'toggleCart' | 'handleCheckout'>) => (
