@@ -1,12 +1,16 @@
+
 import { SheetContent, SheetHeader, SheetTitle } from "@/components/ui/sheet";
 import { Button } from "@/components/ui/button";
 import { Heart, ShoppingCart } from "lucide-react";
+import { createCheckoutSession } from "@/utils/stripe";
+import { DialogContent, DialogDescription } from "@/components/ui/dialog";
 
 interface Product {
   id: number;
   name: string;
   price: number;
   image: string;
+  inCart?: boolean;
 }
 
 interface ShopSheetsProps {
@@ -18,7 +22,7 @@ interface ShopSheetsProps {
 }
 
 export const WishlistSheet = ({ wishlistedProducts, toggleWishlist, toggleCart }: Pick<ShopSheetsProps, 'wishlistedProducts' | 'toggleWishlist' | 'toggleCart'>) => {
-  const handleBuyNow = async (product) => {
+  const handleBuyNow = async (product: Product) => {
     try {
       await createCheckoutSession({
         name: product.name,
@@ -34,6 +38,7 @@ export const WishlistSheet = ({ wishlistedProducts, toggleWishlist, toggleCart }
     <SheetContent>
       <SheetHeader>
         <SheetTitle>Wishlist</SheetTitle>
+        <DialogDescription>Items you've saved for later</DialogDescription>
       </SheetHeader>
       <div className="mt-4 space-y-4">
         {wishlistedProducts.map((product) => (
@@ -66,15 +71,14 @@ export const WishlistSheet = ({ wishlistedProducts, toggleWishlist, toggleCart }
         ))}
       </div>
     </SheetContent>
-  </SheetContent>
   );
 };
-);
 
 export const CartSheet = ({ cartProducts, toggleCart, handleCheckout }: Pick<ShopSheetsProps, 'cartProducts' | 'toggleCart' | 'handleCheckout'>) => (
   <SheetContent>
     <SheetHeader>
       <SheetTitle>Shopping Cart</SheetTitle>
+      <DialogDescription>Items you're ready to purchase</DialogDescription>
     </SheetHeader>
     <div className="mt-4 space-y-4">
       {cartProducts.map((product) => (
