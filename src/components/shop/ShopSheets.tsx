@@ -35,7 +35,7 @@ export const WishlistSheet = ({ wishlistedProducts, toggleWishlist, toggleCart }
   };
 
   return (
-    <SheetContent>
+    <SheetContent side="right" className="w-[400px]">
       <SheetHeader>
         <SheetTitle>Wishlist</SheetTitle>
         <DialogDescription>Items you've saved for later</DialogDescription>

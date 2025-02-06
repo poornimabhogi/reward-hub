@@ -9,7 +9,7 @@ export const createCheckoutSession = async (product: {
 }) => {
   try {
     // Create checkout session on backend
-    const response = await fetch('http://localhost:3000/stripe/create-checkout-session', {
+    const response = await fetch('http://0.0.0.0:3000/stripe/create-checkout-session', {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
